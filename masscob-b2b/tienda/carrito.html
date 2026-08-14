@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MASSCOB Wholesale — Carrito</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="cart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="session.js"></script>
+<script src="assets/brand-logo.js"></script>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'Archivo',system-ui,sans-serif;color:#161616;background:#f2f2ef;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+input,textarea{font-family:inherit}
+
+.preview-ribbon{position:sticky;top:0;z-index:50;background:#161616;color:#fff;text-align:center;font-size:11px;letter-spacing:.08em;padding:7px 12px;font-weight:600}
+
+header{display:flex;align-items:center;justify-content:space-between;padding:22px 40px;background:#fff;border-bottom:1px solid #ededea}
+.wordmark{font-size:16px;font-weight:600;letter-spacing:.16em;color:#161616;line-height:1}
+.wordmark-sub{font-size:8px;font-weight:500;letter-spacing:.3em;color:#a7a7a0;margin-top:5px}
+header nav{display:flex;align-items:center;gap:26px}
+header nav a{font-size:12.5px;color:#6b6b64;text-decoration:none;letter-spacing:.02em}
+header nav a.active{color:#161616;font-weight:600}
+header nav a.logout{color:#a5443b}
+.cartLink{display:flex;align-items:center;gap:7px}
+.cartBadge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;background:#161616;color:#fff;font-size:10.5px;font-weight:700;border-radius:50%}
+
+.profileMenu{position:relative}
+.profileBtn{background:none;border:none;font-size:12.5px;color:#6b6b64;letter-spacing:.02em;padding:4px 0;display:flex;align-items:center;gap:5px;font-family:inherit}
+.profileBtn:hover{color:#161616}
+.profileDropdown{position:absolute;top:calc(100% + 14px);right:0;background:#fff;border:1px solid #ededea;box-shadow:0 12px 30px rgba(0,0,0,.08);min-width:170px;display:none;flex-direction:column;padding:8px 0;z-index:40}
+.profileDropdown.open{display:flex}
+.profileDropdown a,.profileDropdown button{display:block;width:100%;text-align:left;padding:10px 16px;font-size:12.5px;color:#161616;text-decoration:none;background:none;border:none;font-family:inherit;cursor:pointer}
+.profileDropdown a:hover,.profileDropdown button:hover{background:#fafaf8}
+.profileDropdown .activeItem{font-weight:600}
+.profileDropdown .logoutItem{color:#a5443b;border-top:1px solid #f2f2ef;margin-top:4px}
+
+main{max-width:1000px;margin:0 auto;padding:40px 40px 90px}
+.pageHead h1{font-size:30px;font-weight:600;letter-spacing:-.01em;margin:0 0 8px}
+.pageHead p{font-size:14px;color:#6b6b64;margin:0 0 30px}
+
+.layout{display:grid;grid-template-columns:1fr 320px;gap:32px;align-items:start}
+.lines{background:#fff;border:1px solid #ededea}
+.line{display:grid;grid-template-columns:64px 1fr auto;gap:16px;padding:16px 20px;border-bottom:1px solid #f2f2ef;align-items:center}
+.line:last-child{border-bottom:none}
+.line img{width:64px;height:85px;object-fit:cover;background:#f7f7f4;display:block}
+.line .info .name{font-size:14px;font-weight:600}
+.line .info .meta{font-size:12px;color:#6b6b64;margin-top:3px}
+.line .info .code{font-family:ui-monospace,Menlo,monospace;color:#a7a7a0}
+.line .right{display:flex;align-items:center;gap:18px}
+.qtyEdit{display:flex;align-items:center;gap:9px}
+.qtyEdit button{width:24px;height:24px;border:1px solid #e2e2dd;background:#fff;font-size:14px;line-height:1;padding:0}
+.qtyEdit span{font-size:13px;font-weight:600;min-width:16px;text-align:center}
+.lineSubtotal{font-size:14px;font-weight:600;min-width:80px;text-align:right}
+.removeBtn{background:none;border:none;color:#a7a7a0;font-size:12px;text-decoration:underline}
+
+.summary{background:#fff;border:1px solid #ededea;padding:24px}
+.summary .row{display:flex;justify-content:space-between;font-size:13px;color:#6b6b64;margin-bottom:10px}
+.summary .total{display:flex;justify-content:space-between;font-size:18px;font-weight:600;border-top:1px solid #ededea;padding-top:16px;margin-top:6px}
+.summary .checkoutBtn{width:100%;margin-top:22px;background:#161616;color:#fff;border:none;padding:14px;font-size:13px;font-weight:600;letter-spacing:.03em}
+.summary .checkoutBtn:disabled{background:#e2e2dd;color:#a7a7a0}
+.summary .note{font-size:11.5px;color:#a7a7a0;margin-top:12px;line-height:1.5}
+
+.empty{padding:70px 40px;text-align:center;background:#fff;border:1px dashed #d8d8d0}
+.empty p{color:#a7a7a0;font-size:14px;margin:0 0 18px}
+.empty a{display:inline-block;background:#161616;color:#fff;text-decoration:none;padding:12px 24px;font-size:13px;font-weight:600}
+@media (max-width:760px){ .layout{grid-template-columns:1fr} }
+</style>
+</head>
+<body>
+
+<div class="preview-ribbon">El carrito se guarda en este navegador hasta que confirmes — al hacerlo, el pedido pasa a quedar registrado de verdad.</div>
+
+<header>
+  <div class="brand" data-brand data-logo-height="30">
+    <div class="brandText">
+      <div class="wordmark">MASSCOB</div>
+      <div class="wordmark-sub">WHOLESALE</div>
+    </div>
+  </div>
+  <nav>
+    <a href="catalogo.html">Catálogo</a>
+    <a href="carrito.html" class="cartLink active">Carrito <span class="cartBadge" id="cartCount">0</span></a>
+    <div class="profileMenu">
+      <button class="profileBtn" id="profileBtn">Mi perfil ▾</button>
+      <div class="profileDropdown" id="profileDropdown">
+        <a href="pedidos.html" data-nav="pedidos">Pedidos</a>
+        <a href="mi-cuenta.html" data-nav="cuenta">Mis datos</a>
+        <button class="logoutItem" id="logoutBtn">Cerrar sesión</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <div class="pageHead">
+    <h1>Tu pedido</h1>
+    <p>Revisa cantidades y tallas antes de confirmar.</p>
+  </div>
+  <div id="content"></div>
+</main>
+
+<script>
+function render(){
+  const items = cartLoad();
+  const content = document.getElementById('content');
+  if(items.length===0){
+    content.innerHTML = `<div class="empty"><p>Todavía no añadiste nada al pedido.</p><a href="catalogo.html">Ver catálogo →</a></div>`;
+    updateCartBadge();
+    return;
+  }
+  const lines = items.map(i => `
+    <div class="line" data-codigo="${i.codigo}" data-color="${i.color}" data-talla="${i.talla}">
+      <img src="${imgSrc(i.image,200)}" alt="${i.name}">
+      <div class="info">
+        <div class="name">${i.name}</div>
+        <div class="meta"><span class="code">${i.codigo}</span> · ${i.color} · Talla ${i.talla}</div>
+      </div>
+      <div class="right">
+        <div class="qtyEdit">
+          <button data-step="-1">−</button>
+          <span>${i.cantidad}</span>
+          <button data-step="1" ${i.max!=null && i.cantidad>=i.max ? 'disabled':''}>+</button>
+        </div>
+        <div class="lineSubtotal">${fmtEUR(i.cantidad*i.precioUnit)}</div>
+        <button class="removeBtn" data-remove>Quitar</button>
+      </div>
+    </div>`).join('');
+
+  const totalUnits = items.reduce((t,i)=>t+i.cantidad,0);
+  const total = cartTotal();
+  const falta = MIN_ORDER_UNITS - totalUnits;
+
+  content.innerHTML = `
+    <div class="layout">
+      <div class="lines">${lines}</div>
+      <div class="summary">
+        <div class="row"><span>Referencias</span><span>${items.length}</span></div>
+        <div class="row"><span>Unidades totales</span><span>${totalUnits}</span></div>
+        <div class="total"><span>Total</span><span>${fmtEUR(total)}</span></div>
+        <button class="checkoutBtn" ${falta>0?'disabled':''} onclick="location.href='checkout.html'">Confirmar pedido →</button>
+        <div class="note">${falta>0
+          ? `Te faltan ${falta} ud(s) para llegar al pedido mínimo de ${MIN_ORDER_UNITS} uds (se pueden combinar tallas, colores y referencias distintas).`
+          : `El neto mostrado es el precio ERP sin descuentos de cliente/zona — esos se aplican cuando el backend conozca la cuenta que inició sesión.`}</div>
+      </div>
+    </div>`;
+  updateCartBadge();
+}
+
+document.addEventListener('click', e => {
+  const line = e.target.closest('.line');
+  if(!line) return;
+  const codigo=line.dataset.codigo, color=line.dataset.color, talla=line.dataset.talla;
+  const current = cartLoad().find(i => i.codigo===codigo && i.color===color && i.talla===talla);
+  if(!current) return;
+
+  if(e.target.dataset.remove!==undefined){ cartRemove(codigo,color,talla); render(); return; }
+
+  const step = e.target.dataset.step;
+  if(step!==undefined){
+    const max = current.max!=null ? current.max : Infinity;
+    const next = Math.max(0, Math.min(current.cantidad + Number(step), max));
+    cartSetQty(codigo,color,talla,next);
+    render();
+  }
+});
+
+(async function(){
+  const client = await requireSession();
+  if(!client) return;
+  initProfileMenu(client);
+  render();
+})();
+</script>
+
+</body>
+</html>

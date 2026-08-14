@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MASSCOB Wholesale — Catálogo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="../products.js"></script>
+<script src="cart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="session.js"></script>
+<script src="assets/brand-logo.js"></script>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'Archivo',system-ui,sans-serif;color:#161616;background:#fff;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+input{font-family:inherit}
+::placeholder{color:#a7a7a0}
+
+.preview-ribbon{position:sticky;top:0;z-index:50;background:#161616;color:#fff;text-align:center;font-size:11px;letter-spacing:.08em;padding:7px 12px;font-weight:600}
+
+header{display:flex;align-items:center;justify-content:space-between;padding:22px 40px;background:#fff;border-bottom:1px solid #ededea}
+.wordmark{font-size:16px;font-weight:600;letter-spacing:.16em;color:#161616;line-height:1}
+.wordmark-sub{font-size:8px;font-weight:500;letter-spacing:.3em;color:#a7a7a0;margin-top:5px}
+header nav{display:flex;align-items:center;gap:26px}
+header nav a{font-size:12.5px;color:#6b6b64;text-decoration:none;letter-spacing:.02em}
+header nav a.logout{color:#a5443b}
+.cartLink{display:flex;align-items:center;gap:7px}
+.cartBadge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;background:#161616;color:#fff;font-size:10.5px;font-weight:700;border-radius:50%}
+
+.profileMenu{position:relative}
+.profileBtn{background:none;border:none;font-size:12.5px;color:#6b6b64;letter-spacing:.02em;padding:4px 0;display:flex;align-items:center;gap:5px;font-family:inherit}
+.profileBtn:hover{color:#161616}
+.profileDropdown{position:absolute;top:calc(100% + 14px);right:0;background:#fff;border:1px solid #ededea;box-shadow:0 12px 30px rgba(0,0,0,.08);min-width:170px;display:none;flex-direction:column;padding:8px 0;z-index:40}
+.profileDropdown.open{display:flex}
+.profileDropdown a,.profileDropdown button{display:block;width:100%;text-align:left;padding:10px 16px;font-size:12.5px;color:#161616;text-decoration:none;background:none;border:none;font-family:inherit;cursor:pointer}
+.profileDropdown a:hover,.profileDropdown button:hover{background:#fafaf8}
+.profileDropdown .activeItem{font-weight:600}
+.profileDropdown .logoutItem{color:#a5443b;border-top:1px solid #f2f2ef;margin-top:4px}
+
+main{padding:40px 40px 22px}
+.pageHead h1{font-size:30px;font-weight:600;letter-spacing:-.01em;margin:0 0 8px}
+.pageHead p{font-size:14px;color:#6b6b64;margin:0 0 30px}
+
+.toolbar{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap;padding-bottom:22px;border-bottom:1px solid #ededea}
+.toolbar .searchBox{flex:1;min-width:240px;max-width:420px}
+.toolbar .searchBox input{width:100%;padding:11px 14px;border:1px solid #e2e2dd;background:#fff;font-size:13.5px}
+.filtersBtn{display:flex;align-items:center;gap:9px;background:none;border:none;padding:8px 2px;font-size:12px;letter-spacing:.1em;font-weight:600;color:#161616;text-transform:uppercase;border-bottom:1px solid transparent}
+.filtersBtn:hover{border-color:#161616}
+.filterBadge{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 4px;background:#161616;color:#fff;font-size:10px;font-weight:700;border-radius:50%}
+
+/* ---- panel de filtros (slide-in) ---- */
+.filterOverlay{position:fixed;inset:0;background:rgba(22,22,22,.35);z-index:70;opacity:0;pointer-events:none;transition:opacity .25s ease}
+.filterOverlay.open{opacity:1;pointer-events:auto}
+.filterPanel{position:fixed;top:0;right:0;bottom:0;width:100%;max-width:420px;background:#fff;z-index:71;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s ease;box-shadow:-40px 0 70px rgba(0,0,0,.1)}
+.filterPanel.open{transform:translateX(0)}
+.fpHead{display:flex;align-items:center;justify-content:space-between;padding:28px 34px;border-bottom:1px solid #ededea}
+.fpHead h2{font-size:18px;font-weight:600;letter-spacing:-.01em;margin:0}
+.fpClose{background:none;border:none;padding:6px;font-size:11px;letter-spacing:.08em;font-weight:600;color:#6b6b64;text-transform:uppercase}
+.fpClose:hover{color:#161616}
+.fpBody{flex:1;overflow-y:auto;padding:6px 34px}
+.fpSection{padding:26px 0;border-bottom:1px solid #ededea}
+.fpSectionLabel{font-size:10px;letter-spacing:.16em;color:#a7a7a0;font-weight:600;margin-bottom:18px}
+.fpSectionLabel .n{color:#161616}
+.fpOptions{display:flex;flex-wrap:wrap;gap:16px 24px}
+.fpOption{background:none;border:none;padding:2px 0;font-size:13.5px;color:#6b6b64;font-weight:500;border-bottom:1px solid transparent;text-align:left}
+.fpOption:hover{color:#161616}
+.fpOption.active{color:#161616;font-weight:600;border-color:#161616}
+.fpOption.disabled{color:#d8d8d0;pointer-events:none}
+.fpFoot{padding:20px 34px 28px;border-top:1px solid #ededea}
+.fpClear{background:none;border:none;padding:8px 0;font-size:11.5px;letter-spacing:.04em;font-weight:600;color:#a5443b}
+.fpClear:hover{opacity:.75}
+
+.gridSection{padding:32px 0 90px}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;width:100%;margin:0;padding:0}
+.card{background:#fff;border:1px solid #ededea;display:flex;flex-direction:column;cursor:pointer}
+.card:hover{border-color:#161616}
+.card .imgwrap{position:relative;aspect-ratio:4/5;background:#f7f7f4;overflow:hidden}
+.card .imgwrap img{width:100%;height:100%;object-fit:cover;display:block}
+.card .body{padding:14px 15px 16px;display:flex;flex-direction:column;gap:3px}
+.card .cat{font-size:9.5px;letter-spacing:.12em;color:#a7a7a0;font-weight:600}
+.card .name{font-size:14.5px;font-weight:600;letter-spacing:.01em;line-height:1.25;margin-top:3px}
+.card .code{font-size:11px;font-family:ui-monospace,Menlo,monospace;color:#a7a7a0}
+.card .swatches{display:flex;gap:6px;margin-top:8px}
+.card .swatch{width:16px;height:16px;border-radius:50%;border:1px solid rgba(0,0,0,.15);padding:0;cursor:pointer;box-shadow:0 0 0 1px transparent}
+.card .swatch.active{box-shadow:0 0 0 2px #fff,0 0 0 3px #161616}
+.card .miniSizes{display:flex;gap:4px;flex-wrap:wrap;margin-top:9px;min-height:20px}
+.miniSize{font-size:10px;font-weight:600;color:#6b6b64;background:#fafaf8;border:1px solid #ededea;padding:3px 7px}
+.miniSize.muted{color:#c2bfb6;font-weight:500;border-style:dashed}
+.card .foot{display:flex;align-items:baseline;justify-content:space-between;margin-top:11px;padding-top:11px;border-top:1px solid #f2f2ef}
+.card .stock{font-size:11.5px;color:#6b6b64}
+.card .price{font-size:14px;font-weight:600}
+
+.empty{padding:60px;text-align:center;color:#a7a7a0;font-size:14px;background:#fff;border:1px dashed #d8d8d0;margin:0 40px}
+
+/* ---- ficha de producto (modal) ---- */
+.backdrop{position:fixed;inset:0;background:rgba(22,22,22,.5);z-index:60;display:none;align-items:flex-start;justify-content:center;overflow-y:auto;padding:40px 20px}
+.backdrop.open{display:flex}
+.detail{background:#fff;width:100%;max-width:1180px;margin:auto;display:grid;grid-template-columns:500px 1fr}
+.detail .dimg{position:relative;aspect-ratio:3/4;background:#f7f7f4;overflow:hidden}
+.detail .dimg img{width:100%;height:100%;object-fit:cover;display:block}
+.dimgNav{position:absolute;top:50%;transform:translateY(-50%);width:38px;height:38px;border:none;background:rgba(255,255,255,.9);color:#161616;font-size:19px;line-height:1;display:flex;align-items:center;justify-content:center;padding:0}
+.dimgNav:hover{background:#fff}
+.dimgNav.prev{left:16px}
+.dimgNav.next{right:16px}
+.dimgDots{display:flex;justify-content:center;gap:7px;padding:16px 0 2px}
+.dimgDots .dot{width:7px;height:7px;border-radius:50%;background:#e2e2dd;border:none;padding:0}
+.dimgDots .dot.active{background:#161616}
+.detail .dinfo{padding:44px 48px;position:relative}
+.detail .close{position:absolute;top:18px;right:18px;background:none;border:none;font-size:20px;color:#a7a7a0;line-height:1;padding:6px}
+.detail .close:hover{color:#161616}
+.detail .dcat{font-size:11px;letter-spacing:.18em;color:#a7a7a0;font-weight:600;margin-bottom:8px}
+.detail .dname{font-size:24px;font-weight:600;letter-spacing:-.01em;margin:0 0 6px}
+.detail .dcode{font-size:12px;font-family:ui-monospace,Menlo,monospace;color:#a7a7a0;margin-bottom:18px}
+.detail .dprice{font-size:20px;font-weight:600;margin-bottom:24px}
+.detail .colorsLabel{font-size:11px;letter-spacing:.18em;color:#a7a7a0;font-weight:600;margin-bottom:14px;border-top:1px solid #ededea;padding-top:20px}
+.colorRow{display:flex;align-items:flex-start;gap:14px;padding:14px 10px;margin:0 -10px;border-bottom:1px solid #f2f2ef}
+.colorRow.active{background:#fafaf8}
+.colorRow .cdot{width:15px;height:15px;border-radius:50%;border:1px solid rgba(0,0,0,.12);flex:none;margin-top:14px}
+.colorRow .cname{font-size:13px;font-weight:600;width:90px;flex:none;margin-top:12px}
+.colorRow .sizes{display:flex;gap:8px;flex-wrap:wrap;flex:1}
+
+.sizeStepper{display:flex;flex-direction:column;gap:7px;padding:9px 10px;border:1px solid #ededea;background:#fafaf8;min-width:78px}
+.sizeStepper.hasQty{border-color:#161616;background:#fff}
+.sizeStepper.disabled{opacity:.4}
+.sizeLabel{font-size:12px;font-weight:600}
+.stepRow{display:flex;align-items:center;justify-content:space-between}
+.stepBtn{width:24px;height:24px;border:1px solid #e2e2dd;background:#fff;color:#161616;font-size:14px;line-height:1;padding:0;display:flex;align-items:center;justify-content:center}
+.stepBtn:disabled{opacity:.3;cursor:default}
+.stepQty{font-size:13px;font-weight:600;min-width:18px;text-align:center}
+
+.modalFoot{border-top:1px solid #ededea;padding-top:20px;margin-top:6px}
+.lowStockNote{font-size:11px;font-weight:600;letter-spacing:.03em;color:#a5443b;text-align:center;margin-bottom:10px}
+.addBtn{width:100%;background:#161616;color:#fff;border:none;padding:15px;font-size:13px;font-weight:600;letter-spacing:.03em}
+.addBtn:disabled{background:#e2e2dd;color:#a7a7a0}
+.minNote{font-size:11.5px;color:#a7a7a0;margin-top:10px;text-align:center}
+
+@media (max-width:700px){ .detail{grid-template-columns:1fr} .detail .dimg{aspect-ratio:4/3} }
+@media (max-width:900px){ .grid{grid-template-columns:repeat(2,1fr)} }
+@media (max-width:560px){ .grid{grid-template-columns:1fr;gap:1px} .filterPanel{max-width:100%} }
+</style>
+</head>
+<body>
+
+<div class="preview-ribbon">VISTA PREVIA — catálogo de ejemplo, todavía sin conectar a cuentas de cliente reales (precios/stock por cliente llegan con el backend).</div>
+
+<header>
+  <div class="brand" data-brand data-logo-height="30">
+    <div class="brandText">
+      <div class="wordmark">MASSCOB</div>
+      <div class="wordmark-sub">WHOLESALE</div>
+    </div>
+  </div>
+  <nav>
+    <a href="catalogo.html">Catálogo</a>
+    <a href="carrito.html" class="cartLink">Carrito <span class="cartBadge" id="cartCount">0</span></a>
+    <div class="profileMenu">
+      <button class="profileBtn" id="profileBtn">Mi perfil ▾</button>
+      <div class="profileDropdown" id="profileDropdown">
+        <a href="pedidos.html" data-nav="pedidos">Pedidos</a>
+        <a href="mi-cuenta.html" data-nav="cuenta">Mis datos</a>
+        <button class="logoutItem" id="logoutBtn">Cerrar sesión</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <div class="pageHead">
+    <h1>Catálogo</h1>
+    <p id="summary"></p>
+  </div>
+
+  <div class="toolbar">
+    <div class="searchBox"><input id="search" type="text" placeholder="Buscar por nombre o código…"></div>
+    <button class="filtersBtn" id="filtersBtn">Filtros <span class="filterBadge" id="filterBadge" style="display:none"></span></button>
+  </div>
+</main>
+
+<div class="gridSection">
+  <div class="grid" id="grid"></div>
+  <div class="empty" id="empty" style="display:none">Sin resultados para los filtros actuales.</div>
+</div>
+
+<div class="filterOverlay" id="filterOverlay"></div>
+<div class="filterPanel" id="filterPanel">
+  <div class="fpHead">
+    <h2>Filtros</h2>
+    <button class="fpClose" id="fpClose">Cerrar</button>
+  </div>
+  <div class="fpBody">
+    <div class="fpSection">
+      <div class="fpSectionLabel" id="fpTallaLabel">TALLA</div>
+      <div class="fpOptions" id="tallaChips"></div>
+    </div>
+    <div class="fpSection">
+      <div class="fpSectionLabel" id="fpCatLabel">PRENDA</div>
+      <div class="fpOptions" id="catChips"></div>
+    </div>
+  </div>
+  <div class="fpFoot">
+    <button class="fpClear" id="fpClear">Limpiar filtros</button>
+  </div>
+</div>
+
+<div class="backdrop" id="backdrop">
+  <div class="detail" id="detail"></div>
+</div>
+
+<script>
+let CLIENT = null;
+let CLIENT_TARIFA = null;
+
+// ---- tarifa del cliente según su país (mismo cruce que el panel admin:
+// país normalizado -> tarifa asignada en Admin > Tarifas). Si el país del
+// cliente no está mapeado, se usa el precio base (WHOLESALE EUROPA).
+function normPais(s){ return String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toUpperCase().trim(); }
+function clientTarifaNombre(){
+  try{
+    const admin = JSON.parse(localStorage.getItem('masscob_admin_v2')) || {};
+    const paisTarifas = admin.paisTarifas || [];
+    const pais = normPais(CLIENT && CLIENT.pais);
+    const m = paisTarifas.find(pt => normPais(pt.pais)===pais && pt.tarifa);
+    return m ? m.tarifa : null;
+  }catch(e){ return null; }
+}
+function priceFor(p){
+  if(CLIENT_TARIFA){
+    const t = (p.tarifas||[]).find(t => t.nombre===CLIENT_TARIFA);
+    if(t) return t.precio;
+  }
+  return p.price_erp;
+}
+
+function colorHex(name){
+  const n=String(name).toUpperCase();
+  const has=(...k)=>k.some(x=>n.includes(x));
+  if(has('INK','NIGHT','ONYX','NOIR')&&!has('BLUE')) return '#1c1c1a';
+  if(has('BLACK')) return '#1c1c1a';
+  if(has('WHITE','BLANC','OPTIC')) return '#f1efe8';
+  if(has('OLIVE','KAKI','KHAKI','MILITARY','SAGE')) return '#6E7150';
+  if(has('CAMEL','BRUNETTE','TAN','TOFFEE','CARAMEL','HAZEL','COGNAC')) return '#a87f54';
+  if(has('NAVY','INK BLUE','MARINE')) return '#2f3a4a';
+  if(has('BLUE','DENIM','AZUR')) return '#42566b';
+  if(has('RED','RUST','BURGUNDY','BORDEAUX','TERRACOTA','BRICK','WINE')) return '#9e4536';
+  if(has('GREEN','VERDE','BOTTLE','FOREST','EMERALD')) return '#4f6850';
+  if(has('GREY','GRIS','GRAPHITE','STEEL','SLATE','PEWTER')) return '#9a9a93';
+  if(has('CREAM','TILLEUL','ECRU','IVORY','BEIGE','SAND','NUDE','OAT','VANILLA','CHALK','STONE','OFFWHITE')) return '#e3dccb';
+  if(has('GOLD','MUSTARD','OCHRE','SAFFRON','CURRY','HONEY','AMBER')) return '#c2a14e';
+  if(has('PINK','ROSE','BLUSH','MAUVE','POWDER')) return '#cda4a4';
+  if(has('BROWN','CHOCOLATE','MARRON','ESPRESSO','MOKA','COFFEE')) return '#6b4f3a';
+  if(has('PURPLE','LILA','LILAC','VIOLET','PLUM')) return '#6f5d7e';
+  return '#b8b3a8';
+}
+function fmt(n){ return (n==null)?'—': n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €'; }
+function lowStockThreshold(){
+  try{
+    const raw = localStorage.getItem('masscob_admin_v2');
+    const data = raw ? JSON.parse(raw) : null;
+    return (data && data.lowStockThreshold!=null) ? Number(data.lowStockThreshold) : 3;
+  }catch(e){ return 3; }
+}
+function sizeRank(s, tallaje){
+  if(tallaje==='numerico'){ const v=parseInt(s,10); return isNaN(v)?999:v; }
+  const o=['XXS','XS','XS/S','S','S/M','M','M/L','L','L/XL','XL','XXL','XXXL','U','ÚNICA','TU'];
+  const i=o.indexOf(String(s).toUpperCase()); return i<0?900:i;
+}
+
+const ALL = (window.MASSCOB_PRODUCTS||[]).filter(p => p.price_erp!=null && p.image);
+
+const state = { search:'', cat:'Todas', talla:'Todas' };
+const previewColor = {}; // codigo -> color que se está previsualizando en la tarjeta
+
+function colorsOf(p){ return Object.keys(p.colores||{}); }
+function tallasOf(p){ const s=new Set(); Object.values(p.colores||{}).forEach(m=>Object.keys(m).forEach(t=>s.add(t))); return Array.from(s); }
+function imageFor(p, color){ return (p.images && (p.images[color] || p.images['_default'])) || p.image; }
+function galleryFor(p, color){ return (p.gallery && p.gallery[color]) || [imageFor(p, color)]; }
+function miniSizesHTML(p, color){
+  const sizesObj = (p.colores||{})[color] || {};
+  const chips = Object.keys(sizesObj)
+    .sort((a,b)=>sizeRank(a,p.tallaje)-sizeRank(b,p.tallaje))
+    .map(s => `<span class="miniSize">${s}</span>`)
+    .join('');
+  return chips || '<span class="miniSize muted">Sin tallas</span>';
+}
+function cardHTML(p){
+  const colors = colorsOf(p);
+  const color = previewColor[p.codigo] || colors[0];
+  return `
+    <div class="card" data-codigo="${p.codigo}">
+      <div class="imgwrap"><img src="${imgSrc(imageFor(p,color),900)}" alt="${p.name} — ${color}" loading="lazy"></div>
+      <div class="body">
+        <div class="cat">${p.category}</div>
+        <div class="name">${p.name}</div>
+        <div class="code">${p.codigo}</div>
+        <div class="swatches">${colors.map(c=>`<button class="swatch${c===color?' active':''}" data-swatch data-codigo="${p.codigo}" data-color="${c}" style="background:${colorHex(c)}" title="${c}"></button>`).join('')}</div>
+        <div class="miniSizes">${miniSizesHTML(p,color)}</div>
+        <div class="foot"><span class="stock">${p.stock} uds</span><span class="price">${fmt(priceFor(p))}</span></div>
+      </div>
+    </div>`;
+}
+
+function render(){
+  let base = ALL;
+  if(state.cat!=='Todas') base = base.filter(p=>p.category===state.cat);
+
+  // talla chips a partir de 'base' (después de filtrar por prenda)
+  const tallaCount = {};
+  base.forEach(p => tallasOf(p).forEach(t => tallaCount[t]=(tallaCount[t]||0)+1));
+  let afterTalla = base;
+  if(state.talla!=='Todas') afterTalla = base.filter(p => tallasOf(p).includes(state.talla));
+
+  const q = state.search.trim().toLowerCase();
+  const filtered = afterTalla.filter(p => !q || p.name.toLowerCase().includes(q) || p.codigo.toLowerCase().includes(q));
+
+  // categorías (siempre desde el total, para no perder opciones al filtrar)
+  const catCount = {};
+  ALL.forEach(p => catCount[p.category]=(catCount[p.category]||0)+1);
+  const cats = ['Todas', ...Array.from(new Set(ALL.map(p=>p.category))).sort()];
+  document.getElementById('catChips').innerHTML = cats.map(c => {
+    const active = state.cat===c;
+    const disabled = c!=='Todas' && !catCount[c];
+    return `<button class="fpOption${active?' active':''}${disabled?' disabled':''}" data-kind="cat" data-val="${c}">${c}</button>`;
+  }).join('');
+
+  const tallas = ['Todas', ...Object.keys(tallaCount).sort()];
+  document.getElementById('tallaChips').innerHTML = tallas.map(t => {
+    const active = state.talla===t;
+    return `<button class="fpOption${active?' active':''}" data-kind="talla" data-val="${t}">${t}</button>`;
+  }).join('');
+
+  document.getElementById('fpCatLabel').textContent = `PRENDA${state.cat!=='Todas'?' (1)':''}`;
+  document.getElementById('fpTallaLabel').textContent = `TALLA${state.talla!=='Todas'?' (1)':''}`;
+
+  const activeCount = (state.cat!=='Todas'?1:0) + (state.talla!=='Todas'?1:0);
+  const badge = document.getElementById('filterBadge');
+  badge.style.display = activeCount>0 ? 'inline-flex' : 'none';
+  badge.textContent = activeCount;
+
+  document.getElementById('summary').textContent = `${filtered.length} de ${ALL.length} referencias publicables`;
+
+  const grid = document.getElementById('grid');
+  const empty = document.getElementById('empty');
+  if(filtered.length===0){
+    grid.innerHTML=''; empty.style.display='block';
+  } else {
+    empty.style.display='none';
+    grid.innerHTML = filtered.map(cardHTML).join('');
+  }
+}
+
+function openFilters(){ document.getElementById('filterOverlay').classList.add('open'); document.getElementById('filterPanel').classList.add('open'); }
+function closeFilters(){ document.getElementById('filterOverlay').classList.remove('open'); document.getElementById('filterPanel').classList.remove('open'); }
+document.getElementById('filtersBtn').addEventListener('click', openFilters);
+document.getElementById('fpClose').addEventListener('click', closeFilters);
+document.getElementById('filterOverlay').addEventListener('click', closeFilters);
+document.getElementById('fpClear').addEventListener('click', () => { state.cat='Todas'; state.talla='Todas'; render(); });
+
+document.getElementById('search').addEventListener('input', e => { state.search=e.target.value; render(); });
+document.body.addEventListener('click', e => {
+  const chip = e.target.closest('.fpOption');
+  if(chip){
+    const kind = chip.dataset.kind, val = chip.dataset.val;
+    if(kind==='cat'){ state.cat=val; state.talla='Todas'; }
+    if(kind==='talla'){ state.talla=val; }
+    render();
+    return;
+  }
+  const swatch = e.target.closest('[data-swatch]');
+  if(swatch){
+    previewColor[swatch.dataset.codigo] = swatch.dataset.color;
+    const p = ALL.find(x => x.codigo===swatch.dataset.codigo);
+    const card = swatch.closest('.card');
+    if(p && card) card.outerHTML = cardHTML(p);
+    return;
+  }
+  const card = e.target.closest('.card');
+  if(card){ openDetail(card.dataset.codigo, previewColor[card.dataset.codigo]); return; }
+});
+
+// ---- ficha de producto: elegir color + talla + cantidad, añadir al carrito ----
+function openDetail(codigo, colorInicial){
+  const p = ALL.find(x => x.codigo===codigo);
+  if(!p) return;
+  let colorMostrado = colorInicial || colorsOf(p)[0];
+  let galleryIndex = 0;
+  const pending = {}; // "color__talla" -> cantidad elegida en esta apertura de la ficha
+  const keyOf = (color,talla) => color+'__'+talla;
+
+  function sizesHTML(color){
+    const sizesObj = p.colores[color];
+    return Object.keys(sizesObj)
+      .sort((a,b)=>sizeRank(a,p.tallaje)-sizeRank(b,p.tallaje))
+      .map(s => {
+        const max = sizesObj[s];
+        const qty = pending[keyOf(color,s)] || 0;
+        const disabled = max<=0;
+        return `
+          <div class="sizeStepper${qty>0?' hasQty':''}${disabled?' disabled':''}" data-color="${color}" data-talla="${s}" data-max="${max}">
+            <div class="sizeLabel">${s}</div>
+            <div class="stepRow">
+              <button class="stepBtn" data-step="-1" ${(qty===0||disabled)?'disabled':''}>−</button>
+              <span class="stepQty">${qty}</span>
+              <button class="stepBtn" data-step="1" ${(qty>=max||disabled)?'disabled':''}>+</button>
+            </div>
+          </div>`;
+      }).join('');
+  }
+
+  function colorRowsHTML(){
+    return Object.keys(p.colores||{}).map(color => `
+      <div class="colorRow${color===colorMostrado?' active':''}" data-colorrow="${color}">
+        <span class="cdot" style="background:${colorHex(color)}"></span>
+        <span class="cname">${color}</span>
+        <div class="sizes">${sizesHTML(color)}</div>
+      </div>`).join('');
+  }
+
+  function footHTML(){
+    const totalQty = Object.values(pending).reduce((a,b)=>a+b,0);
+    const totalPrice = totalQty * (priceFor(p)||0);
+    const label = totalQty>0 ? `Añadir ${totalQty} uds al carrito — ${fmt(totalPrice)}` : 'Elige una talla';
+    const threshold = lowStockThreshold();
+    const lowStock = Object.keys(pending).some(key => {
+      const idx = key.indexOf('__');
+      const color = key.slice(0,idx), talla = key.slice(idx+2);
+      return p.colores[color][talla] <= threshold;
+    });
+    return `
+      ${lowStock ? '<div class="lowStockNote">Quedan pocas unidades disponibles</div>' : ''}
+      <button class="addBtn" id="addToCart" ${totalQty===0?'disabled':''}>${label}</button>
+      <div class="minNote">Puedes combinar tallas y colores — el pedido completo debe sumar al menos ${MIN_ORDER_UNITS} uds</div>`;
+  }
+
+  function galleryHTML(){
+    const gallery = galleryFor(p, colorMostrado);
+    if(galleryIndex>=gallery.length) galleryIndex = 0;
+    const nav = gallery.length>1 ? `
+        <button class="dimgNav prev" data-nav="-1" aria-label="Foto anterior">‹</button>
+        <button class="dimgNav next" data-nav="1" aria-label="Foto siguiente">›</button>` : '';
+    const dots = gallery.length>1 ? `
+      <div class="dimgDots">${gallery.map((_,i)=>`<button class="dot${i===galleryIndex?' active':''}" data-dot="${i}" aria-label="Foto ${i+1}"></button>`).join('')}</div>` : '';
+    return `
+      <div class="dleft">
+        <div class="dimg"><img src="${imgSrc(gallery[galleryIndex],1200)}" alt="${p.name} — ${colorMostrado}">${nav}</div>
+        ${dots}
+      </div>`;
+  }
+
+  function paint(){
+    document.getElementById('detail').innerHTML = `
+      ${galleryHTML()}
+      <div class="dinfo">
+        <button class="close" id="closeDetail" aria-label="Cerrar">×</button>
+        <div class="dcat">${p.category}</div>
+        <h2 class="dname">${p.name}</h2>
+        <div class="dcode">${p.codigo}</div>
+        <div class="dprice">${fmt(priceFor(p))}</div>
+        <div class="colorsLabel">COLORES Y TALLAS DISPONIBLES</div>
+        ${colorRowsHTML()}
+        <div class="modalFoot">${footHTML()}</div>
+      </div>`;
+  }
+
+  paint();
+  document.getElementById('backdrop').classList.add('open');
+
+  document.getElementById('detail').onclick = (e) => {
+    if(e.target.id==='closeDetail'){ closeDetail(); return; }
+
+    const stepBtn = e.target.closest('.stepBtn');
+    if(stepBtn && !stepBtn.disabled){
+      const box = stepBtn.closest('.sizeStepper');
+      const color = box.dataset.color, talla = box.dataset.talla, max = Number(box.dataset.max);
+      const key = keyOf(color,talla);
+      const dir = Number(stepBtn.dataset.step);
+      let cur = pending[key] || 0;
+      cur = Math.max(0, Math.min(cur+dir, max));
+      if(cur<=0) delete pending[key]; else pending[key]=cur;
+      paint();
+      return;
+    }
+
+    const rowEl = e.target.closest('.colorRow');
+    if(rowEl && !e.target.closest('.sizeStepper')){
+      colorMostrado = rowEl.dataset.colorrow;
+      previewColor[p.codigo] = colorMostrado;
+      galleryIndex = 0;
+      paint();
+      return;
+    }
+
+    const navBtn = e.target.closest('.dimgNav');
+    if(navBtn){
+      const gallery = galleryFor(p, colorMostrado);
+      galleryIndex = (galleryIndex + Number(navBtn.dataset.nav) + gallery.length) % gallery.length;
+      paint();
+      return;
+    }
+
+    const dotBtn = e.target.closest('.dimgDots .dot');
+    if(dotBtn){
+      galleryIndex = Number(dotBtn.dataset.dot);
+      paint();
+      return;
+    }
+
+    if(e.target.id==='addToCart'){
+      let totalQty = 0;
+      Object.keys(pending).forEach(key => {
+        const idx = key.indexOf('__');
+        const color = key.slice(0,idx), talla = key.slice(idx+2);
+        const cantidad = pending[key];
+        totalQty += cantidad;
+        const max = p.colores[color][talla];
+        cartAddLine({ codigo:p.codigo, name:p.name, color, talla, cantidad, precioUnit:priceFor(p), image: imageFor(p,color), max });
+      });
+      updateCartBadge();
+      closeDetail();
+      showToast(`Añadido al carrito: ${totalQty} uds de ${p.name}`);
+      // refresca la tarjeta por si estaba mostrando este mismo producto
+      const card = document.querySelector(`.card[data-codigo="${p.codigo}"]`);
+      if(card) card.outerHTML = cardHTML(p);
+      return;
+    }
+  };
+}
+function closeDetail(){ document.getElementById('backdrop').classList.remove('open'); }
+document.getElementById('backdrop').addEventListener('click', e => {
+  if(e.target.id==='backdrop') closeDetail();
+});
+document.addEventListener('keydown', e => { if(e.key==='Escape'){ closeDetail(); closeFilters(); } });
+
+(async function(){
+  CLIENT = await requireSession();
+  if(!CLIENT) return;
+  initProfileMenu(CLIENT);
+  CLIENT_TARIFA = clientTarifaNombre();
+  // stock en vivo (backend) sobrescribe los números estáticos de products.js
+  // antes del primer render — ALL comparte referencias con cardHTML/
+  // sizesHTML/footHTML, así que mutar in-place basta.
+  const liveStock = await stockActual();
+  ALL.forEach(p => {
+    const live = liveStock[p.codigo];
+    if(!live) return;
+    p.colores = live;
+    p.stock = Object.values(live).reduce((sum,tallas) => sum + Object.values(tallas).reduce((a,b)=>a+b,0), 0);
+  });
+  render();
+})();
+</script>
+
+</body>
+</html>

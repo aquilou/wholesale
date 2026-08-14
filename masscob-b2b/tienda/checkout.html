@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MASSCOB Wholesale — Checkout</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="cart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="session.js"></script>
+<script src="assets/brand-logo.js"></script>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'Archivo',system-ui,sans-serif;color:#161616;background:#f2f2ef;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+input,textarea{font-family:inherit}
+::placeholder{color:#a7a7a0}
+
+.preview-ribbon{position:sticky;top:0;z-index:50;background:#161616;color:#fff;text-align:center;font-size:11px;letter-spacing:.08em;padding:7px 12px;font-weight:600}
+
+header{display:flex;align-items:center;justify-content:space-between;padding:22px 40px;background:#fff;border-bottom:1px solid #ededea}
+.wordmark{font-size:16px;font-weight:600;letter-spacing:.16em;color:#161616;line-height:1}
+.wordmark-sub{font-size:8px;font-weight:500;letter-spacing:.3em;color:#a7a7a0;margin-top:5px}
+header nav{display:flex;align-items:center;gap:26px}
+header nav a{font-size:12.5px;color:#6b6b64;text-decoration:none;letter-spacing:.02em}
+header nav a.logout{color:#a5443b}
+.cartLink{display:flex;align-items:center;gap:7px}
+.cartBadge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;background:#161616;color:#fff;font-size:10.5px;font-weight:700;border-radius:50%}
+
+.profileMenu{position:relative}
+.profileBtn{background:none;border:none;font-size:12.5px;color:#6b6b64;letter-spacing:.02em;padding:4px 0;display:flex;align-items:center;gap:5px;font-family:inherit}
+.profileBtn:hover{color:#161616}
+.profileDropdown{position:absolute;top:calc(100% + 14px);right:0;background:#fff;border:1px solid #ededea;box-shadow:0 12px 30px rgba(0,0,0,.08);min-width:170px;display:none;flex-direction:column;padding:8px 0;z-index:40}
+.profileDropdown.open{display:flex}
+.profileDropdown a,.profileDropdown button{display:block;width:100%;text-align:left;padding:10px 16px;font-size:12.5px;color:#161616;text-decoration:none;background:none;border:none;font-family:inherit;cursor:pointer}
+.profileDropdown a:hover,.profileDropdown button:hover{background:#fafaf8}
+.profileDropdown .activeItem{font-weight:600}
+.profileDropdown .logoutItem{color:#a5443b;border-top:1px solid #f2f2ef;margin-top:4px}
+
+main{max-width:840px;margin:0 auto;padding:40px 40px 90px}
+.pageHead h1{font-size:30px;font-weight:600;letter-spacing:-.01em;margin:0 0 8px}
+.pageHead p{font-size:14px;color:#6b6b64;margin:0 0 30px}
+
+.box{background:#fff;border:1px solid #ededea;padding:26px;margin-bottom:22px}
+.boxLabel{font-size:11px;letter-spacing:.18em;color:#a7a7a0;font-weight:600;margin-bottom:16px}
+.recapRow{display:flex;justify-content:space-between;font-size:13px;padding:9px 0;border-bottom:1px solid #f2f2ef}
+.recapRow:last-child{border-bottom:none}
+.recapRow .qty{color:#a7a7a0;margin-right:8px}
+.recapTotal{display:flex;justify-content:space-between;font-size:17px;font-weight:600;padding-top:16px;margin-top:6px;border-top:1px solid #ededea}
+
+.field{margin-bottom:16px}
+.field label{display:block;font-size:11px;font-weight:600;letter-spacing:.05em;color:#6b6b64;margin-bottom:7px}
+.field input, .field textarea{width:100%;padding:12px 14px;border:1px solid #e2e2dd;background:#fafaf8;font-size:14px;color:#161616}
+.field textarea{min-height:80px;resize:vertical}
+
+.submitBtn{width:100%;background:#161616;color:#fff;border:none;padding:15px;font-size:13px;font-weight:600;letter-spacing:.03em}
+.submitBtn:disabled{background:#e2e2dd;color:#a7a7a0}
+
+.confirmBox{background:#fff;border:1px solid #ededea;padding:50px 40px;text-align:center}
+.confirmBox .check{width:52px;height:52px;border-radius:50%;background:#f0f2ec;color:#6E7150;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:700;margin:0 auto 20px}
+.confirmBox h2{font-size:22px;font-weight:600;margin:0 0 8px}
+.confirmBox .ref{font-family:ui-monospace,Menlo,monospace;font-size:13px;color:#a7a7a0;margin-bottom:20px}
+.confirmBox p{font-size:13.5px;color:#6b6b64;line-height:1.6;max-width:440px;margin:0 auto 24px}
+.confirmBox .actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+.confirmBox a, .confirmBox button{display:inline-block;text-decoration:none;padding:12px 24px;font-size:13px;font-weight:600;border:none;cursor:pointer;font-family:inherit}
+.confirmBox a{background:#161616;color:#fff}
+.confirmBox .pdfBtn{background:#fff;color:#161616;border:1px solid #e2e2dd!important}
+
+/* ---- documento imprimible del pedido (oculto en pantalla, solo para PDF) ---- */
+#printDoc{display:none}
+@media print{
+  @page{ size:A4; margin:16mm }
+  body *{ visibility:hidden }
+  #printDoc, #printDoc *{ visibility:visible }
+  #printDoc{ display:block; position:absolute; top:0; left:0; width:100%; background:#fff }
+}
+.pdocHead{display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:18px;border-bottom:2px solid #161616;margin-bottom:26px}
+.pdocWordmark{font-size:20px;font-weight:600;letter-spacing:.16em}
+.pdocSub{font-size:9px;font-weight:500;letter-spacing:.3em;color:#6b6b64;margin-top:6px}
+.pdocMeta{text-align:right;font-size:12px;color:#6b6b64;line-height:1.7}
+.pdocMeta b{color:#161616;font-weight:600}
+.pdocTitle{font-size:11px;letter-spacing:.2em;color:#a7a7a0;font-weight:600;margin-bottom:26px}
+.pdocTable{width:100%;border-collapse:collapse;font-size:12.5px;margin-bottom:22px}
+.pdocTable th{text-align:left;font-size:9.5px;letter-spacing:.12em;color:#a7a7a0;font-weight:600;padding:0 0 10px;border-bottom:1px solid #161616}
+.pdocTable th.num, .pdocTable td.num{text-align:right}
+.pdocTable td{padding:10px 0;border-bottom:1px solid #ededea;vertical-align:middle}
+.pdocTable .code{font-family:ui-monospace,Menlo,monospace;color:#a7a7a0;font-size:11px}
+.pdocTable td.photoCell{width:50px;padding-right:12px}
+.pdocTable td.photoCell img{width:44px;height:58px;object-fit:cover;display:block;background:#f7f7f4;border:1px solid #ededea}
+.pdocTotalRow td{border-bottom:none;border-top:2px solid #161616;font-weight:600;font-size:14px;padding-top:14px}
+.pdocNota{margin:22px 0;padding:14px 16px;background:#fafaf8;border:1px solid #ededea;font-size:12px;color:#6b6b64}
+.pdocFoot{margin-top:50px;padding-top:14px;border-top:1px solid #ededea;font-size:10.5px;color:#a7a7a0;line-height:1.6}
+</style>
+</head>
+<body>
+
+<div class="preview-ribbon">Al confirmar, el pedido queda registrado de verdad — lo verás en Mi Perfil › Pedidos y en el panel admin.</div>
+
+<header>
+  <div class="brand" data-brand data-logo-height="30">
+    <div class="brandText">
+      <div class="wordmark">MASSCOB</div>
+      <div class="wordmark-sub">WHOLESALE</div>
+    </div>
+  </div>
+  <nav>
+    <a href="catalogo.html">Catálogo</a>
+    <a href="carrito.html" class="cartLink">Carrito <span class="cartBadge" id="cartCount">0</span></a>
+    <div class="profileMenu">
+      <button class="profileBtn" id="profileBtn">Mi perfil ▾</button>
+      <div class="profileDropdown" id="profileDropdown">
+        <a href="pedidos.html" data-nav="pedidos">Pedidos</a>
+        <a href="mi-cuenta.html" data-nav="cuenta">Mis datos</a>
+        <button class="logoutItem" id="logoutBtn">Cerrar sesión</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <div class="pageHead">
+    <h1>Confirmar pedido</h1>
+    <p>Revisa el resumen y añade una nota si hace falta antes de emitirlo.</p>
+  </div>
+  <div id="content"></div>
+</main>
+
+<div id="printDoc"></div>
+
+<script>
+let lastOrder = null; // snapshot del pedido para el PDF (el carrito se vacía al confirmar)
+
+function renderForm(){
+  const items = cartLoad();
+  if(items.length===0){
+    document.getElementById('content').innerHTML = `
+      <div class="box" style="text-align:center;color:#a7a7a0">
+        No hay nada en el pedido. <a href="catalogo.html">Volver al catálogo</a>
+      </div>`;
+    updateCartBadge();
+    return;
+  }
+  if(!cartMeetsMinimum()){
+    document.getElementById('content').innerHTML = `
+      <div class="box" style="text-align:center;color:#a7a7a0">
+        El pedido todavía no llega al mínimo de ${MIN_ORDER_UNITS} uds (llevas ${cartCount()}). <a href="carrito.html">Volver al carrito</a>
+      </div>`;
+    updateCartBadge();
+    return;
+  }
+  const recap = items.map(i => `
+    <div class="recapRow"><span><span class="qty">${i.cantidad}×</span>${i.name} — ${i.color} / ${i.talla}</span><span>${fmtEUR(i.cantidad*i.precioUnit)}</span></div>
+  `).join('');
+
+  document.getElementById('content').innerHTML = `
+    <div class="box">
+      <div class="boxLabel">RESUMEN DEL PEDIDO</div>
+      ${recap}
+      <div class="recapTotal"><span>Total</span><span>${fmtEUR(cartTotal())}</span></div>
+    </div>
+    <div class="box">
+      <div class="boxLabel">NOTA PARA EL PEDIDO (OPCIONAL)</div>
+      <div class="field">
+        <label for="nota">Comentario para tu agente</label>
+        <textarea id="nota" placeholder="Ej. entregar antes del 20, agrupar con el pedido anterior…"></textarea>
+      </div>
+    </div>
+    <button class="submitBtn" id="confirmBtn">Confirmar y emitir pedido →</button>
+  `;
+  updateCartBadge();
+  document.getElementById('confirmBtn').addEventListener('click', submitOrder);
+}
+
+async function submitOrder(){
+  const items = cartLoad();
+  const total = cartTotal();
+  const nota = (document.getElementById('nota')||{}).value || '';
+  const client = await requireSession();
+  if(!client) return;
+
+  const pedido = await crearPedido({ items, total, nota });
+  if(!pedido){
+    document.getElementById('content').innerHTML = `
+      <div class="box" style="text-align:center;color:#a5443b">
+        No se pudo registrar el pedido. Inténtalo de nuevo en unos segundos.
+      </div>`;
+    return;
+  }
+  const fecha = fmtFechaPedido(pedido.fecha);
+  lastOrder = { ref: pedido.ref, fecha, items, total, nota };
+
+  // Pedido guardado de verdad en Supabase — visible tanto en Mi Perfil ›
+  // Pedidos como en el panel admin.
+  document.getElementById('content').innerHTML = `
+    <div class="confirmBox">
+      <div class="check">✓</div>
+      <h2>Pedido registrado</h2>
+      <div class="ref">Referencia ${pedido.ref}</div>
+      <p>${items.reduce((t,i)=>t+i.cantidad,0)} uds · ${fmtEUR(total)} en total. Queda pendiente de que tu agente comercial lo acepte — puedes ver su estado en cualquier momento desde Mi Perfil › Pedidos.</p>
+      <div class="actions">
+        <button class="pdfBtn" onclick="openPdf()">Ver PDF del pedido ↓</button>
+        <a href="pedidos.html">Ver mis pedidos</a>
+        <a href="catalogo.html">Volver al catálogo</a>
+      </div>
+    </div>`;
+  cartClear();
+  updateCartBadge();
+}
+
+// ---- documento del pedido en PDF (misma estética de marca, vía impresión del navegador) ----
+function renderPrintDoc(){
+  if(!lastOrder) return;
+  const rows = lastOrder.items.map(i => `
+    <tr>
+      <td class="photoCell"><img src="${imgSrc(i.image,200)}" alt="${i.name}"></td>
+      <td>${i.name}<br><span class="code">${i.codigo}</span></td>
+      <td>${i.color}</td>
+      <td>${i.talla}</td>
+      <td class="num">${i.cantidad}</td>
+      <td class="num">${fmtEUR(i.precioUnit)}</td>
+      <td class="num">${fmtEUR(i.cantidad*i.precioUnit)}</td>
+    </tr>`).join('');
+  const notaHTML = lastOrder.nota ? `<div class="pdocNota"><strong>Nota:</strong> ${lastOrder.nota}</div>` : '';
+
+  document.getElementById('printDoc').innerHTML = `
+    <div class="pdocHead">
+      <div>
+        <div class="pdocWordmark">MASSCOB</div>
+        <div class="pdocSub">WHOLESALE</div>
+      </div>
+      <div class="pdocMeta">
+        Pedido <b>${lastOrder.ref}</b><br>
+        Fecha ${lastOrder.fecha}
+      </div>
+    </div>
+    <div class="pdocTitle">RESUMEN DE PEDIDO — VISTA PREVIA</div>
+    <table class="pdocTable">
+      <thead><tr><th></th><th>PRODUCTO</th><th>COLOR</th><th>TALLA</th><th class="num">CANT.</th><th class="num">PRECIO</th><th class="num">SUBTOTAL</th></tr></thead>
+      <tbody>
+        ${rows}
+        <tr class="pdocTotalRow"><td colspan="6">Total</td><td class="num">${fmtEUR(lastOrder.total)}</td></tr>
+      </tbody>
+    </table>
+    ${notaHTML}
+    <div class="pdocFoot">Documento generado automáticamente como vista previa del pedido. No es una factura ni una confirmación definitiva — queda sujeto a la validación de tu agente comercial hasta que el pedido se emita desde el sistema real.</div>
+  `;
+}
+function openPdf(){
+  renderPrintDoc();
+  const imgs = Array.from(document.querySelectorAll('#printDoc img'));
+  Promise.all(imgs.map(img => img.complete ? Promise.resolve() : new Promise(res => { img.onload = res; img.onerror = res; })))
+    .then(() => window.print());
+}
+
+(async function(){
+  const client = await requireSession();
+  if(!client) return;
+  initProfileMenu(client);
+  renderForm();
+})();
+</script>
+
+</body>
+</html>

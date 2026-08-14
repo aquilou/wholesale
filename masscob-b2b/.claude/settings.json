@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Read(//c/Users/Masscob Adm 2/Desktop/Apps/B2B//**)",
+      "Read(//c/Users/Masscob Adm 2/Desktop//**)",
+      "Bash(cd \"/c/Users/Masscob Adm 2/Desktop/Apps/B2B/FOTOS S26\" && echo \"--- top level ---\" && ls -la && echo \"--- recursive tree \\(dirs\\) ---\" && find . -type d | head -60 && echo \"--- sample files ---\" && find . -type f | head -60)",
+      "Read(//c/Users/Masscob Adm 2/Desktop/Apps/B2B/FOTOS S26/**)",
+      "Bash(grep -oE '\\\\.[A-Za-z0-9]+$')",
+      "Bash(python -c ' *)",
+      "Bash(ls -la \"/c/Users/Masscob Adm 2/Desktop/Apps/B2B/Fotos\" 2>&1)",
+      "Read(//c/Users/Masscob Adm 2/Desktop/Apps/B2B/Fotos/**)",
+      "Read(//c/Users/Masscob Adm 2/Desktop/Apps/B2B/Fotos/Fotos S26/**)",
+      "Read(//c/Users/Masscob Adm 2/Desktop/Apps/B2B/Fotos/Fotos W27/**)",
+      "Bash(grep -v '^W27[0-9]\\\\{3\\\\}[A-Z]\\\\{1,2\\\\}\\\\.\\\\\\(jpeg\\\\|jpg\\\\|png\\\\\\)$')",
+      "Bash(python build_products.py stockmasscob.xlsx precioserp.xlsx)",
+      "Bash(start \"\" \"c:\\\\Users\\\\Masscob Adm 2\\\\Desktop\\\\Apps\\\\B2B\\\\masscob-b2b\\\\Panel Admin MASSCOB.dc.html\")",
+      "Bash(cd \"/c/Users/Masscob Adm 2/Desktop/Apps/B2B/masscob-b2b\" && ls -la *)",
+      "Bash(python -c \"import xlrd\")",
+      "Bash(python build_products.py stockmasscob.xls precioserp.xls)",
+      "Bash(python test_merge.py)",
+      "Bash(python build_products.py)",
+      "Bash(node -e ' *)",
+      "Bash(node --check /tmp/_check.js)"
+    ]
+  }
+}

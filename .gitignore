@@ -1,0 +1,29 @@
+# Por defecto no se versiona nada de Apps/B2B/ salvo la app (masscob-b2b/)
+# y el banco de fotos (Fotos/) que la app referencia con rutas relativas
+# ("../Fotos/..." desde masscob-b2b/). El resto (propuestas, PDFs, Excel
+# sueltos en la raíz) son documentos de trabajo, no parte de la app.
+/*
+!/masscob-b2b/
+!/Fotos/
+!/.gitignore
+
+# Secretos — nunca al repo.
+masscob-b2b/backend/.env
+
+# Excel del ERP (stock/precios) y copias de seguridad: es la fuente que se
+# importa en local para regenerar products.js (build_products.py) y
+# seed_stock.py, no algo que deba vivir en el repo ni desplegarse. Algunos
+# llevan precios, dato sensible.
+masscob-b2b/*.xls
+masscob-b2b/*.xlsx
+masscob-b2b/*.xls.bak*
+masscob-b2b/~$*
+
+# Artefactos de build / caché, regenerables desde el Excel.
+masscob-b2b/catalog.json
+masscob-b2b/.b2c_products_cache.json
+masscob-b2b/products.js.bak_pre_b2c
+
+# Python
+masscob-b2b/**/__pycache__/
+masscob-b2b/**/*.pyc

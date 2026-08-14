@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MASSCOB Wholesale — Acceso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="session.js"></script>
+<script src="assets/brand-logo.js"></script>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;height:100%}
+body{font-family:'Archivo',system-ui,sans-serif;color:#161616;-webkit-font-smoothing:antialiased}
+::placeholder{color:#a7a7a0}
+input{font-family:inherit}
+button{font-family:inherit;cursor:pointer}
+
+.preview-ribbon{position:fixed;top:0;left:0;right:0;z-index:50;background:#161616;color:#fff;text-align:center;font-size:11px;letter-spacing:.08em;padding:7px 12px;font-weight:600}
+.preview-ribbon a{color:#fff}
+
+.hero{position:relative;min-height:100vh;display:grid;grid-template-columns:1fr 1fr}
+.hero-panel{position:relative;overflow:hidden;background-size:cover;background-position:center}
+.hero-panel.water{background-image:url('assets/home%20left.jpg')}
+.hero-panel.portrait{background-image:url('assets/home%20right.jpg')}
+
+.topbar{position:absolute;top:0;left:0;right:0;z-index:5;display:flex;align-items:flex-start;justify-content:space-between;padding:34px 40px 0}
+.wordmark{font-size:18px;font-weight:600;letter-spacing:.16em;color:#161616;line-height:1}
+.wordmark-sub{font-size:9px;font-weight:500;letter-spacing:.34em;color:#3d3d3a;margin-top:7px}
+.topnote{font-size:11px;letter-spacing:.06em;color:#161616;opacity:.75}
+
+.formwrap{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:4}
+.card{
+  width:100%;max-width:380px;padding:44px 40px;
+  background:rgba(255,255,255,.8);
+  border:1px solid rgba(255,255,255,.5);
+  box-shadow:0 30px 70px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.7), inset 0 0 0 1px rgba(255,255,255,.25);
+}
+@supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .card{
+    background:rgba(255,255,255,.5);
+    -webkit-backdrop-filter:blur(28px) saturate(160%);
+    backdrop-filter:blur(28px) saturate(160%);
+  }
+}
+.eyebrow{font-size:10px;letter-spacing:.24em;color:#a7a7a0;font-weight:600;margin-bottom:14px}
+.card h1{font-size:26px;font-weight:600;letter-spacing:-.01em;margin:0 0 8px}
+.card p.lead{font-size:13px;line-height:1.55;color:#6b6b64;margin:0 0 30px}
+.field{margin-bottom:16px}
+.field label{display:block;font-size:11px;font-weight:600;letter-spacing:.05em;color:#6b6b64;margin-bottom:7px}
+.field input{width:100%;padding:12px 14px;border:1px solid #e2e2dd;background:rgba(250,250,248,.65);font-size:14px;color:#161616}
+.field input:focus{outline:none;border-color:#161616;background:rgba(255,255,255,.85)}
+@supports ((backdrop-filter:blur(1px)) or (-webkit-backdrop-filter:blur(1px))){
+  .field input{-webkit-backdrop-filter:blur(6px);backdrop-filter:blur(6px)}
+}
+.formError{font-size:12px;color:#a5443b;background:#fdeceb;border:1px solid #f6d3cf;padding:10px 12px;margin-bottom:14px;line-height:1.5}
+.submit{width:100%;margin-top:10px;background:#161616;color:#fff;border:none;padding:14px;font-size:13px;font-weight:600;letter-spacing:.04em}
+.submit:hover{background:#000}
+.foot{margin-top:22px;font-size:12px;color:#a7a7a0;text-align:center;line-height:1.6}
+.foot a{color:#6b6b64}
+
+@media (max-width:860px){
+  .hero{grid-template-columns:1fr}
+  .hero-panel.portrait{display:none}
+  .card{margin:0 20px;padding:36px 26px}
+}
+</style>
+</head>
+<body>
+
+<div class="preview-ribbon">VISTA PREVIA — el login ya es real (Supabase Auth). Pedidos y carrito siguen guardándose en local, todavía no en un servidor real.</div>
+
+<div class="hero" style="margin-top:32px">
+  <div class="hero-panel water"></div>
+  <div class="hero-panel portrait"></div>
+
+  <div class="topbar">
+    <div class="brand" data-brand data-logo-height="34">
+      <div class="brandText">
+        <div class="wordmark">MASSCOB</div>
+        <div class="wordmark-sub">WHOLESALE</div>
+      </div>
+    </div>
+    <div class="topnote">¿Quieres acceder al catálogo? <a href="mailto:sales@masscob.com" style="color:inherit">Contacta aquí</a></div>
+  </div>
+
+  <div class="formwrap">
+    <form class="card" id="loginForm">
+      <div class="eyebrow">ACCESO MAYORISTA</div>
+      <h1>Iniciar sesión</h1>
+      <p class="lead">Entra con las credenciales que te dio tu agente comercial para ver el catálogo, precios y stock disponible.</p>
+
+      <div class="field">
+        <label for="user">Email</label>
+        <input id="user" name="user" type="text" autocomplete="username" placeholder="nombre@empresa.com" required>
+      </div>
+      <div class="field">
+        <label for="pass">Contraseña</label>
+        <input id="pass" name="pass" type="password" autocomplete="current-password" placeholder="••••••••" required>
+      </div>
+
+      <div class="formError" id="formError" style="display:none"></div>
+      <button class="submit" type="submit">Entrar →</button>
+      <div class="foot">¿Has olvidado tu contraseña? Contacta con tu agente.</div>
+    </form>
+  </div>
+</div>
+
+<script>
+(async function(){
+  if(await currentClient()) window.location.href = 'catalogo.html';
+})();
+
+document.getElementById('loginForm').addEventListener('submit', async function(e){
+  e.preventDefault();
+  const user = document.getElementById('user').value;
+  const pass = document.getElementById('pass').value;
+  const errEl = document.getElementById('formError');
+  const submitBtn = document.querySelector('.submit');
+  submitBtn.disabled = true;
+  const client = await loginClient(user, pass);
+  submitBtn.disabled = false;
+  if(!client){
+    errEl.textContent = 'Email o contraseña incorrectos. Si no tienes acceso todavía, contacta con tu agente comercial.';
+    errEl.style.display = 'block';
+    return;
+  }
+  window.location.href = 'catalogo.html';
+});
+</script>
+
+</body>
+</html>

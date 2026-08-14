@@ -1,0 +1,1667 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="products.js"></script>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'Archivo',system-ui,sans-serif;color:#161616;background:#f2f2ef;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility}
+button{font-family:inherit;cursor:pointer}
+input{font-family:inherit}
+::placeholder{color:#a7a7a0}
+::-webkit-scrollbar{width:10px;height:10px}
+::-webkit-scrollbar-thumb{background:#e2e2dd;border-radius:0}
+::-webkit-scrollbar-track{background:transparent}
+input[type=range]{-webkit-appearance:none;appearance:none;height:2px;background:#e2e2dd;outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;background:#161616;cursor:pointer;border:3px solid #fff;box-shadow:0 0 0 1px #e2e2dd}
+input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#161616;cursor:pointer;border:3px solid #fff}
+@keyframes fadeUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.fadeup{animation:fadeUp .34s cubic-bezier(.2,.7,.3,1) both}
+.fadein{animation:fadeIn .3s ease both}
+.print-head-row{display:none}
+@media print{
+  @page{size:A4 landscape;margin:20mm 12mm 12mm 12mm}
+  .no-print{display:none!important}
+  .print-head-row{display:table-row!important}
+  body,#root,x-dc,.appShell{background:#fff!important}
+  main{padding:0!important}
+  thead{display:table-header-group}
+  tr{break-inside:avoid;page-break-inside:avoid}
+  .tbl-print{break-inside:auto!important;page-break-inside:auto!important}
+}
+</style>
+</helmet>
+<div class="appShell" style="{{ appShellStyle }}">
+
+  <aside class="no-print" style="width:248px;flex:none;background:#ffffff;border-right:1px solid #ededea;display:flex;flex-direction:column;position:sticky;top:0;height:100vh">
+    <div style="padding:30px 26px 22px">
+      <sc-if value="{{ hasLogo }}" hint-placeholder-val="">
+        <img src="{{ logo }}" style="max-width:100%;max-height:42px;object-fit:contain">
+      </sc-if>
+      <sc-if value="{{ noLogo }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size:18px;font-weight:600;letter-spacing:.16em;color:#161616;line-height:1">MASSCOB</div>
+        <div style="font-size:9px;font-weight:500;letter-spacing:.34em;color:#a7a7a0;margin-top:7px">WHOLESALE</div>
+      </sc-if>
+    </div>
+    <div style="height:1px;background:#ededea;margin:0 26px"></div>
+    <div style="padding:18px 26px 10px">
+      <div style="font-size:9px;letter-spacing:.22em;color:#a7a7a0;font-weight:600">PANEL DE ADMINISTRACIÓN</div>
+    </div>
+    <nav style="display:flex;flex-direction:column;gap:2px;padding:6px 16px;flex:1">
+      <sc-for list="{{ navItems }}" as="it" hint-placeholder-count="5">
+        <button onClick="{{ it.go }}" style="{{ it.style }}">
+          <span style="{{ it.dot }}"></span>
+          <span style="flex:1;text-align:left">{{ it.label }}</span>
+          <span style="{{ it.badgeStyle }}">{{ it.badge }}</span>
+        </button>
+      </sc-for>
+    </nav>
+    <div style="padding:18px 26px 22px;border-top:1px solid #ededea">
+      <div style="font-size:9px;letter-spacing:.2em;color:#a7a7a0;font-weight:600;margin-bottom:8px">COLECCIONES EN STOCK</div>
+      <sc-for list="{{ collections }}" as="c" hint-placeholder-count="2">
+        <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:4px">
+          <span style="font-size:16px;font-weight:600;letter-spacing:.04em;color:#161616">{{ c.codigo }}</span>
+          <span style="font-size:11px;color:#6b6b64;flex:1">{{ c.label }}</span>
+          <span style="font-size:11px;color:#a7a7a0;font-family:ui-monospace,Menlo,monospace">{{ c.count }}</span>
+        </div>
+      </sc-for>
+      <sc-if value="{{ noCollections }}" hint-placeholder-val="">
+        <div style="font-size:12px;color:#a7a7a0">Sin datos importados</div>
+      </sc-if>
+      <div style="font-size:11px;color:#a7a7a0;margin-top:6px">{{ collectionLine }}</div>
+    </div>
+  </aside>
+
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column">
+
+    <!-- ============ A · IMPORTAR ============ -->
+    <sc-if value="{{ isImport }}" hint-placeholder-val="{{ true }}">
+    <div class="fadein" style="padding:46px 56px 70px;max-width:1080px;width:100%">
+      <div style="font-size:11px;letter-spacing:.22em;color:#a7a7a0;font-weight:600;margin-bottom:14px">PASO 1 · IMPORTACIÓN</div>
+      <h1 style="font-size:34px;font-weight:600;letter-spacing:-.01em;margin:0 0 12px">Importar colección</h1>
+      <p style="font-size:15px;line-height:1.6;color:#6b6b64;max-width:620px;margin:0 0 38px">Sube los dos informes del ERP. El motor ya valida y cruza los datos por código; aquí revisas el resultado antes de confirmar la importación a la tienda.</p>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:14px">
+        <label onDrop="{{ onStockDrop }}" onDragOver="{{ onDragOver }}" style="{{ stockZoneStyle }}">
+          <input type="file" onChange="{{ onStockPick }}" style="display:none">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+            <span style="font-size:10px;letter-spacing:.18em;font-weight:600;color:#6E7150">INFORME 01</span>
+          </div>
+          <div style="font-size:17px;font-weight:600;margin-bottom:6px">Informe de stock</div>
+          <div style="font-size:12.5px;color:#a7a7a0;margin-bottom:auto">Colores, tallas y unidades · .xlsx</div>
+          <sc-if value="{{ stockFile }}" hint-placeholder-val="">
+            <div style="display:flex;align-items:center;gap:8px;margin-top:18px;padding:9px 12px;background:#f0f2ec;border:1px solid #dde3d4">
+              <span style="color:#6E7150;font-size:13px;font-weight:700">✓</span>
+              <span style="font-size:12.5px;color:#161616;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ stockFile }}</span>
+            </div>
+          </sc-if>
+          <sc-if value="{{ noStock }}" hint-placeholder-val="{{ true }}">
+            <div style="margin-top:18px;font-size:12.5px;color:#a7a7a0">Arrastra el archivo aquí o haz clic para examinar</div>
+          </sc-if>
+        </label>
+
+        <label onDrop="{{ onPriceDrop }}" onDragOver="{{ onDragOver }}" style="{{ priceZoneStyle }}">
+          <input type="file" onChange="{{ onPricePick }}" style="display:none">
+          <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+            <span style="font-size:10px;letter-spacing:.18em;font-weight:600;color:#b07a3f">INFORME 02</span>
+          </div>
+          <div style="font-size:17px;font-weight:600;margin-bottom:6px">Informe de precios</div>
+          <div style="font-size:12.5px;color:#a7a7a0;margin-bottom:auto">Neto mayorista y familia · .xlsx</div>
+          <sc-if value="{{ priceFile }}" hint-placeholder-val="">
+            <div style="display:flex;align-items:center;gap:8px;margin-top:18px;padding:9px 12px;background:#f7f0e6;border:1px solid #ecdcc4">
+              <span style="color:#b07a3f;font-size:13px;font-weight:700">✓</span>
+              <span style="font-size:12.5px;color:#161616;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ priceFile }}</span>
+            </div>
+          </sc-if>
+          <sc-if value="{{ noPrice }}" hint-placeholder-val="{{ true }}">
+            <div style="margin-top:18px;font-size:12.5px;color:#a7a7a0">Arrastra el archivo aquí o haz clic para examinar</div>
+          </sc-if>
+        </label>
+      </div>
+
+      <button onClick="{{ loadSample }}" style="background:none;border:none;color:#6b6b64;font-size:12.5px;text-decoration:underline;text-underline-offset:3px;padding:4px 0">Cargar informes de ejemplo (stockmasscob.xlsx · precioserp.xlsx)</button>
+
+      <sc-if value="{{ bothLoaded }}" hint-placeholder-val="">
+      <div class="fadeup" style="margin-top:36px;background:#fff;border:1px solid #ededea">
+        <div style="padding:22px 28px;border-bottom:1px solid #ededea;display:flex;align-items:center;justify-content:space-between">
+          <div>
+            <div style="font-size:11px;letter-spacing:.2em;color:#a7a7a0;font-weight:600;margin-bottom:6px">VALIDACIÓN DEL MOTOR</div>
+            <div style="font-size:19px;font-weight:600">Resultado del cruce de datos</div>
+          </div>
+          <div style="font-size:12px;color:#6b6b64;text-align:right">Stock a {{ meta.fechaStock }}<br>{{ collectionsSummary }}</div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr)">
+          <sc-for list="{{ valStats }}" as="s" hint-placeholder-count="6">
+            <div style="{{ s.cellStyle }}">
+              <div style="font-size:34px;font-weight:600;letter-spacing:-.02em;color:{{ s.color }};line-height:1">{{ s.value }}</div>
+              <div style="font-size:13px;font-weight:600;margin-top:10px">{{ s.label }}</div>
+              <div style="font-size:12px;color:#a7a7a0;margin-top:3px;line-height:1.45">{{ s.note }}</div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="padding:20px 28px;display:flex;align-items:center;justify-content:space-between;gap:20px;border-top:1px solid #ededea;background:#fafaf8">
+          <div style="font-size:12.5px;color:#6b6b64;line-height:1.5;max-width:560px">La reimportación de stock <strong style="color:#161616;font-weight:600">no pisa</strong> precios ni imágenes ya asignadas. Insumos (telas, botones, etiquetas, patrones PT) y huérfanos se filtran automáticamente y no llegan a la tienda.</div>
+          <button onClick="{{ confirmImport }}" style="flex:none;background:#161616;color:#fff;border:none;padding:14px 30px;font-size:13px;font-weight:600;letter-spacing:.04em">Confirmar importación →</button>
+        </div>
+      </div>
+      </sc-if>
+    </div>
+    </sc-if>
+
+    <!-- ============ B · CATÁLOGO ============ -->
+    <sc-if value="{{ isCatalog }}" hint-placeholder-val="">
+    <div class="fadein" style="padding:40px 56px 70px;width:100%">
+      <div class="no-print" style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:26px">
+        <div>
+          <div style="font-size:11px;letter-spacing:.22em;color:#a7a7a0;font-weight:600;margin-bottom:12px">CATÁLOGO</div>
+          <h1 style="font-size:32px;font-weight:600;letter-spacing:-.01em;margin:0">Productos de la colección</h1>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px">
+          <sc-if value="{{ isTable }}" hint-placeholder-val="">
+            <div style="display:flex;border:1px solid #e2e2dd;background:#fff">
+              <button onClick="{{ setStocklistDetallado }}" style="{{ stocklistDetalladoBtnStyle }}">Con unidades</button>
+              <button onClick="{{ setStocklistCliente }}" style="{{ stocklistClienteBtnStyle }}">Sin unidades</button>
+            </div>
+            <button onClick="{{ exportPdf }}" style="{{ exportBtnStyle }}">Exportar PDF ↓</button>
+          </sc-if>
+          <div style="display:flex;border:1px solid #e2e2dd;background:#fff">
+            <button onClick="{{ setGrid }}" style="{{ gridBtnStyle }}">Cuadrícula</button>
+            <button onClick="{{ setTable }}" style="{{ tableBtnStyle }}">Tabla</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="no-print" style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:14px">
+        <sc-for list="{{ collChips }}" as="c" hint-placeholder-count="2">
+          <button onClick="{{ c.go }}" style="{{ c.style }}">{{ c.label }}<span style="opacity:.5;margin-left:7px">{{ c.count }}</span></button>
+        </sc-for>
+      </div>
+
+      <div class="no-print" style="display:flex;align-items:center;gap:14px;margin-bottom:18px;flex-wrap:wrap">
+        <div style="position:relative;flex:1;min-width:240px;max-width:380px">
+          <input value="{{ search }}" onInput="{{ onSearch }}" placeholder="Buscar por nombre o código…" style="width:100%;padding:11px 14px;border:1px solid #e2e2dd;background:#fff;font-size:13.5px;color:#161616">
+        </div>
+        <div style="display:flex;gap:7px;flex-wrap:wrap">
+          <sc-for list="{{ stateChips }}" as="c" hint-placeholder-count="3">
+            <button onClick="{{ c.go }}" style="{{ c.style }}">{{ c.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div class="no-print" style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:26px">
+        <sc-for list="{{ catChips }}" as="c" hint-placeholder-count="6">
+          <button onClick="{{ c.go }}" style="{{ c.style }}">{{ c.label }}<span style="opacity:.5;margin-left:7px">{{ c.count }}</span></button>
+        </sc-for>
+      </div>
+
+      <!-- GRID -->
+      <sc-if value="{{ isGrid }}" hint-placeholder-val="{{ true }}">
+      <div style="{{ gridStyle }}">
+        <sc-for list="{{ filtered }}" as="p" hint-placeholder-count="8">
+          <div onClick="{{ p.open }}" style="background:#fff;border:1px solid #ededea;cursor:pointer;display:flex;flex-direction:column" style-hover="border-color:#161616">
+            <div style="position:relative;aspect-ratio:3/4;background:#f7f7f4;overflow:hidden">
+              <sc-if value="{{ p.isPhoto }}" hint-placeholder-val="">
+                {{ p.imgEl }}
+              </sc-if>
+              <sc-if value="{{ p.noPhoto }}" hint-placeholder-val="{{ true }}">
+                <div style="position:absolute;inset:0;background-image:repeating-linear-gradient(45deg,#f0f0ec 0 9px,#f7f7f4 9px 18px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px">
+                  <span style="font-size:10px;letter-spacing:.16em;font-family:ui-monospace,Menlo,monospace;color:#a7a7a0">SIN IMAGEN</span>
+                  <span style="font-size:10px;font-family:ui-monospace,Menlo,monospace;color:#c2bfb6">{{ p.codigo }}</span>
+                </div>
+              </sc-if>
+              <div style="{{ p.badgeStyle }}">{{ p.stateLabel }}</div>
+            </div>
+            <div style="padding:14px 15px 16px;display:flex;flex-direction:column;gap:2px">
+              <div style="font-size:9.5px;letter-spacing:.12em;color:#a7a7a0;font-weight:600">{{ p.category }}</div>
+              <div style="font-size:14.5px;font-weight:600;letter-spacing:.01em;line-height:1.25;margin-top:4px">{{ p.name }}</div>
+              <div style="font-size:11px;font-family:ui-monospace,Menlo,monospace;color:#a7a7a0;margin-top:2px">{{ p.codigo }}</div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;margin-top:11px;padding-top:11px;border-top:1px solid #f2f2ef">
+                <span style="font-size:11.5px;color:#6b6b64">{{ p.stockLabel }}</span>
+                <span style="font-size:14px;font-weight:600;color:{{ p.priceColor }}">{{ p.priceDisplay }}</span>
+              </div>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <!-- TABLE -->
+      <sc-if value="{{ isTable }}" hint-placeholder-val="">
+      <sc-raw-table class="tbl-print" style="width:100%;border-collapse:collapse;background:#fff;border:1px solid #ededea">
+        <colgroup>
+          <col style="width:54px"><col style="width:16%"><col style="width:18%"><col style="width:54%"><col style="width:12%">
+        </colgroup>
+        <sc-raw-thead>
+          <!-- CABECERA DE IMPRESIÓN: fila de thead -> se repite en cada página impresa, igual que la fila de columnas -->
+          <sc-raw-tr class="print-head-row">
+            <sc-raw-th colspan="5" style="padding:0 0 16px">
+              <div style="display:flex;border:1px solid #ededea;background:#fff">
+                <div style="width:200px;flex:none;padding:20px 22px;border-right:1px solid #ededea;display:flex;flex-direction:column;justify-content:center">
+                  <sc-if value="{{ hasLogo }}" hint-placeholder-val="">
+                    <img src="{{ logo }}" style="max-width:100%;max-height:56px;object-fit:contain">
+                  </sc-if>
+                  <sc-if value="{{ noLogo }}" hint-placeholder-val="{{ true }}">
+                    <div style="font-size:19px;font-weight:600;letter-spacing:.14em;line-height:1">MASSCOB</div>
+                    <div style="font-size:8.5px;font-weight:500;letter-spacing:.3em;color:#a7a7a0;margin-top:6px">WHOLESALE</div>
+                  </sc-if>
+                </div>
+                <div style="flex:1;display:flex;align-items:center;justify-content:space-between;padding:18px 24px;gap:20px">
+                  <div style="display:flex;align-items:stretch;gap:12px">
+                    <span style="width:4px;background:#161616"></span>
+                    <span style="font-size:21px;font-weight:700;letter-spacing:-.01em;display:flex;align-items:center">{{ printTitle }}</span>
+                  </div>
+                  <div style="display:flex;border:1px solid #ededea;flex:none">
+                    <div style="padding:9px 16px;background:#fafaf8;font-size:10.5px;font-weight:700;letter-spacing:.08em;border-right:1px solid #ededea;display:flex;align-items:center">FECHA</div>
+                    <div style="padding:9px 18px;font-size:12.5px;display:flex;align-items:center;white-space:nowrap">{{ printDate }}</div>
+                  </div>
+                </div>
+              </div>
+              <div style="font-size:12px;font-weight:600;color:#6b6b64;margin-top:12px">{{ printSubtitle }}</div>
+            </sc-raw-th>
+          </sc-raw-tr>
+          <sc-raw-tr style="text-align:left;font-size:10px;letter-spacing:.14em;color:#161616;font-weight:700">
+            <sc-raw-th style="padding:13px 18px;border-bottom:1px solid #ededea"></sc-raw-th>
+            <sc-raw-th style="padding:13px 18px;border-bottom:1px solid #ededea">ITEM</sc-raw-th>
+            <sc-raw-th style="padding:13px 18px;border-bottom:1px solid #ededea">NOMBRE</sc-raw-th>
+            <sc-raw-th style="padding:13px 18px;border-bottom:1px solid #ededea">TALLA / SIZE</sc-raw-th>
+            <sc-raw-th style="padding:13px 18px;border-bottom:1px solid #ededea;text-align:right">
+              <sc-if value="{{ isStocklistDetallado }}" hint-placeholder-val="{{ true }}">STOCK</sc-if>
+              <sc-if value="{{ isStocklistCliente }}" hint-placeholder-val="">ESTADO</sc-if>
+            </sc-raw-th>
+          </sc-raw-tr>
+        </sc-raw-thead>
+        <sc-raw-tbody>
+        <sc-for list="{{ tableRows }}" as="p" hint-placeholder-count="10">
+          <sc-raw-tr onClick="{{ p.open }}" style="cursor:pointer;border-bottom:1px solid #f2f2ef" style-hover="background:#fafaf8">
+            <sc-raw-td style="padding:14px 18px;vertical-align:middle">
+              <div style="width:38px;height:48px;background:#f2f2ef;overflow:hidden;display:flex;align-items:center;justify-content:center">
+                <sc-if value="{{ p.isPhoto }}" hint-placeholder-val="">{{ p.imgEl }}</sc-if>
+                <sc-if value="{{ p.noPhoto }}" hint-placeholder-val="{{ true }}"><span style="font-size:13px;color:#cdcabf">○</span></sc-if>
+              </div>
+            </sc-raw-td>
+            <sc-raw-td style="padding:14px 18px;vertical-align:middle;min-width:0">
+              <div style="font-size:12.5px;font-weight:700;font-family:ui-monospace,Menlo,monospace;color:#161616;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.codigo }}</div>
+              <div style="display:flex;align-items:center;gap:6px;margin-top:3px">
+                <span style="width:8px;height:8px;border-radius:50%;background:{{ p.dot }};border:1px solid rgba(0,0,0,.12);flex:none"></span>
+                <span style="font-size:11.5px;font-weight:600;color:#6b6b64;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ p.color }}</span>
+              </div>
+            </sc-raw-td>
+            <sc-raw-td style="padding:14px 18px;vertical-align:middle;font-size:13px;color:#161616">{{ p.name }}</sc-raw-td>
+            <sc-raw-td style="padding:14px 18px;vertical-align:middle">
+              <div style="display:flex;gap:14px">
+                <sc-for list="{{ p.sizeGrid }}" as="sg" hint-placeholder-count="5">
+                  <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+                    <span style="font-size:10px;font-weight:700;color:#161616">{{ sg.size }}</span>
+                    <span style="{{ sg.style }}">{{ sg.qtyDisplay }}</span>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-raw-td>
+            <sc-raw-td style="padding:14px 18px;vertical-align:middle;text-align:right">
+              <sc-if value="{{ isStocklistDetallado }}" hint-placeholder-val="{{ true }}">
+                <span style="font-size:15px;font-weight:700;color:#161616">{{ p.stock }}</span>
+              </sc-if>
+              <sc-if value="{{ isStocklistCliente }}" hint-placeholder-val="">
+                <span style="{{ p.estadoStyle }}">{{ p.estadoLabel }}</span>
+              </sc-if>
+            </sc-raw-td>
+          </sc-raw-tr>
+        </sc-for>
+        </sc-raw-tbody>
+      </sc-raw-table>
+      </sc-if>
+
+      <sc-if value="{{ empty }}" hint-placeholder-val="">
+        <div style="padding:60px;text-align:center;color:#a7a7a0;font-size:14px">Sin resultados para los filtros actuales.</div>
+      </sc-if>
+    </div>
+    </sc-if>
+
+    <!-- ============ C · PRODUCTO ============ -->
+    <sc-if value="{{ isProduct }}" hint-placeholder-val="">
+    <div class="fadein" style="padding:34px 56px 70px;width:100%;max-width:1120px">
+      <button onClick="{{ backToCatalog }}" style="background:none;border:none;color:#6b6b64;font-size:13px;padding:0;margin-bottom:24px;display:flex;align-items:center;gap:7px">← Volver al catálogo</button>
+
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:30px">
+        <div>
+          <div style="font-size:11px;letter-spacing:.18em;color:#a7a7a0;font-weight:600;margin-bottom:10px">{{ sel.category }}</div>
+          <h1 style="font-size:30px;font-weight:600;letter-spacing:-.01em;margin:0">{{ sel.name }}</h1>
+          <div style="font-size:13px;font-family:ui-monospace,Menlo,monospace;color:#a7a7a0;margin-top:8px">{{ sel.codigo }}</div>
+        </div>
+        <span style="{{ sel.badgeStyleStatic }}">{{ sel.stateLabel }}</span>
+      </div>
+
+      <div style="display:grid;grid-template-columns:380px 1fr;gap:40px;align-items:start">
+
+        <!-- imagen -->
+        <div>
+          <label onDrop="{{ onImageDrop }}" onDragOver="{{ onDragOver }}" style="{{ imageZoneStyle }}">
+            <input type="file" accept="image/*" onChange="{{ onImagePick }}" style="display:none">
+            <sc-if value="{{ sel.isPhoto }}" hint-placeholder-val="">
+              {{ sel.imgEl }}
+            </sc-if>
+            <sc-if value="{{ sel.noPhoto }}" hint-placeholder-val="{{ true }}">
+              <div style="position:absolute;inset:0;background-image:repeating-linear-gradient(45deg,#f0f0ec 0 11px,#f7f7f4 11px 22px);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:30px;text-align:center">
+                <span style="font-size:26px;color:#cdcabf">↑</span>
+                <span style="font-size:13.5px;color:#6b6b64;font-weight:500">Arrastra una imagen<br>o haz clic para examinar</span>
+                <span style="font-size:10.5px;font-family:ui-monospace,Menlo,monospace;color:#a7a7a0">se asocia a {{ sel.codigo }}</span>
+              </div>
+            </sc-if>
+          </label>
+          <sc-if value="{{ sel.isPhoto }}" hint-placeholder-val="">
+            <button onClick="{{ removeImage }}" style="margin-top:12px;background:none;border:none;color:#6b6b64;font-size:12px;text-decoration:underline;text-underline-offset:3px;padding:0">Quitar imagen</button>
+          </sc-if>
+        </div>
+
+        <!-- info -->
+        <div style="display:flex;flex-direction:column;gap:30px">
+
+          <div style="background:#fff;border:1px solid #ededea">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;padding:18px 22px;border-bottom:1px solid #ededea">
+              <span style="font-size:11px;letter-spacing:.18em;color:#a7a7a0;font-weight:600">COLORES Y TALLAS</span>
+              <span style="font-size:12px;color:#6b6b64">Tallaje {{ sel.tallaje }} · {{ sel.stockLabel }}</span>
+            </div>
+            <div>
+              <sc-for list="{{ sel.colorRows }}" as="cr" hint-placeholder-count="2">
+                <div style="display:flex;align-items:center;gap:16px;padding:14px 22px;border-bottom:1px solid #f2f2ef">
+                  <div style="display:flex;align-items:center;gap:10px;width:150px;flex:none">
+                    <span style="width:15px;height:15px;border-radius:50%;background:{{ cr.dot }};border:1px solid rgba(0,0,0,.12);flex:none"></span>
+                    <span style="font-size:13px;font-weight:500">{{ cr.color }}</span>
+                  </div>
+                  <div style="display:flex;gap:7px;flex-wrap:wrap;flex:1">
+                    <sc-for list="{{ cr.sizes }}" as="sz" hint-placeholder-count="3">
+                      <span style="{{ sz.style }}">{{ sz.size }}<span style="color:#a7a7a0;margin-left:6px">{{ sz.qty }}</span></span>
+                    </sc-for>
+                  </div>
+                  <span style="font-size:13px;font-weight:600;color:#161616;width:54px;text-align:right;flex:none">{{ cr.total }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px">
+            <!-- precio -->
+            <div style="background:#fff;border:1px solid #ededea;padding:22px">
+              <div style="font-size:11px;letter-spacing:.18em;color:#a7a7a0;font-weight:600;margin-bottom:18px">PRECIO</div>
+              <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px">
+                <span style="font-size:12.5px;color:#6b6b64">Neto mayorista ERP</span>
+                <span style="font-size:13.5px;color:#161616;font-family:ui-monospace,Menlo,monospace">{{ sel.erpDisplay }}</span>
+              </div>
+              <div style="font-size:10.5px;color:#a7a7a0;margin-bottom:18px">No editable · siempre se conserva</div>
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+                <span style="font-size:12.5px;color:#6b6b64">Ajuste de plataforma</span>
+                <span style="font-size:13px;font-weight:600;color:{{ sel.adjColor }}">{{ sel.adjLabel }}</span>
+              </div>
+              <input type="range" min="-40" max="40" step="1" value="{{ sel.ajuste }}" onInput="{{ setProductAdjust }}" style="width:100%;margin:4px 0 18px">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;padding-top:16px;border-top:1px solid #ededea">
+                <span style="font-size:12.5px;color:#6b6b64">Precio final</span>
+                <span style="font-size:24px;font-weight:600;letter-spacing:-.01em;color:{{ sel.priceColor }}">{{ sel.priceDisplay }}</span>
+              </div>
+            </div>
+
+            <!-- publicacion -->
+            <div style="background:#fff;border:1px solid #ededea;padding:22px;display:flex;flex-direction:column">
+              <div style="font-size:11px;letter-spacing:.18em;color:#a7a7a0;font-weight:600;margin-bottom:18px">PUBLICACIÓN</div>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:13px">
+                <span style="{{ sel.checkPriceStyle }}">{{ sel.checkPrice }}</span>
+                <span style="font-size:13px;color:#161616">Precio asignado</span>
+              </div>
+              <div style="display:flex;align-items:center;gap:10px;margin-bottom:auto">
+                <span style="{{ sel.checkImgStyle }}">{{ sel.checkImg }}</span>
+                <span style="font-size:13px;color:#161616">Imagen asignada</span>
+              </div>
+              <div style="{{ sel.pubBoxStyle }}">
+                <div style="font-size:13.5px;font-weight:600;color:{{ sel.pubColor }}">{{ sel.pubTitle }}</div>
+                <div style="font-size:11.5px;color:#6b6b64;margin-top:4px;line-height:1.45">{{ sel.pubNote }}</div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ D · AJUSTES ============ -->
+    <sc-if value="{{ isPricing }}" hint-placeholder-val="">
+    <div class="fadein" style="padding:46px 56px 70px;width:100%;max-width:1080px">
+      <div style="font-size:11px;letter-spacing:.22em;color:#a7a7a0;font-weight:600;margin-bottom:14px">AJUSTES</div>
+      <h1 style="font-size:34px;font-weight:600;letter-spacing:-.01em;margin:0 0 12px">Ajustes de plataforma</h1>
+      <p style="font-size:15px;line-height:1.6;color:#6b6b64;max-width:640px;margin:0 0 36px">Precio, pedidos mínimos y política de cambios — se aplican igual para toda la colección.</p>
+
+      <div style="display:grid;grid-template-columns:340px 1fr;gap:32px;align-items:start">
+        <div style="display:flex;flex-direction:column;gap:20px">
+          <div style="background:#fff;border:1px solid #ededea;padding:26px">
+            <div style="font-size:11px;letter-spacing:.18em;color:#a7a7a0;font-weight:600;margin-bottom:14px">LOGO DE MARCA</div>
+            <div style="font-size:12.5px;color:#6b6b64;line-height:1.5;margin-bottom:16px">Se muestra en la cabecera del PDF exportado desde el Catálogo.</div>
+            <label onDrop="{{ onLogoDrop }}" onDragOver="{{ onDragOver }}" style="{{ logoZoneStyle }}">
+              <input type="file" accept="image/*" onChange="{{ onLogoPick }}" style="display:none">
+              <sc-if value="{{ hasLogo }}" hint-placeholder-val="">
+                <img src="{{ logo }}" style="max-width:100%;max-height:70px;object-fit:contain">
+              </sc-if>
+              <sc-if value="{{ noLogo }}" hint-placeholder-val="{{ true }}">
+                <span style="font-size:12.5px;color:#6b6b64">Arrastra tu logo o haz clic para subirlo</span>
+                <span style="font-size:10.5px;color:#a7a7a0;margin-top:4px">PNG o JPG · fondo transparente recomendado</span>
+              </sc-if>
+            </label>
+            <sc-if value="{{ hasLogo }}" hint-placeholder-val="">
+              <button onClick="{{ removeLogo }}" style="margin-top:12px;background:none;border:none;color:#6b6b64;font-size:12px;text-decoration:underline;text-underline-offset:3px;padding:0">Quitar logo</button>
+            </sc-if>
+          </div>
+
+          <div style="background:#fff;border:1px solid #ededea;padding:26px">
+            <div style="font-size:11px;letter-spacing:.18em;color:#a7a7a0;font-weight:600;margin-bottom:18px">AJUSTE DE PRECIO</div>
+            <div style="font-size:52px;font-weight:600;letter-spacing:-.02em;color:{{ globalColor }};line-height:1">{{ globalLabel }}</div>
+            <input type="range" min="-40" max="40" step="1" value="{{ globalDraft }}" onInput="{{ setGlobal }}" style="width:100%;margin:24px 0 6px">
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:#a7a7a0;font-family:ui-monospace,Menlo,monospace"><span>−40%</span><span>0</span><span>+40%</span></div>
+            <button onClick="{{ applyGlobal }}" style="{{ applyBtnStyle }}">Aplicar a las {{ count }} referencias</button>
+            <div style="font-size:11.5px;color:#a7a7a0;text-align:center;margin-top:12px">{{ appliedNote }}</div>
+          </div>
+
+          <div style="background:#fff;border:1px solid #ededea;padding:26px">
+            <div style="font-size:11px;letter-spacing:.18em;color:#a7a7a0;font-weight:600;margin-bottom:14px">REORDERS · UNIDADES MÍNIMAS</div>
+            <div style="font-size:12.5px;color:#6b6b64;line-height:1.5;margin-bottom:16px">Mínimo de unidades por referencia que un cliente debe pedir en un reorder.</div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <input type="number" min="1" step="1" value="{{ minReorder }}" onInput="{{ setMinReorder }}" style="width:76px;padding:10px 12px;border:1px solid #e2e2dd;font-size:18px;font-weight:600;text-align:center;color:#161616">
+              <span style="font-size:12.5px;color:#6b6b64">uds. mínimas</span>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:1px solid #ededea;padding:26px">
+            <div style="font-size:11px;letter-spacing:.18em;color:#a7a7a0;font-weight:600;margin-bottom:14px">STOCK BAJO · AVISO AL CLIENTE</div>
+            <div style="font-size:12.5px;color:#6b6b64;line-height:1.5;margin-bottom:16px">El cliente ya no ve las unidades exactas por talla. Cuando una talla tenga este número de unidades o menos, verá un aviso de "pocas unidades" antes de añadir al carrito.</div>
+            <div style="display:flex;align-items:center;gap:12px">
+              <input type="number" min="0" step="1" value="{{ lowStockThreshold }}" onInput="{{ setLowStockThreshold }}" style="width:76px;padding:10px 12px;border:1px solid #e2e2dd;font-size:18px;font-weight:600;text-align:center;color:#161616">
+              <span style="font-size:12.5px;color:#6b6b64">uds. o menos</span>
+            </div>
+          </div>
+
+          <div style="background:#fff;border:1px solid #ededea;padding:26px">
+            <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+              <div style="font-size:11px;letter-spacing:.18em;color:#a7a7a0;font-weight:600">EXCHANGES</div>
+              <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+                <input type="checkbox" checked="{{ exchangesEnabled }}" onChange="{{ toggleExchanges }}">
+                <span style="font-size:12px;color:#6b6b64">Habilitado</span>
+              </label>
+            </div>
+            <div style="font-size:12.5px;color:#6b6b64;line-height:1.5;margin-bottom:16px">Recargo sobre el importe devuelto para autorizar el cambio. Ajustable a 0% si hiciera falta.</div>
+            <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+              <input type="number" min="0" max="100" step="1" value="{{ exchangePct }}" onInput="{{ setExchangePct }}" style="width:76px;padding:10px 12px;border:1px solid #e2e2dd;font-size:18px;font-weight:600;text-align:center;color:#161616">
+              <span style="font-size:12.5px;color:#6b6b64">% de recargo</span>
+            </div>
+            <div style="padding:12px 14px;background:#fafaf8;border:1px solid #ededea;font-size:11.5px;color:#6b6b64;line-height:1.5">{{ exchangeExample }}</div>
+          </div>
+
+          <div style="background:#fff;border:1px solid #ededea;padding:26px">
+            <div style="font-size:11px;letter-spacing:.18em;color:#a7a7a0;font-weight:600;margin-bottom:14px">CONEXIÓN CON EL BACKEND</div>
+            <div style="font-size:12.5px;color:#6b6b64;line-height:1.5;margin-bottom:16px">Clave de administrador para leer y gestionar los pedidos reales (Supabase). Debe coincidir con <code>ADMIN_API_KEY</code> en el backend.</div>
+            <input type="password" value="{{ adminKey }}" onInput="{{ setAdminKey }}" placeholder="Clave de administrador" style="width:100%;padding:10px 12px;border:1px solid #e2e2dd;font-size:13.5px;color:#161616;margin-bottom:10px">
+            <div style="font-size:12px;color:{{ pedidosConnColor }}">{{ pedidosConnStatus }}</div>
+          </div>
+        </div>
+
+        <div style="background:#fff;border:1px solid #ededea">
+          <div style="display:grid;grid-template-columns:2.2fr 1fr 1fr 1fr;padding:14px 22px;border-bottom:1px solid #ededea;font-size:10px;letter-spacing:.14em;color:#a7a7a0;font-weight:600">
+            <div>PRODUCTO</div><div style="text-align:right">NETO ERP</div><div style="text-align:right">CON AJUSTE</div><div style="text-align:right">Δ</div>
+          </div>
+          <div style="max-height:560px;overflow-y:auto">
+            <sc-for list="{{ pricePreview }}" as="r" hint-placeholder-count="12">
+              <div style="display:grid;grid-template-columns:2.2fr 1fr 1fr 1fr;padding:11px 22px;border-bottom:1px solid #f2f2ef;align-items:center">
+                <div style="min-width:0"><div style="font-size:13px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">{{ r.name }}</div><div style="font-size:10.5px;font-family:ui-monospace,Menlo,monospace;color:#a7a7a0">{{ r.codigo }}</div></div>
+                <div style="font-size:12.5px;text-align:right;color:#a7a7a0;font-family:ui-monospace,Menlo,monospace">{{ r.erp }}</div>
+                <div style="font-size:13px;text-align:right;font-weight:600;font-family:ui-monospace,Menlo,monospace">{{ r.next }}</div>
+                <div style="font-size:12px;text-align:right;color:{{ r.deltaColor }};font-family:ui-monospace,Menlo,monospace">{{ r.delta }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <!-- ============ E · PEDIDOS ============ -->
+    <sc-if value="{{ isOrders }}" hint-placeholder-val="">
+    <div class="fadein" style="padding:46px 56px 70px;width:100%;max-width:900px">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:20px">
+        <div>
+          <div style="font-size:11px;letter-spacing:.22em;color:#a7a7a0;font-weight:600;margin-bottom:14px">PEDIDOS</div>
+          <h1 style="font-size:34px;font-weight:600;letter-spacing:-.01em;margin:0 0 12px">Pedidos de clientes</h1>
+        </div>
+        <button onClick="{{ refreshPedidos }}" style="flex:none;margin-top:2px;background:none;border:1px solid #e2e2dd;color:#161616;padding:9px 16px;font-size:12.5px;font-weight:600">{{ refreshPedidosLabel }}</button>
+      </div>
+      <p style="font-size:15px;line-height:1.6;color:#6b6b64;max-width:560px;margin:0 0 8px">{{ ordersSummary }}</p>
+      <p style="font-size:12.5px;color:{{ pedidosConnColor }};margin:0 0 28px">{{ pedidosConnStatus }}</p>
+
+      <sc-if value="{{ hasOrders }}" hint-placeholder-val="">
+      <div style="background:#fff;border:1px solid #ededea;overflow-x:auto">
+        <div style="{{ ordersHeadStyle }}">
+          <div>CLIENTE</div><div>Nº PEDIDO</div><div>FECHA</div><div>ESTADO</div><div></div><div></div>
+        </div>
+        <sc-for list="{{ orderRows }}" as="o" hint-placeholder-count="3">
+          <div style="{{ ordersRowStyle }}">
+            <div style="font-size:13px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ o.clienteNombre }}</div>
+            <div style="font-size:12.5px;font-family:ui-monospace,Menlo,monospace;color:#6b6b64">{{ o.ref }}</div>
+            <div style="font-size:12.5px;color:#6b6b64">{{ o.fecha }}</div>
+            <div>{{ o.estadoSelectEl }}</div>
+            <div><button onClick="{{ o.printOrder }}" style="background:none;border:none;color:#6b6b64;font-size:12px;cursor:pointer;text-decoration:underline">Descargar PDF</button></div>
+            <div style="text-align:right"><button onClick="{{ o.viewOrder }}" style="background:none;border:none;color:#161616;font-size:12px;font-weight:600;cursor:pointer;text-decoration:underline">Ver más →</button></div>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+      <sc-if value="{{ noOrders }}" hint-placeholder-val="">
+        <div style="background:#fff;border:1px dashed #d8d8d0;padding:60px;text-align:center;color:#a7a7a0;font-size:14px">
+          {{ noOrdersNote }}
+        </div>
+      </sc-if>
+    </div>
+    </sc-if>
+
+    <!-- ============ E2 · DETALLE DE PEDIDO ============ -->
+    <sc-if value="{{ isOrderDetail }}" hint-placeholder-val="">
+    <div class="fadein" style="padding:34px 56px 70px;width:100%;max-width:900px">
+      <button onClick="{{ backToOrders }}" style="background:none;border:none;color:#6b6b64;font-size:13px;padding:0;margin-bottom:24px;display:flex;align-items:center;gap:7px">← Volver a pedidos</button>
+
+      <sc-if value="{{ hasOrderDetail }}" hint-placeholder-val="">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:24px;margin-bottom:30px;flex-wrap:wrap">
+        <div>
+          <div style="font-size:11px;letter-spacing:.18em;color:#a7a7a0;font-weight:600;margin-bottom:10px">PEDIDO {{ orderDetail.ref }}</div>
+          <h1 style="font-size:28px;font-weight:600;letter-spacing:-.01em;margin:0">{{ orderDetail.clienteNombre }}</h1>
+          <div style="font-size:13px;color:#a7a7a0;margin-top:8px">{{ orderDetail.fecha }}</div>
+        </div>
+        <div>{{ orderDetail.estadoSelectEl }}</div>
+      </div>
+
+      <div style="background:#fff;border:1px solid #ededea">
+        <sc-for list="{{ orderDetail.itemRows }}" as="i" hint-placeholder-count="3">
+          <div style="display:grid;grid-template-columns:64px 1fr .9fr .7fr .7fr .9fr .9fr;gap:16px;padding:14px 22px;border-bottom:1px solid #f2f2ef;align-items:center">
+            <div style="width:56px;height:74px;background:#f2f2ef;overflow:hidden;flex:none">
+              <sc-if value="{{ i.isPhoto }}" hint-placeholder-val="">{{ i.imgEl }}</sc-if>
+              <sc-if value="{{ i.noPhoto }}" hint-placeholder-val="">
+                <div style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;color:#cdcabf;font-size:13px">○</div>
+              </sc-if>
+            </div>
+            <div style="min-width:0">
+              <div style="font-size:13.5px;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ i.name }}</div>
+              <div style="font-size:11px;font-family:ui-monospace,Menlo,monospace;color:#a7a7a0;margin-top:2px">{{ i.codigo }}</div>
+            </div>
+            <div style="font-size:12.5px;color:#6b6b64">{{ i.color }}</div>
+            <div style="font-size:12.5px;color:#6b6b64">{{ i.talla }}</div>
+            <div style="font-size:13px;font-weight:600;text-align:right">{{ i.cantidad }} uds</div>
+            <div style="font-size:12.5px;color:#6b6b64;text-align:right;font-family:ui-monospace,Menlo,monospace">{{ i.precioUnit }}</div>
+            <div style="font-size:13.5px;font-weight:600;text-align:right;font-family:ui-monospace,Menlo,monospace">{{ i.subtotal }}</div>
+          </div>
+        </sc-for>
+        <div style="display:flex;justify-content:flex-end;align-items:baseline;gap:14px;padding:18px 22px;background:#fafaf8">
+          <span style="font-size:12.5px;color:#6b6b64;letter-spacing:.08em">TOTAL</span>
+          <span style="font-size:20px;font-weight:600">{{ orderDetail.total }}</span>
+        </div>
+      </div>
+
+      <sc-if value="{{ orderDetail.hasNota }}" hint-placeholder-val="">
+        <div style="margin-top:20px;padding:14px 18px;background:#fafaf8;border:1px solid #ededea;font-size:12.5px;color:#6b6b64"><strong style="color:#161616">Nota del cliente:</strong> {{ orderDetail.nota }}</div>
+      </sc-if>
+      </sc-if>
+
+      <sc-if value="{{ hasOrderDetail }}" hint-placeholder-val="{{ true }}">
+        <div style="background:#fff;border:1px dashed #d8d8d0;padding:60px;text-align:center;color:#a7a7a0;font-size:14px">Este pedido ya no existe.</div>
+      </sc-if>
+    </div>
+    </sc-if>
+
+    <!-- ============ F · CLIENTES ============ -->
+    <sc-if value="{{ isClients }}" hint-placeholder-val="">
+    <div class="fadein" style="padding:40px 56px 70px;width:100%">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px;margin-bottom:26px">
+        <div>
+          <div style="font-size:11px;letter-spacing:.22em;color:#a7a7a0;font-weight:600;margin-bottom:12px">CLIENTES</div>
+          <h1 style="font-size:32px;font-weight:600;letter-spacing:-.01em;margin:0">Clientes</h1>
+          <p style="font-size:14px;color:#6b6b64;margin:10px 0 0">{{ clientsSummary }}</p>
+        </div>
+        <button onClick="{{ newClient }}" style="{{ newClientBtnStyle }}">+ Nuevo cliente</button>
+      </div>
+
+      <sc-if value="{{ hasClientForm }}" hint-placeholder-val="">
+      <datalist id="paisesTarifaList">
+        <sc-for list="{{ paisesSugeridos }}" as="ps" hint-placeholder-count="3">
+          <option value="{{ ps }}"></option>
+        </sc-for>
+      </datalist>
+      <div class="fadeup" style="background:#fff;border:1px solid #ededea;padding:26px;margin-bottom:26px">
+        <div style="font-size:11px;letter-spacing:.18em;color:#a7a7a0;font-weight:600;margin-bottom:20px">{{ clientFormTitle }}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px 20px">
+          <label style="display:flex;flex-direction:column;gap:6px">
+            <span style="font-size:11px;color:#6b6b64;font-weight:600;letter-spacing:.04em">NOMBRE COMERCIAL</span>
+            <input value="{{ clientDraft.nombreComercial }}" onInput="{{ setNombreComercial }}" style="{{ fieldStyle }}">
+          </label>
+          <label style="display:flex;flex-direction:column;gap:6px">
+            <span style="font-size:11px;color:#6b6b64;font-weight:600;letter-spacing:.04em">RAZÓN SOCIAL</span>
+            <input value="{{ clientDraft.razonSocial }}" onInput="{{ setRazonSocial }}" style="{{ fieldStyle }}">
+          </label>
+          <label style="display:flex;flex-direction:column;gap:6px">
+            <span style="font-size:11px;color:#6b6b64;font-weight:600;letter-spacing:.04em">CIF</span>
+            <input value="{{ clientDraft.cif }}" onInput="{{ setCif }}" style="{{ fieldStyle }}">
+          </label>
+          <label style="display:flex;flex-direction:column;gap:6px">
+            <span style="font-size:11px;color:#6b6b64;font-weight:600;letter-spacing:.04em">PAÍS</span>
+            <input value="{{ clientDraft.pais }}" onInput="{{ setPais }}" list="paisesTarifaList" style="{{ fieldStyle }}">
+          </label>
+          <label style="display:flex;flex-direction:column;gap:6px;grid-column:1/3">
+            <span style="font-size:11px;color:#6b6b64;font-weight:600;letter-spacing:.04em">DIRECCIÓN</span>
+            <input value="{{ clientDraft.direccion }}" onInput="{{ setDireccion }}" style="{{ fieldStyle }}">
+          </label>
+          <label style="display:flex;flex-direction:column;gap:6px">
+            <span style="font-size:11px;color:#6b6b64;font-weight:600;letter-spacing:.04em">AGENTE</span>
+            <input value="{{ clientDraft.agente }}" onInput="{{ setAgente }}" style="{{ fieldStyle }}">
+          </label>
+        </div>
+
+        <div style="margin-top:22px;padding-top:22px;border-top:1px solid #ededea">
+          <div style="font-size:11px;letter-spacing:.18em;color:#a7a7a0;font-weight:600;margin-bottom:16px">ACCESO A LA TIENDA</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:18px 20px">
+            <label style="display:flex;flex-direction:column;gap:6px">
+              <span style="font-size:11px;color:#6b6b64;font-weight:600;letter-spacing:.04em">EMAIL DE ACCESO</span>
+              <input value="{{ clientDraft.usuario }}" onInput="{{ setUsuario }}" placeholder="nombre@empresa.com" style="{{ fieldStyle }}">
+            </label>
+            <label style="display:flex;flex-direction:column;gap:6px">
+              <span style="font-size:11px;color:#6b6b64;font-weight:600;letter-spacing:.04em">CONTRASEÑA</span>
+              <input value="{{ clientDraft.password }}" onInput="{{ setPassword }}" placeholder="mínimo 4 caracteres" style="{{ fieldStyle }}">
+            </label>
+          </div>
+          <div style="font-size:11.5px;color:#a7a7a0;margin-top:10px;line-height:1.5">Con esto el cliente ya puede entrar en la tienda (masscob-b2b/tienda) con este email y contraseña. Déjalo en blanco si todavía no debe tener acceso.</div>
+          <sc-if value="{{ clientUsuarioError }}" hint-placeholder-val="">
+            <div style="font-size:11.5px;color:#a5443b;margin-top:8px">{{ clientUsuarioError }}</div>
+          </sc-if>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:22px">
+          <button onClick="{{ saveClient }}" style="{{ saveClientBtnStyle }}">{{ saveClientBtnLabel }}</button>
+          <button onClick="{{ cancelClientForm }}" style="{{ cancelClientBtnStyle }}">Cancelar</button>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ hasClients }}" hint-placeholder-val="{{ true }}">
+      <div style="background:#fff;border:1px solid #ededea;overflow-x:auto">
+        <div style="{{ clientsHeadStyle }}">
+          <div>NOMBRE COMERCIAL</div><div>RAZÓN SOCIAL</div><div>CIF</div><div>DIRECCIÓN</div><div>PAÍS</div><div>AGENTE</div><div>TARIFA</div><div>ACCESO</div><div></div>
+        </div>
+        <sc-for list="{{ clientRows }}" as="c" hint-placeholder-count="4">
+          <div style="{{ clientsRowStyle }}">
+            <div onClick="{{ c.edit }}" style="font-size:13px;font-weight:600;cursor:pointer;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.nombreComercial }}</div>
+            <div style="font-size:12.5px;color:#6b6b64;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.razonSocial }}</div>
+            <div style="font-size:12px;font-family:ui-monospace,Menlo,monospace;color:#6b6b64">{{ c.cif }}</div>
+            <div style="font-size:12.5px;color:#6b6b64;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.direccion }}</div>
+            <div style="font-size:12.5px;color:#6b6b64">{{ c.pais }}</div>
+            <div style="font-size:12.5px;color:#6b6b64">{{ c.agente }}</div>
+            <div style="font-size:11.5px;font-weight:600;color:{{ c.tarifaColor }}">{{ c.tarifaLabel }}</div>
+            <div style="font-size:11.5px;color:{{ c.accesoColor }};overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ c.accesoLabel }}</div>
+            <div style="text-align:right"><button onClick="{{ c.remove }}" style="background:none;border:none;color:#a7a7a0;font-size:12px;cursor:pointer;text-decoration:underline">Eliminar</button></div>
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ noClients }}" hint-placeholder-val="">
+        <div style="padding:60px;text-align:center;color:#a7a7a0;font-size:14px;background:#fff;border:1px dashed #d8d8d0">Todavía no cargaste ningún cliente.</div>
+      </sc-if>
+    </div>
+    </sc-if>
+
+    <!-- ============ G · TARIFAS ============ -->
+    <sc-if value="{{ isTarifas }}" hint-placeholder-val="">
+    <div class="fadein" style="padding:40px 56px 70px;width:100%">
+      <div style="margin-bottom:26px">
+        <div style="font-size:11px;letter-spacing:.22em;color:#a7a7a0;font-weight:600;margin-bottom:12px">TARIFAS</div>
+        <h1 style="font-size:32px;font-weight:600;letter-spacing:-.01em;margin:0">Tarifas</h1>
+        <p style="font-size:14px;color:#6b6b64;margin:10px 0 0">{{ tarifasSummary }}</p>
+      </div>
+
+      <div style="background:#fff;border:1px solid #ededea;padding:26px;margin-bottom:30px;max-width:760px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+          <div style="font-size:11px;letter-spacing:.18em;color:#a7a7a0;font-weight:600">TARIFA SEGÚN PAÍS DEL CLIENTE</div>
+          <button onClick="{{ addPaisTarifa }}" style="background:none;border:none;color:#6b6b64;font-size:12px;text-decoration:underline;text-underline-offset:3px;padding:4px 0">+ Añadir país</button>
+        </div>
+        <div style="font-size:12.5px;color:#6b6b64;line-height:1.5;margin-bottom:18px">Escribe el país en mayúsculas y sin acentos (ej. ESPANA, BELGICA) — así coincide con el país guardado en la ficha del cliente.</div>
+
+        <sc-if value="{{ hasPaisTarifas }}" hint-placeholder-val="">
+        <div>
+          <sc-for list="{{ paisTarifaRows }}" as="pt" hint-placeholder-count="2">
+            <div style="display:grid;grid-template-columns:1fr 1.4fr 32px;gap:14px;align-items:center;padding:10px 0;border-bottom:1px solid #f2f2ef">
+              <input value="{{ pt.pais }}" onInput="{{ pt.setPais }}" onBlur="{{ pt.blurPais }}" placeholder="ESPANA" style="{{ fieldStyle }}">
+              <div>{{ pt.tarifaSelectEl }}</div>
+              <button onClick="{{ pt.remove }}" aria-label="Eliminar" style="background:none;border:none;color:#a7a7a0;font-size:17px;line-height:1;cursor:pointer;padding:4px">×</button>
+            </div>
+          </sc-for>
+        </div>
+        </sc-if>
+        <sc-if value="{{ noPaisTarifas }}" hint-placeholder-val="">
+          <div style="font-size:12.5px;color:#a7a7a0">Todavía no añadiste ningún país.</div>
+        </sc-if>
+      </div>
+
+      <sc-if value="{{ hasTarifas }}" hint-placeholder-val="">
+      <div class="no-print" style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:22px">
+        <sc-for list="{{ collChips }}" as="c" hint-placeholder-count="2">
+          <button onClick="{{ c.go }}" style="{{ c.style }}">{{ c.label }}<span style="opacity:.5;margin-left:7px">{{ c.count }}</span></button>
+        </sc-for>
+      </div>
+
+      <div style="background:#fff;border:1px solid #ededea;overflow-x:auto">
+        <div style="{{ priceHeadStyle }}">
+          <div>REFERENCIA</div><div>NOMBRE</div>
+          <sc-for list="{{ tarifaCols }}" as="tc" hint-placeholder-count="4">
+            <div style="text-align:right">{{ tc.nombre }}</div>
+          </sc-for>
+        </div>
+        <sc-for list="{{ priceRows }}" as="r" hint-placeholder-count="10">
+          <div style="{{ priceRowStyle }}">
+            <div style="font-size:12px;font-family:ui-monospace,Menlo,monospace;color:#a7a7a0">{{ r.codigo }}</div>
+            <div style="font-size:13px;font-weight:500;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ r.name }}</div>
+            <sc-for list="{{ r.cells }}" as="c" hint-placeholder-count="4">
+              <div style="font-size:13px;font-weight:600;text-align:right;font-family:ui-monospace,Menlo,monospace">{{ c.value }}</div>
+            </sc-for>
+          </div>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{ emptyPriceRows }}" hint-placeholder-val="">
+        <div style="padding:60px;text-align:center;color:#a7a7a0;font-size:14px;background:#fff;border:1px dashed #d8d8d0;margin-top:16px">Sin referencias para esta colección.</div>
+      </sc-if>
+      </sc-if>
+
+      <sc-if value="{{ noTarifas }}" hint-placeholder-val="">
+        <div style="padding:60px;text-align:center;color:#a7a7a0;font-size:14px;background:#fff;border:1px dashed #d8d8d0">Todavía no se importó ningún informe de precios con columnas de tarifa (WHOLESALE EUROPA, WHOLESALE EUROPA + N%…).</div>
+      </sc-if>
+    </div>
+    </sc-if>
+
+  </main>
+</div>
+
+<!-- documento imprimible de un pedido — oculto salvo mientras se imprime, ver printOrder() -->
+<div id="orderPrintDoc" style="{{ printDocStyle }}">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;padding-bottom:18px;border-bottom:2px solid #161616;margin-bottom:26px">
+    <div>
+      <sc-if value="{{ hasLogo }}" hint-placeholder-val="">
+        <img src="{{ logo }}" style="max-width:220px;max-height:56px;object-fit:contain">
+      </sc-if>
+      <sc-if value="{{ noLogo }}" hint-placeholder-val="{{ true }}">
+        <div style="font-size:20px;font-weight:600;letter-spacing:.16em">MASSCOB</div>
+        <div style="font-size:9px;font-weight:500;letter-spacing:.3em;color:#6b6b64;margin-top:6px">WHOLESALE</div>
+      </sc-if>
+    </div>
+    <div style="text-align:right;font-size:12px;color:#6b6b64;line-height:1.8">
+      Pedido <b style="color:#161616">{{ printDoc.ref }}</b><br>
+      Cliente: <b style="color:#161616">{{ printDoc.clienteNombre }}</b><br>
+      Fecha {{ printDoc.fecha }} · Estado {{ printDoc.estado }}
+    </div>
+  </div>
+  <div style="font-size:11px;letter-spacing:.2em;color:#a7a7a0;font-weight:600;margin-bottom:22px">RESUMEN DE PEDIDO</div>
+
+  <div style="display:grid;grid-template-columns:50px 1fr .9fr .7fr .7fr .9fr .9fr;gap:14px;padding:0 0 10px;border-bottom:1px solid #161616;font-size:9.5px;letter-spacing:.1em;color:#a7a7a0;font-weight:600">
+    <div></div><div>PRODUCTO</div><div>COLOR</div><div>TALLA</div><div style="text-align:right">CANT.</div><div style="text-align:right">PRECIO</div><div style="text-align:right">SUBTOTAL</div>
+  </div>
+  <sc-for list="{{ printDoc.itemRows }}" as="i" hint-placeholder-count="3">
+    <div style="display:grid;grid-template-columns:50px 1fr .9fr .7fr .7fr .9fr .9fr;gap:14px;padding:10px 0;border-bottom:1px solid #ededea;align-items:center">
+      <div style="width:44px;height:58px;background:#f7f7f4;overflow:hidden">
+        <sc-if value="{{ i.isPhoto }}" hint-placeholder-val="">{{ i.imgEl }}</sc-if>
+      </div>
+      <div style="font-size:12.5px">{{ i.name }}<br><span style="font-family:ui-monospace,Menlo,monospace;color:#a7a7a0;font-size:11px">{{ i.codigo }}</span></div>
+      <div style="font-size:12.5px;color:#6b6b64">{{ i.color }}</div>
+      <div style="font-size:12.5px;color:#6b6b64">{{ i.talla }}</div>
+      <div style="font-size:12.5px;text-align:right">{{ i.cantidad }}</div>
+      <div style="font-size:12.5px;text-align:right;color:#6b6b64">{{ i.precioUnit }}</div>
+      <div style="font-size:12.5px;text-align:right;font-weight:600">{{ i.subtotal }}</div>
+    </div>
+  </sc-for>
+  <div style="display:grid;grid-template-columns:1fr auto;padding-top:14px;margin-top:8px;border-top:2px solid #161616;font-weight:600;font-size:14px">
+    <div>Total</div><div style="text-align:right">{{ printDoc.total }}</div>
+  </div>
+
+  <sc-if value="{{ printDoc.hasNota }}" hint-placeholder-val="">
+    <div style="margin:22px 0;padding:14px 16px;background:#fafaf8;border:1px solid #ededea;font-size:12px;color:#6b6b64"><strong style="color:#161616">Nota:</strong> {{ printDoc.nota }}</div>
+  </sc-if>
+  <div style="margin-top:50px;padding-top:14px;border-top:1px solid #ededea;font-size:10.5px;color:#a7a7a0;line-height:1.6">Documento generado desde el panel de administración MASSCOB Wholesale.</div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:860},&quot;defaultScreen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Importar&quot;,&quot;Catálogo&quot;],&quot;default&quot;:&quot;Importar&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Inicio&quot;},&quot;defaultView&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Cuadrícula&quot;,&quot;Tabla&quot;],&quot;default&quot;:&quot;Cuadrícula&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Catálogo&quot;},&quot;catalogDensity&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Cómodo&quot;,&quot;Compacto&quot;],&quot;default&quot;:&quot;Cómodo&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Catálogo&quot;}}">
+const API_BASE = 'http://127.0.0.1:8001'; // backend local; actualizar cuando haya despliegue real
+
+class Component extends DCLogic {
+  constructor(props){
+    super(props);
+    const saved = this._load();
+    const metaColecciones = (window.MASSCOB_META && window.MASSCOB_META.colecciones) || [];
+    this.state = {
+      screen: (props.defaultScreen==='Catálogo' && saved.imported) ? 'catalog' : 'import',
+      stockFile: null, priceFile: null,
+      imported: saved.imported || false,
+      search: '', catFilter: 'Todas', stateFilter: 'Todos',
+      // por defecto solo se ve la colección con más referencias (ej. no mezclar
+      // una unidad suelta de otra campaña); "Todas" queda un clic más allá
+      collFilter: metaColecciones[0] ? metaColecciones[0].codigo : 'Todas',
+      view: (props.defaultView==='Tabla') ? 'table' : 'grid',
+      stocklistFormat: 'detallado', // 'detallado' (con unidades) | 'cliente' (sin unidades, con Estado)
+      selectedCode: null,
+      selectedOrderId: null,
+      printOrderId: null,
+      globalDraft: saved.appliedGlobal || 0,
+      appliedGlobal: saved.appliedGlobal || 0,
+      minReorder: saved.minReorder!=null ? saved.minReorder : 3,
+      lowStockThreshold: saved.lowStockThreshold!=null ? saved.lowStockThreshold : 3,
+      exchangesEnabled: saved.exchangesEnabled!=null ? saved.exchangesEnabled : true,
+      exchangePct: saved.exchangePct!=null ? saved.exchangePct : 20,
+      clients: saved.clients || [],
+      clientDraft: null,
+      clientEditingId: null,
+      clientUsuarioError: null,
+      clientSaving: false,
+      paisTarifas: saved.paisTarifas || [],
+      overrides: saved.overrides || {},
+      logo: saved.logo || null,
+      adminKey: saved.adminKey || '',
+      pedidosRemote: [],
+      pedidosLoading: false,
+      pedidosError: null,
+    };
+  }
+  componentDidMount(){
+    if(!window.MASSCOB_PRODUCTS){ setTimeout(()=>this.forceUpdate(), 200); }
+    if(this.state.imported && !this.state.stockFile){
+      this.setState({stockFile:'stockmasscob.xlsx', priceFile:'precioserp.xlsx'});
+    }
+    this._fetchPedidos();
+    this._fetchStock();
+  }
+  _key(){ return 'masscob_admin_v2'; }
+  _load(){ try{ return JSON.parse(localStorage.getItem(this._key())) || {}; }catch(e){ return {}; } }
+  _save(extra){
+    const s = Object.assign({
+      overrides:this.state.overrides, imported:this.state.imported, appliedGlobal:this.state.appliedGlobal,
+      minReorder:this.state.minReorder, lowStockThreshold:this.state.lowStockThreshold,
+      exchangesEnabled:this.state.exchangesEnabled, exchangePct:this.state.exchangePct,
+      clients:this.state.clients, paisTarifas:this.state.paisTarifas, logo:this.state.logo,
+      adminKey:this.state.adminKey,
+    }, extra||{});
+    try{ localStorage.setItem(this._key(), JSON.stringify(s)); }catch(e){}
+  }
+
+  data(){ return window.MASSCOB_PRODUCTS || []; }
+  meta(){ return window.MASSCOB_META || {recibidos:0,sinPrecio:0,huerfanos:0,insumos:0,fechaStock:'',colecciones:[]}; }
+  r2(n){ return Math.round(n*100)/100; }
+  fmt(n){ return (n==null)?'—': n.toLocaleString('es-ES',{minimumFractionDigits:2,maximumFractionDigits:2})+' €'; }
+
+  // pedidos: los crea la tienda (checkout.html) vía el backend real
+  // (Supabase); este panel los lee/gestiona con una clave de admin
+  // compartida (ver setAdminKey / _fetchPedidos), no con un login propio.
+  ESTADOS_PEDIDO = ['PENDIENTE', 'ACEPTADO', 'ANULADO'];
+  pedidos(){ return this.state.pedidosRemote; }
+  _adminHeaders(){ return {'X-Admin-Key': this.state.adminKey}; }
+  _fetchPedidos=()=>{
+    if(!this.state.adminKey){ this.setState({pedidosRemote:[], pedidosError:null}); return; }
+    this.setState({pedidosLoading:true, pedidosError:null});
+    fetch(API_BASE+'/admin/pedidos', {headers:this._adminHeaders()})
+      .then(res => { if(!res.ok) throw new Error(res.status===401?'Clave de administrador incorrecta':'Error del servidor'); return res.json(); })
+      .then(data => this.setState({pedidosRemote:data, pedidosLoading:false, pedidosError:null}))
+      .catch(err => this.setState({pedidosRemote:[], pedidosLoading:false, pedidosError: err.message==='Failed to fetch' ? 'Backend no accesible' : err.message}));
+  }
+  // stock en vivo (tabla `stock` del backend) sobrescrito sobre el catálogo
+  // estático de products.js — mutar los objetos in-place basta porque
+  // data() lee window.MASSCOB_PRODUCTS en caliente en cada render.
+  _fetchStock=()=>{
+    if(!this.state.adminKey || !window.MASSCOB_PRODUCTS) return;
+    fetch(API_BASE+'/admin/stock', {headers:this._adminHeaders()})
+      .then(res => { if(!res.ok) throw new Error(); return res.json(); })
+      .then(liveStock => {
+        window.MASSCOB_PRODUCTS.forEach(p => {
+          const live = liveStock[p.codigo];
+          if(!live) return;
+          p.colores = live;
+          p.stock = Object.values(live).reduce((sum,tallas) => sum + Object.values(tallas).reduce((a,b)=>a+b,0), 0);
+        });
+        this.forceUpdate();
+      })
+      .catch(()=>{}); // el catálogo cae de vuelta a los números estáticos de products.js
+  }
+  setAdminKey=(e)=>{
+    const adminKey=e.target.value;
+    this.setState({adminKey}, ()=>{ this._save(); this._fetchPedidos(); this._fetchStock(); });
+  }
+  fmtFechaPedido(iso){ try{ return new Date(iso).toLocaleDateString('es-ES', {day:'2-digit',month:'2-digit',year:'numeric'}); }catch(e){ return iso; } }
+  estadoPedidoStyle(estado){
+    const m = {
+      'PENDIENTE': 'color:#b07a3f;background:#f7f0e6;border:1px solid #ecdcc4',
+      'ACEPTADO': 'color:#6E7150;background:#f0f2ec;border:1px solid #dde3d4',
+      'ANULADO': 'color:#8a4a42;background:#f5eae8;border:1px solid #e6cfc9',
+    };
+    return m[estado] || m['PENDIENTE'];
+  }
+  setPedidoEstado=(id)=>(e)=>{
+    const estado=e.target.value;
+    // optimista: refleja el cambio ya mismo, y confirma contra el servidor
+    this.setState({pedidosRemote: this.pedidos().map(o => o.id===id ? Object.assign({}, o, {estado}) : o)});
+    fetch(API_BASE+'/admin/pedidos/'+id+'/estado', {
+      method:'PATCH', headers:Object.assign({'Content-Type':'application/json'}, this._adminHeaders()),
+      body: JSON.stringify({estado}),
+    })
+      .then(async res=>{
+        if(!res.ok){
+          const body = await res.json().catch(()=>({}));
+          throw new Error(body.detail || 'No se pudo actualizar el estado');
+        }
+        this._fetchStock(); // aceptar/revertir puede haber movido stock
+      })
+      .catch(err => {
+        window.alert(err.message==='Failed to fetch' ? 'Backend no accesible' : err.message);
+        this._fetchPedidos(); // revierte el cambio optimista al estado real del servidor
+      });
+  }
+  fmtDate(iso){
+    if(!iso) return '—';
+    const m=['ene','feb','mar','abr','may','jun','jul','ago','sep','oct','nov','dic'];
+    const d=new Date(iso+'T00:00:00');
+    if(isNaN(d.getTime())) return iso;
+    return d.getDate()+' '+m[d.getMonth()]+' '+d.getFullYear();
+  }
+  // país en mayúsculas y sin acentos — mismo criterio en la tabla de
+  // Tarifas y en la ficha de cliente, para que el cruce por país no falle
+  // por un acento o una minúscula de más
+  normPais(s){ return String(s||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toUpperCase().trim(); }
+  tarifaDeCliente(pais, paisTarifas){
+    const p=this.normPais(pais);
+    if(!p) return null;
+    const m=(paisTarifas||[]).find(pt=>this.normPais(pt.pais)===p && pt.tarifa);
+    return m ? m.tarifa : null;
+  }
+
+  colorHex(name){
+    const n=String(name).toUpperCase();
+    const has=(...k)=>k.some(x=>n.includes(x));
+    if(has('INK','NIGHT','ONYX','NOIR')&&!has('BLUE')) return '#1c1c1a';
+    if(has('BLACK')) return '#1c1c1a';
+    if(has('WHITE','BLANC','OPTIC')) return '#f1efe8';
+    if(has('OLIVE','KAKI','KHAKI','MILITARY','SAGE')) return '#6E7150';
+    if(has('CAMEL','BRUNETTE','TAN','TOFFEE','CARAMEL','HAZEL','COGNAC')) return '#a87f54';
+    if(has('NAVY','INK BLUE','MARINE')) return '#2f3a4a';
+    if(has('BLUE','DENIM','AZUR')) return '#42566b';
+    if(has('RED','RUST','BURGUNDY','BORDEAUX','TERRACOTA','BRICK','WINE')) return '#9e4536';
+    if(has('GREEN','VERDE','BOTTLE','FOREST','EMERALD')) return '#4f6850';
+    if(has('GREY','GRIS','GRAPHITE','STEEL','SLATE','PEWTER')) return '#9a9a93';
+    if(has('CREAM','TILLEUL','ECRU','IVORY','BEIGE','SAND','NUDE','OAT','VANILLA','CHALK','STONE','OFFWHITE')) return '#e3dccb';
+    if(has('GOLD','MUSTARD','OCHRE','SAFFRON','CURRY','HONEY','AMBER')) return '#c2a14e';
+    if(has('PINK','ROSE','BLUSH','MAUVE','POWDER')) return '#cda4a4';
+    if(has('BROWN','CHOCOLATE','MARRON','ESPRESSO','MOKA','COFFEE')) return '#6b4f3a';
+    if(has('PURPLE','LILA','LILAC','VIOLET','PLUM')) return '#6f5d7e';
+    return '#b8b3a8';
+  }
+  sizeRank(s, tallaje){
+    if(tallaje==='numerico'){ const v=parseInt(s,10); return isNaN(v)?999:v; }
+    const o=['XXS','XS','XS/S','S','S/M','M','M/L','L','L/XL','XL','XXL','XXXL','U','ÚNICA','TU'];
+    const i=o.indexOf(String(s).toUpperCase()); return i<0?900:i;
+  }
+
+  // merge raw data with overrides -> working products
+  // la imagen manual (drag&drop, guardada en localStorage) siempre pisa a la
+  // foto auto-asignada por import_images.py; si no hay ninguna de las dos
+  // queda "sin imagen" en el panel.
+  derive(){
+    const ov=this.state.overrides;
+    return this.data().map(p=>{
+      const o=ov[p.codigo]||{};
+      const ajuste = (o.ajuste_pct!=null)?o.ajuste_pct:0;
+      const price = (p.price_erp==null)?null:this.r2(p.price_erp*(1+ajuste/100));
+      const image = o.image || p.image || null;
+      const publicable = (price!=null) && !!image;
+      return Object.assign({}, p, {ajuste, price, image, publicable});
+    });
+  }
+
+  navigate(s){ this.setState({screen:s}); }
+  selectProduct(code){ this.setState({selectedCode:code, screen:'product'}); }
+  viewOrder=(id)=>{ this.setState({selectedOrderId:id, screen:'orderDetail'}); }
+  backToOrders=()=>{ this.setState({screen:'orders', selectedOrderId:null}); }
+  // imprime/descarga el PDF de un pedido sin salir de donde estés: oculta
+  // el panel un instante, muestra solo el documento imprimible, espera a
+  // que todas las fotos hayan cargado (si no, window.print() dispara antes
+  // de que lleguen y salen en blanco), lanza el diálogo de impresión del
+  // navegador y restaura la vista al terminar.
+  printOrder=(id)=>()=>{
+    this.setState({printOrderId:id}, ()=>{
+      const imgs=Array.from(document.querySelectorAll('#orderPrintDoc img'));
+      Promise.all(imgs.map(img => img.complete ? Promise.resolve() : new Promise(res => { img.onload=res; img.onerror=res; })))
+        .then(() => {
+          window.print();
+          this.setState({printOrderId:null});
+        });
+    });
+  }
+
+  // ---- import handlers
+  _fileName(e, fromDrop){
+    const f = fromDrop ? (e.dataTransfer && e.dataTransfer.files[0]) : (e.target && e.target.files[0]);
+    return f ? f.name : null;
+  }
+  onStockPick=(e)=>{ const n=this._fileName(e,false); if(n) this.setState({stockFile:n}); }
+  onPricePick=(e)=>{ const n=this._fileName(e,false); if(n) this.setState({priceFile:n}); }
+  onStockDrop=(e)=>{ e.preventDefault(); const n=this._fileName(e,true); if(n) this.setState({stockFile:n}); }
+  onPriceDrop=(e)=>{ e.preventDefault(); const n=this._fileName(e,true); if(n) this.setState({priceFile:n}); }
+  onDragOver=(e)=>{ e.preventDefault(); }
+  loadSample=()=>{ this.setState({stockFile:'stockmasscob.xlsx', priceFile:'precioserp.xlsx'}); }
+  confirmImport=()=>{ this.setState({imported:true, screen:'catalog'}, ()=>this._save()); }
+
+  // ---- catalog handlers
+  onSearch=(e)=>{ this.setState({search:e.target.value}); }
+  setCat=(c)=>{ this.setState({catFilter:c}); }
+  setColl=(c)=>{ this.setState({collFilter:c}); }
+  setState_=(s)=>{ this.setState({stateFilter:s}); }
+  setGrid=()=>{ this.setState({view:'grid'}); }
+  setTable=()=>{ this.setState({view:'table'}); }
+  setStocklistDetallado=()=>{ this.setState({stocklistFormat:'detallado'}); }
+  setStocklistCliente=()=>{ this.setState({stocklistFormat:'cliente'}); }
+  exportPdf=()=>{ window.print(); }
+
+  // ---- product handlers
+  _readImage(e, fromDrop){
+    const f = fromDrop ? (e.dataTransfer && e.dataTransfer.files[0]) : (e.target && e.target.files[0]);
+    if(!f || !f.type.startsWith('image/')) return;
+    const code=this.state.selectedCode;
+    const rd=new FileReader();
+    rd.onload=()=>{ const ov=Object.assign({}, this.state.overrides); ov[code]=Object.assign({}, ov[code], {image:rd.result}); this.setState({overrides:ov}, ()=>this._save()); };
+    rd.readAsDataURL(f);
+  }
+  onImagePick=(e)=>{ this._readImage(e,false); }
+  onImageDrop=(e)=>{ e.preventDefault(); this._readImage(e,true); }
+  removeImage=()=>{ const code=this.state.selectedCode; const ov=Object.assign({}, this.state.overrides); if(ov[code]){ ov[code]=Object.assign({}, ov[code]); delete ov[code].image; } this.setState({overrides:ov}, ()=>this._save()); }
+  setProductAdjust=(e)=>{ const code=this.state.selectedCode; const v=Number(e.target.value); const ov=Object.assign({}, this.state.overrides); ov[code]=Object.assign({}, ov[code], {ajuste_pct:v}); this.setState({overrides:ov}, ()=>this._save()); }
+  backToCatalog=()=>{ this.setState({screen:'catalog'}); }
+
+  // ---- pricing handlers
+  setGlobal=(e)=>{ this.setState({globalDraft:Number(e.target.value)}); }
+  applyGlobal=()=>{ const v=this.state.globalDraft; const ov=Object.assign({}, this.state.overrides); this.data().forEach(p=>{ ov[p.codigo]=Object.assign({}, ov[p.codigo], {ajuste_pct:v}); }); this.setState({overrides:ov, appliedGlobal:v}, ()=>this._save()); }
+  setMinReorder=(e)=>{ const v=Math.max(1, Math.round(Number(e.target.value)||1)); this.setState({minReorder:v}, ()=>this._save()); }
+  setLowStockThreshold=(e)=>{ const v=Math.max(0, Math.round(Number(e.target.value)||0)); this.setState({lowStockThreshold:v}, ()=>this._save()); }
+  toggleExchanges=(e)=>{ this.setState({exchangesEnabled:e.target.checked}, ()=>this._save()); }
+  setExchangePct=(e)=>{ const v=Math.min(100, Math.max(0, Math.round(Number(e.target.value)||0))); this.setState({exchangePct:v}, ()=>this._save()); }
+  _readLogo=(e, fromDrop)=>{
+    const f = fromDrop ? (e.dataTransfer && e.dataTransfer.files[0]) : (e.target && e.target.files[0]);
+    if(!f || !f.type.startsWith('image/')) return;
+    const rd=new FileReader();
+    rd.onload=()=>{ this.setState({logo:rd.result}, ()=>this._save()); };
+    rd.readAsDataURL(f);
+  }
+  onLogoPick=(e)=>{ this._readLogo(e,false); }
+  onLogoDrop=(e)=>{ e.preventDefault(); this._readLogo(e,true); }
+  removeLogo=()=>{ this.setState({logo:null}, ()=>this._save()); }
+
+  // ---- clients handlers
+  newClient=()=>{ this.setState({clientDraft:{nombreComercial:'',razonSocial:'',cif:'',direccion:'',pais:'',agente:'',usuario:'',password:''}, clientEditingId:null, clientUsuarioError:null}); }
+  editClient=(id)=>{ const c=this.state.clients.find(x=>x.id===id); if(c) this.setState({clientDraft:Object.assign({},c), clientEditingId:id, clientUsuarioError:null}); }
+  cancelClientForm=()=>{ this.setState({clientDraft:null, clientEditingId:null, clientUsuarioError:null}); }
+  setClientDraftField=(field)=>(e)=>{ const cd=Object.assign({}, this.state.clientDraft); cd[field]=e.target.value; this.setState({clientDraft:cd, clientUsuarioError:null}); }
+  saveClient=()=>{
+    if(this.state.clientSaving) return;
+    if(!this.state.clientDraft || !this.state.clientDraft.nombreComercial.trim()) return;
+    const cd=Object.assign({}, this.state.clientDraft);
+    // mismo criterio que la tabla de tarifas por país (mayúsculas, sin
+    // acentos), para que el cruce por país no falle por cómo se escribió
+    cd.pais=this.normPais(cd.pais);
+    cd.usuario=String(cd.usuario||'').trim().toLowerCase();
+    // el email de acceso tiene que ser único: es lo único con lo que la
+    // tienda identifica qué cliente ha iniciado sesión
+    if(cd.usuario){
+      const dup=this.state.clients.find(c => c.id!==this.state.clientEditingId && String(c.usuario||'').trim().toLowerCase()===cd.usuario);
+      if(dup){ this.setState({clientUsuarioError:'Ese email de acceso ya lo usa otro cliente: '+dup.nombreComercial}); return; }
+    }
+
+    // si todavía no tiene cuenta real (cliente nuevo, o uno local al que se
+    // le añade acceso ahora) y hay email+contraseña, hay que crear primero
+    // el usuario de verdad en Supabase antes de guardar nada — si no, el
+    // acceso nunca funcionaría (los clientes creados solo en local nunca
+    // pudieron entrar en la tienda).
+    if(!cd.synced && cd.usuario && cd.password){
+      if(!this.state.adminKey){ this.setState({clientUsuarioError:'Configura la clave de administrador en Ajustes para poder crear accesos.'}); return; }
+      this.setState({clientSaving:true, clientUsuarioError:null});
+      fetch(API_BASE+'/admin/clientes', {
+        method:'POST',
+        headers:Object.assign({'Content-Type':'application/json'}, this._adminHeaders()),
+        body: JSON.stringify({
+          nombre_comercial: cd.nombreComercial, razon_social: cd.razonSocial, cif: cd.cif,
+          direccion: cd.direccion, pais: cd.pais, agente: cd.agente,
+          usuario: cd.usuario, password: cd.password,
+        }),
+      })
+        .then(async res=>{
+          const data=await res.json().catch(()=>({}));
+          if(!res.ok) throw new Error(data.detail || 'Error del servidor');
+          return data;
+        })
+        .then(data=>{
+          let clients=this.state.clients.slice();
+          if(this.state.clientEditingId!=null){
+            clients=clients.map(c=>c.id===this.state.clientEditingId ? Object.assign({}, cd, {id:data.id, synced:true}) : c);
+          } else {
+            clients.push(Object.assign({}, cd, {id:data.id, synced:true}));
+          }
+          this.setState({clients, clientDraft:null, clientEditingId:null, clientUsuarioError:null, clientSaving:false}, ()=>this._save());
+        })
+        .catch(err=>{
+          this.setState({clientUsuarioError: err.message==='Failed to fetch' ? 'Backend no accesible' : err.message, clientSaving:false});
+        });
+      return;
+    }
+
+    // cliente sin acceso a la tienda todavía, o edición de campos de un
+    // cliente ya sincronizado (actualizar esos campos en el backend queda
+    // pendiente): se guarda solo en local, como antes.
+    let clients=this.state.clients.slice();
+    if(this.state.clientEditingId!=null){
+      clients=clients.map(c=>c.id===this.state.clientEditingId ? Object.assign({}, cd, {id:this.state.clientEditingId}) : c);
+    } else {
+      const id=clients.reduce((m,c)=>Math.max(m,c.id||0),0)+1;
+      clients.push(Object.assign({}, cd, {id}));
+    }
+    this.setState({clients, clientDraft:null, clientEditingId:null, clientUsuarioError:null}, ()=>this._save());
+  }
+  removeClient=(id)=>{
+    if(!window.confirm('¿Eliminar este cliente?')) return;
+    this.setState({clients:this.state.clients.filter(c=>c.id!==id)}, ()=>this._save());
+  }
+
+  pct(v){ return (v>0?'+':'')+v+'%'; }
+
+  // ---- tarifas por país
+  addPaisTarifa=()=>{
+    const rows=this.state.paisTarifas.slice();
+    const id=rows.reduce((m,r)=>Math.max(m,r.id||0),0)+1;
+    rows.push({id, pais:'', tarifa:''});
+    this.setState({paisTarifas:rows});
+  }
+  setPaisTarifaPais=(id)=>(e)=>{
+    const rows=this.state.paisTarifas.map(r=>r.id===id ? Object.assign({}, r, {pais:e.target.value}) : r);
+    this.setState({paisTarifas:rows});
+  }
+  blurPaisTarifaPais=(id)=>(e)=>{
+    const rows=this.state.paisTarifas.map(r=>r.id===id ? Object.assign({}, r, {pais:this.normPais(e.target.value)}) : r);
+    this.setState({paisTarifas:rows}, ()=>this._save());
+  }
+  setPaisTarifaTarifa=(id)=>(e)=>{
+    const rows=this.state.paisTarifas.map(r=>r.id===id ? Object.assign({}, r, {tarifa:e.target.value}) : r);
+    this.setState({paisTarifas:rows}, ()=>this._save());
+  }
+  removePaisTarifa=(id)=>{
+    this.setState({paisTarifas:this.state.paisTarifas.filter(r=>r.id!==id)}, ()=>this._save());
+  }
+
+  renderVals(){
+    const st=this.state, meta=this.meta();
+    const all=this.derive();
+    const sel = all.find(p=>p.codigo===st.selectedCode) || null;
+
+    // nav
+    const clients=st.clients||[];
+    const items=[
+      {key:'import', label:'Importar', badge:''},
+      {key:'catalog', label:'Catálogo', badge:String(all.length||'')},
+      {key:'orders', label:'Pedidos', badge:String(this.pedidos().length||'')},
+      {key:'clients', label:'Clientes', badge:String(clients.length||'')},
+      {key:'tarifas', label:'Tarifas', badge:String((meta.tarifas||[]).length||'')},
+      {key:'pricing', label:'Ajustes', badge: st.appliedGlobal? this.pct(st.appliedGlobal):''},
+    ];
+    const navItems=items.map(it=>{
+      const active = st.screen===it.key || (it.key==='catalog'&&st.screen==='product') || (it.key==='orders'&&st.screen==='orderDetail');
+      return {
+        label:it.label, badge:it.badge, go:()=>this.navigate(it.key),
+        style:`display:flex;align-items:center;gap:11px;width:100%;padding:11px 12px;border:none;font-size:13.5px;font-weight:${active?'600':'500'};letter-spacing:.01em;text-align:left;background:${active?'#f2f2ef':'transparent'};color:${active?'#161616':'#6b6b64'}`,
+        dot:`width:5px;height:5px;border-radius:50%;flex:none;background:${active?'#6E7150':'transparent'}`,
+        badgeStyle:`font-size:10.5px;font-family:ui-monospace,Menlo,monospace;color:${active?'#6E7150':'#a7a7a0'}`,
+      };
+    });
+
+    // ---- import validation
+    const publicables=all.filter(p=>p.publicable).length;
+    const sinImagen=all.filter(p=>p.price!=null && !p.image).length;
+    const sinPrecio=all.filter(p=>p.price==null).length;
+    const incompletos=all.filter(p=>p.stock>0 && (p.price==null || !p.image)).length;
+    const statBase='padding:24px 28px;border-right:1px solid #ededea;border-bottom:1px solid #ededea';
+    const colecciones=meta.colecciones||[];
+    const collectionsSummary=colecciones.map(c=>c.codigo+' · '+c.label+' ('+c.count+')').join('  ·  ') || 'Sin colección detectada';
+    const collections=colecciones.map(c=>({codigo:c.codigo, label:c.label, count:c.count}));
+    const valStats=[
+      {value:String(all.length), label:'Productos recibidos', note:'con stock físico en almacén', color:'#161616', cellStyle:statBase},
+      {value:String(publicables), label:'Publicables ahora', note:'con precio e imagen', color:'#6E7150', cellStyle:statBase},
+      {value:String(incompletos), label:'Incompletos', note:sinImagen+' sin imagen · '+sinPrecio+' sin precio', color:'#b07a3f', cellStyle:'padding:24px 28px;border-bottom:1px solid #ededea'},
+      {value:String(meta.huerfanos), label:'Huérfanos', note:'precio en ERP, sin stock — no se publican', color:'#a7a7a0', cellStyle:'padding:24px 28px;border-right:1px solid #ededea'},
+      {value:String(meta.insumos), label:'Insumos filtrados', note:'telas, botones, etiquetas, patrones PT', color:'#a7a7a0', cellStyle:'padding:24px 28px;border-right:1px solid #ededea'},
+      {value:String(colecciones.length), label:'Colecciones', note:colecciones.map(c=>c.codigo+' ('+c.count+')').join(' · ')||'—', color:'#a7a7a0', cellStyle:'padding:24px 28px'},
+    ];
+
+    // ---- catalog
+    // colección/campaña primero: 'Todas' + una por cada código detectado en el stock (meta.colecciones)
+    const collOptions=[{codigo:'Todas', label:'Todas', count:all.length}].concat(colecciones);
+    const collChips=collOptions.map(c=>{const a=st.collFilter===c.codigo;return {label:c.codigo==='Todas'?'Todas':(c.codigo+' · '+c.label), count:c.count, go:()=>this.setColl(c.codigo), style:`padding:8px 13px;border:1px solid ${a?'#6E7150':'#e2e2dd'};background:${a?'#f0f2ec':'#fff'};color:${a?'#6E7150':'#6b6b64'};font-size:12.5px;font-weight:${a?'600':'500'}`};});
+    const base=st.collFilter==='Todas' ? all : all.filter(p=>p.coleccion===st.collFilter);
+
+    const cats=['Todas'].concat(Array.from(new Set(base.map(p=>p.category))).sort());
+    const catCount=(c)=> c==='Todas'?base.length:base.filter(p=>p.category===c).length;
+    const catChips=cats.map(c=>{const a=st.catFilter===c;return {label:c, count:catCount(c), go:()=>this.setCat(c), style:`padding:8px 13px;border:1px solid ${a?'#161616':'#e2e2dd'};background:${a?'#161616':'#fff'};color:${a?'#fff':'#6b6b64'};font-size:12.5px;font-weight:500`};});
+    const states=['Todos','Publicado','Borrador'];
+    const stateChips=states.map(s=>{const a=st.stateFilter===s;return {label:s, go:()=>this.setState_(s), style:`padding:8px 13px;border:1px solid ${a?'#6E7150':'#e2e2dd'};background:${a?'#f0f2ec':'#fff'};color:${a?'#6E7150':'#6b6b64'};font-size:12.5px;font-weight:${a?'600':'500'}`};});
+
+    // ---- cabecera de impresión (export PDF)
+    const collLabel = st.collFilter==='Todas' ? 'Todas las colecciones' : st.collFilter;
+    const printTitle = 'Stocklist '+(st.collFilter==='Todas' ? '' : st.collFilter);
+    const printDate = this.fmtDate(meta.fechaStock);
+    const printSubtitle = 'Relación de Stock — '+collLabel+' · Con stock'+(st.stateFilter!=='Todos' ? ' · '+st.stateFilter : '');
+
+    const q=st.search.trim().toLowerCase();
+    let filtered=base.filter(p=>{
+      if(st.catFilter!=='Todas' && p.category!==st.catFilter) return false;
+      if(st.stateFilter==='Publicado' && !p.publicable) return false;
+      if(st.stateFilter==='Borrador' && p.publicable) return false;
+      if(q && !(p.name.toLowerCase().includes(q) || p.codigo.toLowerCase().includes(q))) return false;
+      return true;
+    });
+
+    const stateInfo=(p)=>{
+      if(p.publicable) return {label:'Publicado', color:'#6E7150', bg:'#f0f2ec', bd:'#dde3d4'};
+      if(p.price==null) return {label:'Falta precio', color:'#a5443b', bg:'#fdeceb', bd:'#f6d3cf'};
+      return {label:'Borrador', color:'#6b6b64', bg:'#f2f2ef', bd:'#e2e2dd'};
+    };
+    const fmt=this.fmt.bind(this);
+    const buildColorRows=(p)=> Object.keys(p.colores||{}).map(color=>{
+      const sizes=Object.keys(p.colores[color]).map(s=>({size:s, qty:p.colores[color][s]}));
+      sizes.sort((a,b)=>this.sizeRank(a.size,p.tallaje)-this.sizeRank(b.size,p.tallaje));
+      const total=sizes.reduce((t,x)=>t+x.qty,0);
+      return {color, dot:this.colorHex(color), total, sizes:sizes.map(x=>({size:x.size, qty:x.qty, style:'display:inline-flex;align-items:center;padding:6px 11px;background:#fafaf8;border:1px solid #ededea;font-size:12px;font-weight:600'}))};
+    });
+    // rejilla de tallas del stocklist del cliente: siempre las 5 tallas
+    // estándar del tallaje (con casilla vacía si esa talla no tiene stock),
+    // salvo esquemas no estándar (U, XS/S, etc.) que solo muestran lo que hay.
+    const SIZE_CANON={numerico:['34','36','38','40','42'], alfanumerico:['XS','S','M','L','XL']};
+    const boxStyle=(hasQty)=> hasQty
+      ? 'display:flex;align-items:center;justify-content:center;min-width:24px;height:22px;padding:0 4px;background:#fafaf8;border:1px solid #ddd8cf;color:#161616;font-size:12px;font-weight:700;border-radius:3px'
+      : 'display:flex;align-items:center;justify-content:center;min-width:24px;height:22px;padding:0 4px;background:#fff;border:1px solid #ededea;color:transparent;font-size:12px;font-weight:700;border-radius:3px';
+    const buildSizeGrid=(p, color, showQty)=>{
+      const raw=(p.colores||{})[color]||{};
+      const keys=Object.keys(raw);
+      const canon=SIZE_CANON[p.tallaje];
+      const useCanon=canon && keys.every(k=>canon.includes(k));
+      const labels=useCanon ? canon : keys.slice().sort((a,b)=>this.sizeRank(a,p.tallaje)-this.sizeRank(b,p.tallaje));
+      return labels.map(sz=>{
+        const qty=raw[sz]||0;
+        const qtyDisplay = qty<=0 ? '' : (showQty ? String(qty) : '✓');
+        return {size:sz, qty, qtyDisplay, style:boxStyle(qty>0)};
+      });
+    };
+    // stocklist "cliente": sin unidades, con columna Estado según el umbral de Ajustes
+    const showQty = st.stocklistFormat!=='cliente';
+    const lowStockThreshold = st.lowStockThreshold!=null ? st.lowStockThreshold : 3;
+    const estadoFor=(total)=>{
+      const low = total>0 && total<=lowStockThreshold;
+      return {
+        label: low ? 'POCAS UNIDADES' : 'DISPONIBLE',
+        style: `display:inline-block;padding:4px 10px;font-size:10.5px;font-weight:700;letter-spacing:.04em;color:${low?'#a5443b':'#6E7150'};background:${low?'#fdeceb':'#f0f2ec'};border:1px solid ${low?'#f6d3cf':'#dde3d4'}`,
+      };
+    };
+    const decorate=(p)=>{
+      const si=stateInfo(p);
+      const isPhoto=!!p.image;
+      return Object.assign({}, p, {
+        open:()=>this.selectProduct(p.codigo),
+        isPhoto, noPhoto:!isPhoto, imageUrl:p.image||'',
+        imgEl: isPhoto ? React.createElement('img',{src:p.image,style:{width:'100%',height:'100%',objectFit:'cover',display:'block'}}) : null,
+        priceDisplay: fmt(p.price),
+        erpDisplay: fmt(p.price_erp),
+        priceColor: p.price==null?'#a5443b':'#161616',
+        stockLabel: p.stock+' uds',
+        colorRows: buildColorRows(p).map(cr=>Object.assign({}, cr, {
+          sizes: cr.sizes.map(sz=>Object.assign({}, sz, {style:'display:inline-flex;align-items:center;padding:4px 9px;background:#fafaf8;border:1px solid #ededea;font-size:11px;font-weight:600;white-space:nowrap'}))
+        })),
+        stateLabel: si.label,
+        badgeStyle:`position:absolute;top:10px;left:10px;padding:4px 9px;font-size:9.5px;letter-spacing:.08em;font-weight:600;color:${si.color};background:${si.bg};border:1px solid ${si.bd}`,
+        pillStyle:`display:inline-block;padding:4px 10px;font-size:10.5px;font-weight:600;color:${si.color};background:${si.bg};border:1px solid ${si.bd}`,
+      });
+    };
+    const filteredD=filtered.map(decorate);
+
+    // ---- una fila por combinación producto+color, con la foto de ESE color
+    // (no la foto por defecto del producto) para la vista Tabla / export PDF.
+    // Usa siempre 'imagesLocal' (banco de fotos propio) y no 'images': el
+    // informe impreso tiene que llevar nuestra foto de plana, nunca la de la
+    // web (import_b2c_images.py deja ambas por separado justo para esto).
+    const tableRows=[];
+    filteredD.forEach(p=>{
+      const rows = p.colorRows.length ? p.colorRows : [{color:'—', dot:'#cdcabf', total:p.stock, sizes:[]}];
+      rows.forEach(cr=>{
+        const localImgs = p.imagesLocal || p.images;
+        const imgSrc = (localImgs && (localImgs[cr.color] || localImgs[String(cr.color).toUpperCase()] || localImgs._default)) || p.image || '';
+        const isPhoto = !!imgSrc;
+        const estado = estadoFor(cr.total);
+        tableRows.push({
+          key: p.codigo+'|'+cr.color,
+          open: p.open,
+          codigo: p.codigo, name: p.name,
+          stock: cr.total, color: cr.color, dot: cr.dot,
+          sizeGrid: buildSizeGrid(p, cr.color, showQty),
+          estadoLabel: estado.label, estadoStyle: estado.style,
+          isPhoto, noPhoto: !isPhoto,
+          imgEl: isPhoto ? React.createElement('img',{src:imgSrc,style:{width:'100%',height:'100%',objectFit:'cover',display:'block'}}) : null,
+        });
+      });
+    });
+
+    // ---- selected product detail
+    let selD=null;
+    if(sel){
+      const colorRows=buildColorRows(sel);
+      const si=stateInfo(sel);
+      const priceOk=sel.price!=null, imgOk=!!sel.image;
+      selD=Object.assign({}, sel, {
+        isPhoto:imgOk, noPhoto:!imgOk, imageUrl:sel.image||'',
+        imgEl: imgOk ? React.createElement('img',{src:sel.image,style:{width:'100%',height:'100%',objectFit:'cover',display:'block'}}) : null,
+        erpDisplay:fmt(sel.price_erp), priceDisplay:fmt(sel.price),
+        priceColor: sel.price==null?'#a5443b':'#161616',
+        stockLabel: sel.stock+' uds',
+        stateLabel: si.label,
+        badgeStyleStatic:`flex:none;padding:7px 13px;font-size:11px;letter-spacing:.06em;font-weight:600;color:${si.color};background:${si.bg};border:1px solid ${si.bd}`,
+        ajuste: sel.ajuste,
+        adjLabel: this.pct(sel.ajuste),
+        adjColor: sel.ajuste>0?'#6E7150':(sel.ajuste<0?'#a5443b':'#6b6b64'),
+        colorRows,
+        checkPrice: priceOk?'✓':'○', checkImg: imgOk?'✓':'○',
+        checkPriceStyle:`width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex:none;color:${priceOk?'#fff':'#a7a7a0'};background:${priceOk?'#6E7150':'#f2f2ef'};border:1px solid ${priceOk?'#6E7150':'#e2e2dd'}`,
+        checkImgStyle:`width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex:none;color:${imgOk?'#fff':'#a7a7a0'};background:${imgOk?'#6E7150':'#f2f2ef'};border:1px solid ${imgOk?'#6E7150':'#e2e2dd'}`,
+        pubBoxStyle:`margin-top:18px;padding:14px 16px;background:${sel.publicable?'#f0f2ec':'#fafaf8'};border:1px solid ${sel.publicable?'#dde3d4':'#ededea'}`,
+        pubColor: sel.publicable?'#6E7150':'#b07a3f',
+        pubTitle: sel.publicable?'Listo para publicar':'Aún en borrador',
+        pubNote: sel.publicable?'Aparece en la tienda con esta colección.':(sel.price==null?'Sin precio en el ERP: visible solo en el admin.':'Falta la imagen: visible solo en el admin hasta cargarla.'),
+      });
+    }
+    const imageZoneStyle='position:relative;display:block;width:100%;aspect-ratio:3/4;background:#f7f7f4;border:1px solid #e2e2dd;cursor:pointer;overflow:hidden';
+
+    // ---- pricing preview
+    const gd=st.globalDraft;
+    const pricePreview=all.filter(p=>p.price_erp!=null).map(p=>{
+      const next=this.r2(p.price_erp*(1+gd/100));
+      const delta=this.r2(next-p.price_erp);
+      return {name:p.name, codigo:p.codigo, erp:fmt(p.price_erp), next:fmt(next), delta:(delta>0?'+':'')+fmt(delta).replace(' €','')+' €', deltaColor: delta>0?'#6E7150':(delta<0?'#a5443b':'#a7a7a0')};
+    });
+
+    // ---- exchanges: ejemplo con 1.000,00 € devueltos
+    const exchangeExample = st.exchangesEnabled
+      ? ('Ejemplo: para cambiar '+fmt(1000)+' de mercancía devuelta, el cliente debe pedir '+fmt(this.r2(1000*(1+st.exchangePct/100)))+'.')
+      : 'Exchanges deshabilitados: los clientes no pueden solicitar cambios.';
+
+    // ---- pedidos (los crea la tienda; ver pedidos() más arriba)
+    const pedidosConnStatus = !st.adminKey
+      ? 'Pega la clave de administrador para ver los pedidos.'
+      : st.pedidosError
+        ? st.pedidosError
+        : st.pedidosLoading
+          ? 'Cargando…'
+          : 'Conectado · ' + st.pedidosRemote.length + (st.pedidosRemote.length===1 ? ' pedido' : ' pedidos');
+    const pedidosConnColor = (!st.adminKey || st.pedidosError) ? '#a5443b' : '#6E7150';
+    const noOrdersNote = st.adminKey ? 'Actualmente no consta ningún pedido.' : 'Configura la clave de administrador en Ajustes para ver los pedidos.';
+    const estadoSelectStyle={padding:'6px 9px', border:'1px solid #e2e2dd', fontSize:'11.5px', fontWeight:'600', background:'#fff', color:'#161616'};
+    const estadoSelect=(o)=> React.createElement('select', {value:o.estado, onChange:this.setPedidoEstado(o.id), style:estadoSelectStyle},
+      this.ESTADOS_PEDIDO.map(es => React.createElement('option', {key:es, value:es}, es))
+    );
+    const todosPedidos=this.pedidos().slice().sort((a,b)=>b.id-a.id);
+    const ordersGridCols='1.6fr 1.3fr 1fr 1.4fr 100px 90px';
+    const ordersHeadStyle='display:grid;grid-template-columns:'+ordersGridCols+';padding:13px 18px;border-bottom:1px solid #ededea;font-size:10px;letter-spacing:.1em;color:#a7a7a0;font-weight:600';
+    const ordersRowStyle='display:grid;grid-template-columns:'+ordersGridCols+';padding:12px 18px;border-bottom:1px solid #f2f2ef;align-items:center';
+    const orderRows=todosPedidos.map(o=>({
+      id:o.id, ref:o.referencia, fecha:this.fmtFechaPedido(o.fecha),
+      clienteNombre: o.cliente_nombre,
+      estadoSelectEl: estadoSelect(o),
+      viewOrder:()=>this.viewOrder(o.id),
+      printOrder:this.printOrder(o.id),
+    }));
+
+    // fotos: la de plana propia (banco de fotos del ERP), no la de la web —
+    // igual criterio que el resto de informes impresos del panel
+    const buildOrderItemRows=(o)=> o.items.map(i=>{
+      const prod=this.data().find(p=>p.codigo===i.codigo);
+      const localImgs=prod && prod.imagesLocal;
+      const imgSrc=(localImgs && (localImgs[i.color] || localImgs[String(i.color).toUpperCase()] || localImgs._default)) || i.image || '';
+      const isPhoto=!!imgSrc;
+      return {
+        key:i.codigo+'|'+i.color+'|'+i.talla,
+        isPhoto, noPhoto:!isPhoto,
+        imgEl: isPhoto ? React.createElement('img',{src:imgSrc,style:{width:'100%',height:'100%',objectFit:'cover',display:'block'}}) : null,
+        name:i.nombre, codigo:i.codigo, color:i.color, talla:i.talla, cantidad:i.cantidad,
+        precioUnit:fmt(i.precio_unit), subtotal:fmt(i.cantidad*i.precio_unit),
+      };
+    });
+
+    // ---- detalle de un pedido en pantalla (con fotos)
+    let orderDetail=null;
+    if(st.screen==='orderDetail' && st.selectedOrderId!=null){
+      const o=todosPedidos.find(x=>x.id===st.selectedOrderId);
+      if(o){
+        orderDetail={
+          ref:o.referencia, fecha:this.fmtFechaPedido(o.fecha),
+          clienteNombre: o.cliente_nombre,
+          total: fmt(o.total), nota:o.nota, hasNota:!!o.nota,
+          estadoSelectEl: estadoSelect(o),
+          itemRows: buildOrderItemRows(o),
+        };
+      }
+    }
+
+    // ---- documento imprimible de un pedido (mismo formato que el PDF del
+    // cliente): oculto siempre en pantalla, solo se muestra durante
+    // window.print() mientras printOrderId esté activo (ver printOrder()).
+    let printDoc=null;
+    if(st.printOrderId!=null){
+      const o=todosPedidos.find(x=>x.id===st.printOrderId);
+      if(o){
+        printDoc={
+          ref:o.referencia, fecha:this.fmtFechaPedido(o.fecha),
+          clienteNombre: o.cliente_nombre,
+          total: fmt(o.total), nota:o.nota, hasNota:!!o.nota,
+          estado:o.estado,
+          itemRows: buildOrderItemRows(o),
+        };
+      }
+    }
+    const printDocStyle = (printDoc?'display:block':'display:none')+';padding:30px 40px;background:#fff;max-width:1000px;margin:0 auto';
+    const appShellStyle = 'display:'+(printDoc?'none':'flex')+';min-height:100vh;width:100%;background:#f2f2ef';
+
+    // ---- tarifas: una columna por cada precio WHOLESALE* que trae el
+    // informe de precios del ERP (cargar_precios / build_products.py), no
+    // algo que se edite aquí — este panel solo muestra lo que ya viene subido.
+    const tarifaCols=meta.tarifas||[];
+    const paisTarifas=st.paisTarifas||[];
+
+    // ---- clientes
+    const clientRows=clients.map(c=>{
+      const tarifa=this.tarifaDeCliente(c.pais, paisTarifas);
+      return Object.assign({}, c, {
+        edit:()=>this.editClient(c.id),
+        remove:()=>this.removeClient(c.id),
+        tarifaLabel: tarifa || (c.pais ? 'País sin mapear' : 'Sin país'),
+        tarifaColor: tarifa ? '#6E7150' : '#a7a7a0',
+        accesoLabel: c.usuario ? c.usuario : 'Sin acceso',
+        accesoColor: c.usuario ? '#6b6b64' : '#c2bfb6',
+      });
+    });
+    const clientsGridCols='1.4fr 1.3fr .8fr 1.4fr .65fr .8fr 1.2fr 1.4fr 70px';
+    const clientsHeadStyle='display:grid;grid-template-columns:'+clientsGridCols+';padding:13px 18px;border-bottom:1px solid #ededea;font-size:10px;letter-spacing:.1em;color:#a7a7a0;font-weight:600;min-width:max-content';
+    const clientsRowStyle='display:grid;grid-template-columns:'+clientsGridCols+';padding:12px 18px;border-bottom:1px solid #f2f2ef;align-items:center;min-width:max-content';
+
+    const priceRows=base.map(p=>{
+      const porNombre={};
+      (p.tarifas||[]).forEach(t=>{ porNombre[t.nombre]=t.precio; });
+      const cells=tarifaCols.map(tc=>({
+        key:p.codigo+'|'+tc.nombre,
+        value: porNombre[tc.nombre]!=null ? fmt(porNombre[tc.nombre]) : '—',
+      }));
+      return {codigo:p.codigo, name:p.name, cells};
+    });
+    const priceGridStyle=`display:grid;grid-template-columns:1.6fr 1.8fr repeat(${tarifaCols.length||1},1fr);gap:0`;
+    const priceHeadStyle=priceGridStyle+';padding:13px 18px;border-bottom:1px solid #ededea;font-size:10px;letter-spacing:.1em;color:#a7a7a0;font-weight:600;min-width:max-content';
+    const priceRowStyle=priceGridStyle+';padding:11px 18px;border-bottom:1px solid #f2f2ef;align-items:center;min-width:max-content';
+    const tarifasSummary = tarifaCols.length
+      ? (tarifaCols.length+(tarifaCols.length===1?' tarifa':' tarifas')+' · '+priceRows.length+' referencias')
+      : 'Sube el informe de precios (con una columna WHOLESALE por tarifa) para verlas aquí.';
+    const fieldStyle='padding:10px 12px;border:1px solid #e2e2dd;font-size:13.5px;color:#161616;width:100%';
+    const newClientBtnStyle='flex:none;padding:11px 18px;border:1px solid #e2e2dd;background:#fff;color:#161616;font-size:12.5px;font-weight:600';
+    const saveClientBtnStyle='background:#161616;color:#fff;border:none;padding:11px 22px;font-size:12.5px;font-weight:600;letter-spacing:.03em'+(st.clientSaving?';opacity:.5;pointer-events:none':'');
+    const cancelClientBtnStyle='background:none;border:1px solid #e2e2dd;color:#6b6b64;padding:11px 22px;font-size:12.5px;font-weight:500';
+
+    // ---- tarifas por país: qué tarifa le toca a cada cliente según su país
+    // (mismo campo 'país' de la ficha de cliente, ya normalizado al guardar)
+    const paisesSugeridos=Array.from(new Set(paisTarifas.map(r=>r.pais).filter(Boolean))).sort();
+    const selectStyle={padding:'10px 12px', border:'1px solid #e2e2dd', fontSize:'13.5px', color:'#161616', width:'100%', background:'#fff'};
+    const paisTarifaRows=paisTarifas.map(r=>({
+      id:r.id, pais:r.pais,
+      setPais:this.setPaisTarifaPais(r.id), blurPais:this.blurPaisTarifaPais(r.id),
+      tarifaSelectEl: React.createElement('select', {value:r.tarifa||'', onChange:this.setPaisTarifaTarifa(r.id), style:selectStyle},
+        [React.createElement('option', {key:'_none', value:''}, 'Sin asignar')]
+          .concat(tarifaCols.map(tc=>React.createElement('option', {key:tc.nombre, value:tc.nombre}, tc.nombre)))
+      ),
+      remove:()=>this.removePaisTarifa(r.id),
+    }));
+
+    // import zone styles
+    const zoneBase='position:relative;display:flex;flex-direction:column;min-height:190px;padding:26px;border:1.5px dashed #d8d8d0;background:#fff;cursor:pointer';
+    const zoneOk='position:relative;display:flex;flex-direction:column;min-height:190px;padding:26px;border:1.5px solid #ededea;background:#fff;cursor:pointer';
+
+    return {
+      navItems,
+      collections, noCollections: collections.length===0,
+      collectionLine: (this.data().length||0)+' referencias · stock '+meta.fechaStock,
+      collectionsSummary,
+      isImport: st.screen==='import',
+      isCatalog: st.screen==='catalog',
+      isProduct: st.screen==='product',
+      isPricing: st.screen==='pricing',
+      isOrders: st.screen==='orders',
+      isOrderDetail: st.screen==='orderDetail',
+      isClients: st.screen==='clients',
+      ordersSummary: orderRows.length ? (orderRows.length+(orderRows.length===1?' pedido':' pedidos')) : 'Aquí verás los pedidos que hagan los clientes.',
+      hasOrders: orderRows.length>0, noOrders: orderRows.length===0,
+      noOrdersNote,
+      ordersHeadStyle, ordersRowStyle,
+      orderRows,
+      refreshPedidos: this._fetchPedidos,
+      refreshPedidosLabel: st.pedidosLoading ? 'Actualizando…' : 'Actualizar',
+      pedidosConnStatus, pedidosConnColor,
+      adminKey: st.adminKey, setAdminKey: this.setAdminKey,
+      orderDetail: orderDetail || {}, hasOrderDetail: !!orderDetail,
+      backToOrders: this.backToOrders,
+      printDoc: printDoc || {}, printDocStyle, appShellStyle,
+
+      // import
+      meta,
+      stockFile: st.stockFile, priceFile: st.priceFile,
+      noStock: !st.stockFile, noPrice: !st.priceFile,
+      bothLoaded: !!(st.stockFile && st.priceFile),
+      stockZoneStyle: st.stockFile?zoneOk:zoneBase,
+      priceZoneStyle: st.priceFile?zoneOk:zoneBase,
+      valStats,
+      onStockPick:this.onStockPick, onPricePick:this.onPricePick,
+      onStockDrop:this.onStockDrop, onPriceDrop:this.onPriceDrop, onDragOver:this.onDragOver,
+      loadSample:this.loadSample, confirmImport:this.confirmImport,
+
+      // catalog
+      collChips, catChips, stateChips,
+      search: st.search, onSearch:this.onSearch,
+      isGrid: st.view==='grid', isTable: st.view==='table',
+      gridStyle:`display:grid;grid-template-columns:repeat(auto-fill,minmax(${this.props.catalogDensity==='Compacto'?'168px':'202px'},1fr));gap:${this.props.catalogDensity==='Compacto'?'16px':'22px'}`,
+      gridBtnStyle:`padding:9px 16px;border:none;background:${st.view==='grid'?'#161616':'#fff'};color:${st.view==='grid'?'#fff':'#6b6b64'};font-size:12.5px;font-weight:500`,
+      tableBtnStyle:`padding:9px 16px;border:none;border-left:1px solid #e2e2dd;background:${st.view==='table'?'#161616':'#fff'};color:${st.view==='table'?'#fff':'#6b6b64'};font-size:12.5px;font-weight:500`,
+      exportBtnStyle:`padding:9px 16px;border:1px solid #e2e2dd;background:#fff;color:#161616;font-size:12.5px;font-weight:500`,
+      exportPdf:this.exportPdf,
+      isStocklistDetallado: st.stocklistFormat!=='cliente', isStocklistCliente: st.stocklistFormat==='cliente',
+      setStocklistDetallado:this.setStocklistDetallado, setStocklistCliente:this.setStocklistCliente,
+      stocklistDetalladoBtnStyle:`padding:9px 16px;border:none;background:${st.stocklistFormat!=='cliente'?'#161616':'#fff'};color:${st.stocklistFormat!=='cliente'?'#fff':'#6b6b64'};font-size:12.5px;font-weight:500`,
+      stocklistClienteBtnStyle:`padding:9px 16px;border:none;border-left:1px solid #e2e2dd;background:${st.stocklistFormat==='cliente'?'#161616':'#fff'};color:${st.stocklistFormat==='cliente'?'#fff':'#6b6b64'};font-size:12.5px;font-weight:500`,
+      printTitle, printDate, printSubtitle,
+      hasLogo: !!st.logo, noLogo: !st.logo, logo: st.logo||'',
+      filtered: filteredD,
+      tableRows,
+      empty: filteredD.length===0,
+      setGrid:this.setGrid, setTable:this.setTable,
+
+      // product
+      sel: selD,
+      imageZoneStyle,
+      onImagePick:this.onImagePick, onImageDrop:this.onImageDrop,
+      removeImage:this.removeImage, setProductAdjust:this.setProductAdjust,
+      backToCatalog:this.backToCatalog,
+
+      // pricing
+      globalDraft: gd,
+      globalLabel: this.pct(gd),
+      globalColor: gd>0?'#6E7150':(gd<0?'#a5443b':'#161616'),
+      count: all.length,
+      setGlobal:this.setGlobal, applyGlobal:this.applyGlobal,
+      applyBtnStyle:`width:100%;margin-top:22px;background:#161616;color:#fff;border:none;padding:14px;font-size:13px;font-weight:600;letter-spacing:.03em`,
+      appliedNote: st.appliedGlobal===gd ? ('Ajuste actual aplicado: '+this.pct(st.appliedGlobal)) : ('Actualmente aplicado: '+this.pct(st.appliedGlobal)),
+      minReorder: st.minReorder, setMinReorder:this.setMinReorder,
+      lowStockThreshold: st.lowStockThreshold, setLowStockThreshold:this.setLowStockThreshold,
+      exchangesEnabled: st.exchangesEnabled, toggleExchanges:this.toggleExchanges,
+      exchangePct: st.exchangePct, setExchangePct:this.setExchangePct,
+      exchangeExample,
+      pricePreview,
+      logoZoneStyle: st.logo
+        ? 'position:relative;display:flex;align-items:center;justify-content:center;width:100%;height:110px;background:#fff;border:1px solid #ededea;cursor:pointer;padding:14px'
+        : 'position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;width:100%;height:110px;background:#fafaf8;border:1.5px dashed #d8d8d0;cursor:pointer;text-align:center;padding:14px',
+      onLogoPick:this.onLogoPick, onLogoDrop:this.onLogoDrop, removeLogo:this.removeLogo,
+
+      // clients
+      clientsSummary: clients.length+(clients.length===1?' cliente':' clientes'),
+      newClient:this.newClient, newClientBtnStyle,
+      hasClientForm: !!st.clientDraft,
+      clientFormTitle: st.clientEditingId!=null ? 'EDITAR CLIENTE' : 'NUEVO CLIENTE',
+      clientDraft: st.clientDraft || {},
+      fieldStyle,
+      setNombreComercial: this.setClientDraftField('nombreComercial'),
+      setRazonSocial: this.setClientDraftField('razonSocial'),
+      setCif: this.setClientDraftField('cif'),
+      setDireccion: this.setClientDraftField('direccion'),
+      setPais: this.setClientDraftField('pais'),
+      setAgente: this.setClientDraftField('agente'),
+      setUsuario: this.setClientDraftField('usuario'),
+      setPassword: this.setClientDraftField('password'),
+      clientUsuarioError: st.clientUsuarioError,
+      saveClient:this.saveClient, saveClientBtnStyle,
+      saveClientBtnLabel: st.clientSaving ? 'Creando acceso…' : 'Guardar cliente',
+      cancelClientForm:this.cancelClientForm, cancelClientBtnStyle,
+      hasClients: clients.length>0,
+      noClients: clients.length===0,
+      clientRows,
+      clientsHeadStyle, clientsRowStyle,
+      paisesSugeridos,
+
+      // tarifas
+      isTarifas: st.screen==='tarifas',
+      tarifasSummary,
+      tarifaCols, hasTarifas: tarifaCols.length>0, noTarifas: tarifaCols.length===0,
+      priceHeadStyle, priceRowStyle,
+      priceRows, emptyPriceRows: priceRows.length===0,
+      paisTarifaRows, addPaisTarifa:this.addPaisTarifa,
+      hasPaisTarifas: paisTarifaRows.length>0,
+      noPaisTarifas: paisTarifaRows.length===0,
+    };
+  }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MASSCOB Wholesale — Mis pedidos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="cart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="session.js"></script>
+<script src="assets/brand-logo.js"></script>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'Archivo',system-ui,sans-serif;color:#161616;background:#fff;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+::placeholder{color:#a7a7a0}
+
+.preview-ribbon{position:sticky;top:0;z-index:50;background:#161616;color:#fff;text-align:center;font-size:11px;letter-spacing:.08em;padding:7px 12px;font-weight:600}
+
+header{display:flex;align-items:center;justify-content:space-between;padding:22px 40px;background:#fff;border-bottom:1px solid #ededea}
+.wordmark{font-size:16px;font-weight:600;letter-spacing:.16em;color:#161616;line-height:1}
+.wordmark-sub{font-size:8px;font-weight:500;letter-spacing:.3em;color:#a7a7a0;margin-top:5px}
+header nav{display:flex;align-items:center;gap:26px}
+header nav a{font-size:12.5px;color:#6b6b64;text-decoration:none;letter-spacing:.02em}
+.cartLink{display:flex;align-items:center;gap:7px}
+.cartBadge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;background:#161616;color:#fff;font-size:10.5px;font-weight:700;border-radius:50%}
+
+.profileMenu{position:relative}
+.profileBtn{background:none;border:none;font-size:12.5px;color:#6b6b64;letter-spacing:.02em;padding:4px 0;display:flex;align-items:center;gap:5px;font-family:inherit}
+.profileBtn:hover{color:#161616}
+.profileDropdown{position:absolute;top:calc(100% + 14px);right:0;background:#fff;border:1px solid #ededea;box-shadow:0 12px 30px rgba(0,0,0,.08);min-width:170px;display:none;flex-direction:column;padding:8px 0;z-index:40}
+.profileDropdown.open{display:flex}
+.profileDropdown a,.profileDropdown button{display:block;width:100%;text-align:left;padding:10px 16px;font-size:12.5px;color:#161616;text-decoration:none;background:none;border:none;font-family:inherit;cursor:pointer}
+.profileDropdown a:hover,.profileDropdown button:hover{background:#fafaf8}
+.profileDropdown .activeItem{font-weight:600}
+.profileDropdown .logoutItem{color:#a5443b;border-top:1px solid #f2f2ef;margin-top:4px}
+
+main{max-width:900px;margin:0 auto;padding:40px 40px 90px}
+.pageHead h1{font-size:30px;font-weight:600;letter-spacing:-.01em;margin:0 0 8px}
+.pageHead p{font-size:14px;color:#6b6b64;margin:0 0 30px}
+
+.order{background:#fff;border:1px solid #ededea;margin-bottom:18px}
+.order .head{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:18px 22px;border-bottom:1px solid #ededea;flex-wrap:wrap}
+.order .ref{font-size:14px;font-weight:600;font-family:ui-monospace,Menlo,monospace}
+.order .fecha{font-size:12.5px;color:#a7a7a0;margin-top:3px}
+.estadoBadge{display:inline-block;padding:5px 12px;font-size:10.5px;font-weight:700;letter-spacing:.05em}
+.order .lines{padding:6px 22px}
+.orderLine{display:flex;justify-content:space-between;font-size:13px;padding:9px 0;border-bottom:1px solid #f2f2ef}
+.orderLine:last-child{border-bottom:none}
+.orderLine .qty{color:#a7a7a0;margin-right:8px}
+.order .foot{display:flex;justify-content:space-between;align-items:center;padding:16px 22px;border-top:1px solid #ededea;background:#fafaf8}
+.order .total{font-size:15px;font-weight:600}
+.order .nota{font-size:12.5px;color:#6b6b64;font-style:italic}
+
+.empty{padding:70px 40px;text-align:center;background:#fff;border:1px dashed #d8d8d0}
+.empty p{color:#a7a7a0;font-size:14px;margin:0 0 18px}
+.empty a{display:inline-block;background:#161616;color:#fff;text-decoration:none;padding:12px 24px;font-size:13px;font-weight:600}
+</style>
+</head>
+<body>
+
+<div class="preview-ribbon">Pedidos reales, guardados en Supabase — también visibles desde el panel admin.</div>
+
+<header>
+  <div class="brand" data-brand data-logo-height="30">
+    <div class="brandText">
+      <div class="wordmark">MASSCOB</div>
+      <div class="wordmark-sub">WHOLESALE</div>
+    </div>
+  </div>
+  <nav>
+    <a href="catalogo.html">Catálogo</a>
+    <a href="carrito.html" class="cartLink">Carrito <span class="cartBadge" id="cartCount">0</span></a>
+    <div class="profileMenu">
+      <button class="profileBtn" id="profileBtn">Mi perfil ▾</button>
+      <div class="profileDropdown" id="profileDropdown">
+        <a href="pedidos.html" data-nav="pedidos">Pedidos</a>
+        <a href="mi-cuenta.html" data-nav="cuenta">Mis datos</a>
+        <button class="logoutItem" id="logoutBtn">Cerrar sesión</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <div class="pageHead">
+    <h1>Mis pedidos</h1>
+    <p>El estado lo actualiza tu agente comercial a medida que gestiona el pedido.</p>
+  </div>
+  <div id="content"></div>
+</main>
+
+<script>
+let client;
+
+async function render(){
+  if(!client) return;
+  const pedidos = await pedidosDeCliente();
+  const content = document.getElementById('content');
+  if(pedidos.length===0){
+    content.innerHTML = `<div class="empty"><p>Todavía no tienes ningún pedido.</p><a href="catalogo.html">Ver catálogo →</a></div>`;
+    return;
+  }
+  content.innerHTML = pedidos.map(p => {
+    const lines = p.items.map(i => `
+      <div class="orderLine"><span><span class="qty">${i.cantidad}×</span>${i.name} — ${i.color} / ${i.talla}</span><span>${fmtEUR(i.cantidad*i.precioUnit)}</span></div>
+    `).join('');
+    const style = ESTADO_STYLE[p.estado] || ESTADO_STYLE['PENDIENTE'];
+    return `
+      <div class="order">
+        <div class="head">
+          <div>
+            <div class="ref">${p.ref}</div>
+            <div class="fecha">${fmtFechaPedido(p.fecha)}</div>
+          </div>
+          <span class="estadoBadge" style="${style}">${p.estado}</span>
+        </div>
+        <div class="lines">${lines}</div>
+        <div class="foot">
+          <span class="nota">${p.nota ? 'Nota: ' + p.nota : ''}</span>
+          <span class="total">${fmtEUR(p.total)}</span>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+(async function(){
+  client = await requireSession();
+  if(!client) return;
+  initProfileMenu(client, 'pedidos');
+  updateCartBadge();
+  await render();
+})();
+</script>
+
+</body>
+</html>

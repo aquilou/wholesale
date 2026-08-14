@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MASSCOB Wholesale — Mis datos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="cart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="session.js"></script>
+<script src="assets/brand-logo.js"></script>
+<style>
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{font-family:'Archivo',system-ui,sans-serif;color:#161616;background:#fff;-webkit-font-smoothing:antialiased}
+button{font-family:inherit;cursor:pointer}
+::placeholder{color:#a7a7a0}
+
+.preview-ribbon{position:sticky;top:0;z-index:50;background:#161616;color:#fff;text-align:center;font-size:11px;letter-spacing:.08em;padding:7px 12px;font-weight:600}
+
+header{display:flex;align-items:center;justify-content:space-between;padding:22px 40px;background:#fff;border-bottom:1px solid #ededea}
+.wordmark{font-size:16px;font-weight:600;letter-spacing:.16em;color:#161616;line-height:1}
+.wordmark-sub{font-size:8px;font-weight:500;letter-spacing:.3em;color:#a7a7a0;margin-top:5px}
+header nav{display:flex;align-items:center;gap:26px}
+header nav a{font-size:12.5px;color:#6b6b64;text-decoration:none;letter-spacing:.02em}
+.cartLink{display:flex;align-items:center;gap:7px}
+.cartBadge{display:inline-flex;align-items:center;justify-content:center;min-width:18px;height:18px;padding:0 5px;background:#161616;color:#fff;font-size:10.5px;font-weight:700;border-radius:50%}
+
+.profileMenu{position:relative}
+.profileBtn{background:none;border:none;font-size:12.5px;color:#6b6b64;letter-spacing:.02em;padding:4px 0;display:flex;align-items:center;gap:5px;font-family:inherit}
+.profileBtn:hover{color:#161616}
+.profileDropdown{position:absolute;top:calc(100% + 14px);right:0;background:#fff;border:1px solid #ededea;box-shadow:0 12px 30px rgba(0,0,0,.08);min-width:170px;display:none;flex-direction:column;padding:8px 0;z-index:40}
+.profileDropdown.open{display:flex}
+.profileDropdown a,.profileDropdown button{display:block;width:100%;text-align:left;padding:10px 16px;font-size:12.5px;color:#161616;text-decoration:none;background:none;border:none;font-family:inherit;cursor:pointer}
+.profileDropdown a:hover,.profileDropdown button:hover{background:#fafaf8}
+.profileDropdown .activeItem{font-weight:600}
+.profileDropdown .logoutItem{color:#a5443b;border-top:1px solid #f2f2ef;margin-top:4px}
+
+main{max-width:640px;margin:0 auto;padding:40px 40px 90px}
+.pageHead h1{font-size:30px;font-weight:600;letter-spacing:-.01em;margin:0 0 8px}
+.pageHead p{font-size:14px;color:#6b6b64;margin:0 0 30px}
+
+.box{background:#fff;border:1px solid #ededea}
+.row{display:flex;justify-content:space-between;gap:20px;padding:16px 24px;border-bottom:1px solid #f2f2ef}
+.row:last-child{border-bottom:none}
+.row .label{font-size:11px;letter-spacing:.1em;color:#a7a7a0;font-weight:600;flex:none;padding-top:2px}
+.row .value{font-size:14px;color:#161616;text-align:right}
+.note{font-size:12px;color:#a7a7a0;margin-top:16px;line-height:1.6}
+</style>
+</head>
+<body>
+
+<div class="preview-ribbon">DATOS REALES — cargados desde Supabase a través de tu sesión de acceso.</div>
+
+<header>
+  <div class="brand" data-brand data-logo-height="30">
+    <div class="brandText">
+      <div class="wordmark">MASSCOB</div>
+      <div class="wordmark-sub">WHOLESALE</div>
+    </div>
+  </div>
+  <nav>
+    <a href="catalogo.html">Catálogo</a>
+    <a href="carrito.html" class="cartLink">Carrito <span class="cartBadge" id="cartCount">0</span></a>
+    <div class="profileMenu">
+      <button class="profileBtn" id="profileBtn">Mi perfil ▾</button>
+      <div class="profileDropdown" id="profileDropdown">
+        <a href="pedidos.html" data-nav="pedidos">Pedidos</a>
+        <a href="mi-cuenta.html" data-nav="cuenta">Mis datos</a>
+        <button class="logoutItem" id="logoutBtn">Cerrar sesión</button>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<main>
+  <div class="pageHead">
+    <h1>Mis datos</h1>
+    <p>Si algo no es correcto, contacta con tu agente comercial para actualizarlo.</p>
+  </div>
+  <div id="content"></div>
+</main>
+
+<script>
+let client;
+
+function render(){
+  if(!client) return;
+  const rows = [
+    ['NOMBRE COMERCIAL', client.nombreComercial],
+    ['RAZÓN SOCIAL', client.razonSocial],
+    ['CIF', client.cif],
+    ['DIRECCIÓN', client.direccion],
+    ['PAÍS', client.pais],
+    ['AGENTE', client.agente],
+    ['EMAIL DE ACCESO', client.usuario],
+  ];
+  document.getElementById('content').innerHTML = `
+    <div class="box">
+      ${rows.map(([label,value]) => `<div class="row"><span class="label">${label}</span><span class="value">${value || '—'}</span></div>`).join('')}
+    </div>
+    <div class="note">Estos datos los gestiona MASSCOB desde el panel de administración.</div>
+  `;
+}
+
+(async function(){
+  client = await requireSession();
+  if(!client) return;
+  initProfileMenu(client, 'cuenta');
+  updateCartBadge();
+  render();
+})();
+</script>
+
+</body>
+</html>
