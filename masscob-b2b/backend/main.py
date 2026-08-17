@@ -335,3 +335,20 @@ def crear_cliente(cliente: ClienteIn, _: None = Depends(require_admin)):
     finally:
         conn.close()
     return dict(zip(["id"] + _CLIENTE_CAMPOS, row))
+
+
+@app.get("/admin/clientes")
+def listar_clientes_admin(_: None = Depends(require_admin)):
+    conn = get_conn()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                f"select c.id, {', '.join('c.' + f for f in _CLIENTE_CAMPOS)}, u.email "
+                "from clientes c join auth.users u on u.id = c.id "
+                "order by c.created_at desc"
+            )
+            rows = cur.fetchall()
+    finally:
+        conn.close()
+    keys = ["id"] + _CLIENTE_CAMPOS + ["usuario"]
+    return [dict(zip(keys, row)) for row in rows]

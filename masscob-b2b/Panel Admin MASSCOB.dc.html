@@ -886,6 +886,7 @@ class Component extends DCLogic {
     }
     this._fetchPedidos();
     this._fetchStock();
+    this._fetchClientes();
   }
   _key(){ return 'masscob_admin_v2'; }
   _load(){ try{ return JSON.parse(localStorage.getItem(this._key())) || {}; }catch(e){ return {}; } }
@@ -937,9 +938,23 @@ class Component extends DCLogic {
       })
       .catch(()=>{}); // el catálogo cae de vuelta a los números estáticos de products.js
   }
+  // clientes reales (tabla `clientes` + email de auth.users) — se fusionan
+  // con los que hubiera solo en local (sin acceso todavía, nunca llegan a
+  // la base de datos porque el esquema exige una cuenta de Auth real).
+  _fetchClientes=()=>{
+    if(!this.state.adminKey) return;
+    fetch(API_BASE+'/admin/clientes', {headers:this._adminHeaders()})
+      .then(res => { if(!res.ok) throw new Error(); return res.json(); })
+      .then(remotos => {
+        const locales = this.state.clients.filter(c => !remotos.some(r => r.id===c.id));
+        const clients = locales.concat(remotos.map(r => Object.assign({}, r, {synced:true})));
+        this.setState({clients}, ()=>this._save());
+      })
+      .catch(()=>{}); // si falla, se queda con lo que ya hubiera en local
+  }
   setAdminKey=(e)=>{
     const adminKey=e.target.value;
-    this.setState({adminKey}, ()=>{ this._save(); this._fetchPedidos(); this._fetchStock(); });
+    this.setState({adminKey}, ()=>{ this._save(); this._fetchPedidos(); this._fetchStock(); this._fetchClientes(); });
   }
   fmtFechaPedido(iso){ try{ return new Date(iso).toLocaleDateString('es-ES', {day:'2-digit',month:'2-digit',year:'numeric'}); }catch(e){ return iso; } }
   estadoPedidoStyle(estado){
