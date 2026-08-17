@@ -952,8 +952,15 @@ class Component extends DCLogic {
     fetch(API_BASE+'/admin/clientes', {headers:this._adminHeaders()})
       .then(res => { if(!res.ok) throw new Error(); return res.json(); })
       .then(remotos => {
-        const locales = this.state.clients.filter(c => !remotos.some(r => r.id===c.id));
-        const clients = locales.concat(remotos.map(r => Object.assign({}, r, {synced:true})));
+        // el backend devuelve snake_case (columnas tal cual en Postgres);
+        // el panel pinta camelCase — convertir aquí, no en el servidor.
+        const norm = remotos.map(r => ({
+          id: r.id, nombreComercial: r.nombre_comercial, razonSocial: r.razon_social,
+          cif: r.cif, direccion: r.direccion, pais: r.pais, agente: r.agente,
+          usuario: r.usuario, synced: true,
+        }));
+        const locales = this.state.clients.filter(c => !norm.some(r => r.id===c.id));
+        const clients = locales.concat(norm);
         this.setState({clients}, ()=>this._save());
       })
       .catch(()=>{}); // si falla, se queda con lo que ya hubiera en local
