@@ -6,6 +6,7 @@
 !/masscob-b2b/
 !/Fotos/
 !/.gitignore
+!/vercel.json
 
 # Secretos — nunca al repo.
 masscob-b2b/backend/.env

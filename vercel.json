@@ -1,0 +1,5 @@
+{
+  "rewrites": [
+    { "source": "/", "destination": "/masscob-b2b/tienda/index.html" }
+  ]
+}
