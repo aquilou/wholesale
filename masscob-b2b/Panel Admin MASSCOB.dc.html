@@ -839,7 +839,13 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 </div>
 </x-dc>
 <script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:860},&quot;defaultScreen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Importar&quot;,&quot;Catálogo&quot;],&quot;default&quot;:&quot;Importar&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Inicio&quot;},&quot;defaultView&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Cuadrícula&quot;,&quot;Tabla&quot;],&quot;default&quot;:&quot;Cuadrícula&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Catálogo&quot;},&quot;catalogDensity&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;Cómodo&quot;,&quot;Compacto&quot;],&quot;default&quot;:&quot;Cómodo&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Catálogo&quot;}}">
-const API_BASE = 'http://127.0.0.1:8001'; // backend local; actualizar cuando haya despliegue real
+// En local (http.server + uvicorn por separado) el backend está en :8001;
+// en Vercel, frontend y backend viven en el mismo dominio (vercel.json
+// enruta /health, /me, /pedidos, /admin/*, /stock a la función Python), así
+// que ahí basta con rutas relativas.
+const API_BASE = (location.hostname === '127.0.0.1' || location.hostname === 'localhost')
+  ? 'http://127.0.0.1:8001'
+  : '';
 
 class Component extends DCLogic {
   constructor(props){

@@ -7,6 +7,8 @@
 !/Fotos/
 !/.gitignore
 !/vercel.json
+!/api/
+!/requirements.txt
 
 # Secretos — nunca al repo.
 masscob-b2b/backend/.env
@@ -28,3 +30,5 @@ masscob-b2b/products.js.bak_pre_b2c
 # Python
 masscob-b2b/**/__pycache__/
 masscob-b2b/**/*.pyc
+api/__pycache__/
+api/*.pyc

@@ -24,7 +24,11 @@ app = FastAPI(title="MASSCOB Wholesale API")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # TODO: restringir al dominio real (b2b.masscob.com) antes de ir a producción
+    # En producción (Vercel) frontend y backend son el mismo origen, así que
+    # el navegador ni aplica CORS ahí. Esto es solo para poder seguir
+    # probando en local con la tienda servida aparte del backend (:5500 vs
+    # :8001, orígenes distintos).
+    allow_origins=["http://127.0.0.1:5500", "http://localhost:5500"],
     allow_methods=["*"],
     allow_headers=["*"],
 )

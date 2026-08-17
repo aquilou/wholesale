@@ -3,7 +3,13 @@
 // que cada página cargue el SDK de Supabase (CDN) antes que este script.
 const SUPABASE_URL = 'https://eqhlxeainbvzfkifszap.supabase.co';
 const SUPABASE_ANON_KEY = 'sb_publishable_gLbaQk49__Z1PMYFeGNFkA_ojyiCuAF';
-const API_BASE = 'http://127.0.0.1:8001'; // backend local; actualizar cuando haya despliegue real
+// En local (http.server + uvicorn por separado) el backend está en :8001;
+// en Vercel, frontend y backend viven en el mismo dominio (vercel.json
+// enruta /health, /me, /pedidos, /admin/*, /stock a la función Python), así
+// que ahí basta con rutas relativas.
+const API_BASE = (location.hostname === '127.0.0.1' || location.hostname === 'localhost')
+  ? 'http://127.0.0.1:8001'
+  : '';
 
 const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 

@@ -1,5 +1,11 @@
 {
   "rewrites": [
-    { "source": "/", "destination": "/masscob-b2b/tienda/index.html" }
+    { "source": "/", "destination": "/masscob-b2b/tienda/index.html" },
+    { "source": "/health", "destination": "/api/index" },
+    { "source": "/me", "destination": "/api/index" },
+    { "source": "/pedidos", "destination": "/api/index" },
+    { "source": "/pedidos/:path*", "destination": "/api/index" },
+    { "source": "/stock", "destination": "/api/index" },
+    { "source": "/admin/:path*", "destination": "/api/index" }
   ]
 }

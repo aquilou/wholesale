@@ -1,0 +1,4 @@
+fastapi
+python-dotenv
+pyjwt[crypto]
+psycopg[binary]
