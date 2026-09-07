@@ -317,6 +317,64 @@ def _crear_auth_user(email: str, password: str) -> str:
         raise HTTPException(400, f"No se pudo crear el acceso a la tienda: {msg}")
 
 
+class ClienteAccesoIn(BaseModel):
+    usuario: Optional[str] = None
+    password: Optional[str] = None
+
+
+def _actualizar_auth_user(user_id: str, email: Optional[str], password: Optional[str]):
+    """Cambia el email y/o la contraseña de un cliente que ya tiene cuenta.
+
+    Antes esto no existía: el panel dejaba editar el email/contraseña de un
+    cliente ya sincronizado pero solo lo guardaba en local, sin tocar
+    Supabase Auth, así que el acceso nunca cambiaba de verdad (bug).
+    """
+    if not SUPABASE_SERVICE_ROLE_KEY:
+        raise HTTPException(
+            500,
+            "Falta SUPABASE_SERVICE_ROLE_KEY en el backend (.env) — "
+            "sin ella no se puede modificar el acceso.",
+        )
+    body = {}
+    if email:
+        body["email"] = email
+    if password:
+        body["password"] = password
+    if not body:
+        return
+    req = urllib.request.Request(
+        f"{SUPABASE_URL}/auth/v1/admin/users/{user_id}",
+        data=json.dumps(body).encode(),
+        headers={
+            "apikey": SUPABASE_SERVICE_ROLE_KEY,
+            "Authorization": f"Bearer {SUPABASE_SERVICE_ROLE_KEY}",
+            "Content-Type": "application/json",
+        },
+        method="PUT",
+    )
+    try:
+        with urllib.request.urlopen(req) as res:
+            res.read()
+    except urllib.error.HTTPError as e:
+        resp_body = e.read().decode()
+        try:
+            msg = json.loads(resp_body).get("msg") or json.loads(resp_body).get("message") or resp_body
+        except Exception:
+            msg = resp_body
+        raise HTTPException(400, f"No se pudo actualizar el acceso a la tienda: {msg}")
+
+
+@app.put("/admin/clientes/{cliente_id}/acceso")
+def actualizar_acceso_cliente(
+    cliente_id: str, datos: ClienteAccesoIn, _: None = Depends(require_admin)
+):
+    if datos.password and len(datos.password) < 6:
+        raise HTTPException(400, "La contraseña debe tener al menos 6 caracteres")
+    usuario = datos.usuario.strip().lower() if datos.usuario else None
+    _actualizar_auth_user(cliente_id, usuario, datos.password)
+    return {"ok": True}
+
+
 @app.post("/admin/clientes")
 def crear_cliente(cliente: ClienteIn, _: None = Depends(require_admin)):
     if len(cliente.password) < 6:

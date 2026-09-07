@@ -681,7 +681,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
               <input value="{{ clientDraft.password }}" onInput="{{ setPassword }}" placeholder="mínimo 4 caracteres" style="{{ fieldStyle }}">
             </label>
           </div>
-          <div style="font-size:11.5px;color:#a7a7a0;margin-top:10px;line-height:1.5">Con esto el cliente ya puede entrar en la tienda (masscob-b2b/tienda) con este email y contraseña. Déjalo en blanco si todavía no debe tener acceso.</div>
+          <div style="font-size:11.5px;color:#a7a7a0;margin-top:10px;line-height:1.5">{{ clientAccesoHelp }}</div>
           <sc-if value="{{ clientUsuarioError }}" hint-placeholder-val="">
             <div style="font-size:11.5px;color:#a5443b;margin-top:8px">{{ clientUsuarioError }}</div>
           </sc-if>
@@ -1192,9 +1192,36 @@ class Component extends DCLogic {
       return;
     }
 
-    // cliente sin acceso a la tienda todavía, o edición de campos de un
-    // cliente ya sincronizado (actualizar esos campos en el backend queda
-    // pendiente): se guarda solo en local, como antes.
+    // cliente ya sincronizado al que se le pone/cambia la contraseña: hay
+    // que avisar a Supabase Auth, si no el acceso se queda con la
+    // contraseña vieja aunque el panel muestre la nueva (bug real: pasaba
+    // antes con felipe@berrizmoda.com, que nunca pudo entrar).
+    if(cd.synced && cd.password){
+      if(!this.state.adminKey){ this.setState({clientUsuarioError:'Configura la clave de administrador en Ajustes para poder modificar el acceso.'}); return; }
+      this.setState({clientSaving:true, clientUsuarioError:null});
+      fetch(API_BASE+'/admin/clientes/'+this.state.clientEditingId+'/acceso', {
+        method:'PUT',
+        headers:Object.assign({'Content-Type':'application/json'}, this._adminHeaders()),
+        body: JSON.stringify({ usuario: cd.usuario, password: cd.password }),
+      })
+        .then(async res=>{
+          const data=await res.json().catch(()=>({}));
+          if(!res.ok) throw new Error(data.detail || 'Error del servidor');
+          return data;
+        })
+        .then(()=>{
+          const clients=this.state.clients.map(c=>c.id===this.state.clientEditingId ? Object.assign({}, cd, {synced:true}) : c);
+          this.setState({clients, clientDraft:null, clientEditingId:null, clientUsuarioError:null, clientSaving:false}, ()=>this._save());
+        })
+        .catch(err=>{
+          this.setState({clientUsuarioError: err.message==='Failed to fetch' ? 'Backend no accesible' : err.message, clientSaving:false});
+        });
+      return;
+    }
+
+    // cliente sin acceso a la tienda todavía, o edición de campos que no
+    // tocan el acceso (nombre, CIF, dirección...): eso se guarda solo en
+    // local, como antes.
     let clients=this.state.clients.slice();
     if(this.state.clientEditingId!=null){
       clients=clients.map(c=>c.id===this.state.clientEditingId ? Object.assign({}, cd, {id:this.state.clientEditingId}) : c);
@@ -1669,8 +1696,11 @@ class Component extends DCLogic {
       setUsuario: this.setClientDraftField('usuario'),
       setPassword: this.setClientDraftField('password'),
       clientUsuarioError: st.clientUsuarioError,
+      clientAccesoHelp: (st.clientDraft && st.clientDraft.synced)
+        ? 'Este cliente ya tiene acceso. Escribe una contraseña nueva solo si quieres cambiarla; déjala en blanco para no tocarla.'
+        : 'Con esto el cliente ya puede entrar en la tienda (masscob-b2b/tienda) con este email y contraseña. Déjalo en blanco si todavía no debe tener acceso.',
       saveClient:this.saveClient, saveClientBtnStyle,
-      saveClientBtnLabel: st.clientSaving ? 'Creando acceso…' : 'Guardar cliente',
+      saveClientBtnLabel: st.clientSaving ? 'Guardando…' : 'Guardar cliente',
       cancelClientForm:this.cancelClientForm, cancelClientBtnStyle,
       hasClients: clients.length>0,
       noClients: clients.length===0,
