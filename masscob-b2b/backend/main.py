@@ -315,6 +315,13 @@ def _crear_auth_user(email: str, password: str) -> str:
         except Exception:
             msg = body
         raise HTTPException(400, f"No se pudo crear el acceso a la tienda: {msg}")
+    except HTTPException:
+        raise
+    except Exception as e:
+        # Cualquier otro fallo (red, SSL, respuesta inesperada de Supabase...)
+        # también como HTTPException con el motivo real, para no devolver un
+        # 500 mudo que solo se puede diagnosticar mirando logs de Vercel.
+        raise HTTPException(502, f"No se pudo contactar con Supabase Auth: {e!r}")
 
 
 class ClienteAccesoIn(BaseModel):
@@ -362,6 +369,10 @@ def _actualizar_auth_user(user_id: str, email: Optional[str], password: Optional
         except Exception:
             msg = resp_body
         raise HTTPException(400, f"No se pudo actualizar el acceso a la tienda: {msg}")
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(502, f"No se pudo contactar con Supabase Auth: {e!r}")
 
 
 @app.put("/admin/clientes/{cliente_id}/acceso")
