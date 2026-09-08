@@ -68,10 +68,17 @@ header nav a.logout{color:#a5443b}
   header nav .profileMenu{width:100%}
   header nav .profileBtn{width:100%;justify-content:space-between;padding:16px 0;font-size:14px}
   header nav .profileDropdown{position:static;display:flex;box-shadow:none;border:none;min-width:0;padding:0 0 6px}
-  main{padding-left:20px;padding-right:20px}
+  main{padding:20px 20px 8px}
   .pageHead h1{font-size:24px}
-  .toolbar{flex-direction:column;align-items:stretch}
-  .toolbar .searchBox{max-width:none}
+  .pageHead p{margin-bottom:16px}
+  .toolbar{flex-direction:column;align-items:stretch;gap:12px;padding-bottom:14px}
+  .toolbar .searchBox{max-width:none!important}
+  /* en móvil los filtros de talla se simplifican fuera (chips de prenda
+     directas debajo del buscador); el botón/panel completo queda solo
+     para desktop */
+  .filtersBtn{display:none}
+  .catChipsRow{display:flex}
+  .gridSection{padding-top:18px}
 }
 
 main{padding:40px 40px 22px}
@@ -84,6 +91,14 @@ main{padding:40px 40px 22px}
 .filtersBtn{display:flex;align-items:center;gap:9px;background:none;border:none;padding:8px 2px;font-size:12px;letter-spacing:.1em;font-weight:600;color:#161616;text-transform:uppercase;border-bottom:1px solid transparent}
 .filtersBtn:hover{border-color:#161616}
 .filterBadge{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 4px;background:#161616;color:#fff;font-size:10px;font-weight:700;border-radius:50%}
+
+/* fila de chips de prenda en línea (solo móvil, ver media query): tocar
+   una prenda filtra directo, sin abrir ningún panel */
+.catChipsRow{display:none;gap:8px;overflow-x:auto;padding-bottom:4px;margin-bottom:2px;-ms-overflow-style:none;scrollbar-width:none}
+.catChipsRow::-webkit-scrollbar{display:none}
+.catChipsRow .fpOption{flex:none;white-space:nowrap;padding:6px 13px;border:1px solid #e2e2dd;background:#fff}
+.catChipsRow .fpOption.active{background:#161616;color:#fff;border-color:#161616}
+.catChipsRow .fpOption.disabled{color:#d8d8d0}
 
 /* ---- panel de filtros (slide-in) ---- */
 .filterOverlay{position:fixed;inset:0;background:rgba(22,22,22,.35);z-index:70;opacity:0;pointer-events:none;transition:opacity .25s ease}
@@ -225,6 +240,7 @@ main{padding:40px 40px 22px}
     <div class="searchBox"><input id="search" type="text" placeholder="Buscar por nombre o código…"></div>
     <button class="filtersBtn" id="filtersBtn">Filtros <span class="filterBadge" id="filterBadge" style="display:none"></span></button>
   </div>
+  <div class="catChipsRow" id="catChipsInline"></div>
 </main>
 
 <div class="gridSection">
@@ -368,11 +384,13 @@ function render(){
   const catCount = {};
   ALL.forEach(p => catCount[p.category]=(catCount[p.category]||0)+1);
   const cats = ['Todas', ...Array.from(new Set(ALL.map(p=>p.category))).sort()];
-  document.getElementById('catChips').innerHTML = cats.map(c => {
+  const catChipsHTML = cats.map(c => {
     const active = state.cat===c;
     const disabled = c!=='Todas' && !catCount[c];
     return `<button class="fpOption${active?' active':''}${disabled?' disabled':''}" data-kind="cat" data-val="${c}">${c}</button>`;
   }).join('');
+  document.getElementById('catChips').innerHTML = catChipsHTML;
+  document.getElementById('catChipsInline').innerHTML = catChipsHTML;
 
   const tallas = ['Todas', ...Object.keys(tallaCount).sort()];
   document.getElementById('tallaChips').innerHTML = tallas.map(t => {
