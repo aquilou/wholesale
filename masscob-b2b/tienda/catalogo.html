@@ -41,6 +41,25 @@ header nav a.logout{color:#a5443b}
 .profileDropdown .activeItem{font-weight:600}
 .profileDropdown .logoutItem{color:#a5443b;border-top:1px solid #f2f2ef;margin-top:4px}
 
+.navToggle{display:none;flex-direction:column;justify-content:center;gap:4px;width:34px;height:34px;background:none;border:none;padding:0}
+.navToggle span{display:block;width:20px;height:2px;background:#161616}
+.navOverlay{position:fixed;inset:0;background:rgba(22,22,22,.35);z-index:79;opacity:0;pointer-events:none;transition:opacity .25s ease}
+.navOverlay.open{opacity:1;pointer-events:auto}
+@media (max-width:680px){
+  header{padding:16px 20px}
+  .navToggle{display:flex}
+  header nav{position:fixed;top:0;right:0;bottom:0;width:100%;max-width:320px;background:#fff;flex-direction:column;align-items:stretch;gap:0;padding:26px 28px;transform:translateX(100%);transition:transform .3s ease;box-shadow:-40px 0 70px rgba(0,0,0,.1);z-index:80;overflow-y:auto}
+  header nav.open{transform:translateX(0)}
+  header nav>a{padding:16px 0;border-bottom:1px solid #f2f2ef;font-size:14px}
+  header nav .profileMenu{width:100%}
+  header nav .profileBtn{width:100%;justify-content:space-between;padding:16px 0;font-size:14px}
+  header nav .profileDropdown{position:static;display:flex;box-shadow:none;border:none;min-width:0;padding:0 0 6px}
+  main{padding-left:20px;padding-right:20px}
+  .pageHead h1{font-size:24px}
+  .toolbar{flex-direction:column;align-items:stretch}
+  .toolbar .searchBox{max-width:none}
+}
+
 main{padding:40px 40px 22px}
 .pageHead h1{font-size:30px;font-weight:600;letter-spacing:-.01em;margin:0 0 8px}
 .pageHead p{font-size:14px;color:#6b6b64;margin:0 0 30px}
@@ -92,6 +111,7 @@ main{padding:40px 40px 22px}
 .miniSize.muted{color:#c2bfb6;font-weight:500;border-style:dashed}
 .card .foot{display:flex;align-items:baseline;justify-content:space-between;margin-top:11px;padding-top:11px;border-top:1px solid #f2f2ef}
 .card .stock{font-size:11.5px;color:#6b6b64}
+.card .stock.low{color:#a5443b;font-weight:600}
 .card .price{font-size:14px;font-weight:600}
 
 .empty{padding:60px;text-align:center;color:#a7a7a0;font-size:14px;background:#fff;border:1px dashed #d8d8d0;margin:0 40px}
@@ -138,7 +158,7 @@ main{padding:40px 40px 22px}
 .addBtn:disabled{background:#e2e2dd;color:#a7a7a0}
 .minNote{font-size:11.5px;color:#a7a7a0;margin-top:10px;text-align:center}
 
-@media (max-width:700px){ .detail{grid-template-columns:1fr} .detail .dimg{aspect-ratio:4/3} }
+@media (max-width:700px){ .detail{grid-template-columns:1fr} .detail .dimg{aspect-ratio:4/3} .detail .dinfo{padding:28px 22px} .backdrop{padding:0} .colorRow .cname{width:auto;margin-right:4px} }
 @media (max-width:900px){ .grid{grid-template-columns:repeat(2,1fr)} }
 @media (max-width:560px){ .grid{grid-template-columns:1fr;gap:1px} .filterPanel{max-width:100%} }
 </style>
@@ -154,7 +174,8 @@ main{padding:40px 40px 22px}
       <div class="wordmark-sub">WHOLESALE</div>
     </div>
   </div>
-  <nav>
+  <button class="navToggle" id="navToggle" aria-label="Abrir menú"><span></span><span></span><span></span></button>
+  <nav id="mainNav">
     <a href="catalogo.html">Catálogo</a>
     <a href="carrito.html" class="cartLink">Carrito <span class="cartBadge" id="cartCount">0</span></a>
     <div class="profileMenu">
@@ -167,6 +188,7 @@ main{padding:40px 40px 22px}
     </div>
   </nav>
 </header>
+<div class="navOverlay" id="navOverlay"></div>
 
 <main>
   <div class="pageHead">
@@ -289,6 +311,7 @@ function miniSizesHTML(p, color){
 function cardHTML(p){
   const colors = colorsOf(p);
   const color = previewColor[p.codigo] || colors[0];
+  const low = p.stock <= lowStockThreshold();
   return `
     <div class="card" data-codigo="${p.codigo}">
       <div class="imgwrap"><img src="${imgSrc(imageFor(p,color),900)}" alt="${p.name} — ${color}" loading="lazy"></div>
@@ -298,7 +321,7 @@ function cardHTML(p){
         <div class="code">${p.codigo}</div>
         <div class="swatches">${colors.map(c=>`<button class="swatch${c===color?' active':''}" data-swatch data-codigo="${p.codigo}" data-color="${c}" style="background:${colorHex(c)}" title="${c}"></button>`).join('')}</div>
         <div class="miniSizes">${miniSizesHTML(p,color)}</div>
-        <div class="foot"><span class="stock">${p.stock} uds</span><span class="price">${fmt(priceFor(p))}</span></div>
+        <div class="foot"><span class="stock${low?' low':''}">${low?'Pocas unidades':''}</span><span class="price">${fmt(priceFor(p))}</span></div>
       </div>
     </div>`;
 }

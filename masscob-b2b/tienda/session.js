@@ -137,4 +137,15 @@ function initProfileMenu(client, active){
     const link = dd.querySelector('[data-nav="' + active + '"]');
     if(link) link.classList.add('activeItem');
   }
+
+  // Menú de hamburguesa en móvil: el <nav> pasa de fila a panel deslizante.
+  const navToggle = document.getElementById('navToggle');
+  const nav = document.getElementById('mainNav');
+  const overlay = document.getElementById('navOverlay');
+  if(navToggle && nav && overlay){
+    const closeNav = () => { nav.classList.remove('open'); overlay.classList.remove('open'); };
+    navToggle.addEventListener('click', () => { nav.classList.add('open'); overlay.classList.add('open'); });
+    overlay.addEventListener('click', closeNav);
+    nav.querySelectorAll('a').forEach(a => a.addEventListener('click', closeNav));
+  }
 }
