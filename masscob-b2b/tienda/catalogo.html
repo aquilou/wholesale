@@ -46,7 +46,10 @@ header nav a.logout{color:#a5443b}
 .navOverlay{position:fixed;inset:0;background:rgba(22,22,22,.35);z-index:79;opacity:0;pointer-events:none;transition:opacity .25s ease}
 .navOverlay.open{opacity:1;pointer-events:auto}
 @media (max-width:680px){
-  header{padding:16px 20px}
+  /* header pegajoso: sigue accesible (hamburguesa, logo, carrito) aunque
+     esté abierta la ficha de producto encima — antes se perdía del todo
+     detrás del modal y la única salida era la × pequeña */
+  header{padding:16px 20px;position:sticky;top:28px;z-index:65}
   .navToggle{display:flex}
   header nav{position:fixed;top:0;right:0;bottom:0;width:100%;max-width:320px;background:#fff;flex-direction:column;align-items:stretch;gap:0;padding:26px 28px;transform:translateX(100%);transition:transform .3s ease;box-shadow:-40px 0 70px rgba(0,0,0,.1);z-index:80;overflow-y:auto}
   header nav.open{transform:translateX(0)}
@@ -158,7 +161,16 @@ main{padding:40px 40px 22px}
 .addBtn:disabled{background:#e2e2dd;color:#a7a7a0}
 .minNote{font-size:11.5px;color:#a7a7a0;margin-top:10px;text-align:center}
 
-@media (max-width:700px){ .detail{grid-template-columns:1fr} .detail .dimg{aspect-ratio:4/3} .detail .dinfo{padding:28px 22px} .backdrop{padding:0} .colorRow .cname{width:auto;margin-right:4px} }
+@media (max-width:680px){
+  .detail{grid-template-columns:1fr}
+  /* aspect-ratio fijo recortaba las prendas largas (abrigos, vestidos);
+     con altura automática se ve la foto entera, sin cortes */
+  .detail .dimg{aspect-ratio:auto}
+  .detail .dimg img{height:auto;object-fit:contain}
+  .detail .dinfo{padding:28px 22px}
+  .backdrop{padding:0;top:92px}
+  .colorRow .cname{width:auto;margin-right:4px}
+}
 @media (max-width:900px){ .grid{grid-template-columns:repeat(2,1fr)} }
 @media (max-width:560px){ .grid{grid-template-columns:1fr;gap:1px} .filterPanel{max-width:100%} }
 </style>
