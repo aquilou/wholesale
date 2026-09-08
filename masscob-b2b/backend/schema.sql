@@ -49,6 +49,13 @@ create table if not exists stock (
   primary key (codigo, color, talla)
 );
 
+-- Direcciones del equipo MASSCOB que reciben aviso por email de cada
+-- pedido nuevo (además del propio cliente que lo hizo). Editable desde
+-- Admin > Ajustes > Notificaciones por email.
+create table if not exists notif_emails (
+  email text primary key
+);
+
 -- Todas las tablas bloqueadas para acceso directo (anon/authenticated desde
 -- el navegador); solo el backend (FastAPI, con DATABASE_URL) puede leer y
 -- escribir. Si algún día se llama a Supabase directo desde el navegador,
@@ -57,3 +64,4 @@ alter table clientes enable row level security;
 alter table pedidos enable row level security;
 alter table pedido_items enable row level security;
 alter table stock enable row level security;
+alter table notif_emails enable row level security;

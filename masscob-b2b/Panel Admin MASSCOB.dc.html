@@ -533,6 +533,31 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
             <input type="password" value="{{ adminKey }}" onInput="{{ setAdminKey }}" placeholder="Clave de administrador" style="width:100%;padding:10px 12px;border:1px solid #e2e2dd;font-size:13.5px;color:#161616;margin-bottom:10px">
             <div style="font-size:12px;color:{{ pedidosConnColor }}">{{ pedidosConnStatus }}</div>
           </div>
+
+          <div style="background:#fff;border:1px solid #ededea;padding:26px">
+            <div style="font-size:11px;letter-spacing:.18em;color:#a7a7a0;font-weight:600;margin-bottom:14px">NOTIFICACIONES POR EMAIL</div>
+            <div style="font-size:12.5px;color:#6b6b64;line-height:1.5;margin-bottom:16px">Cada pedido nuevo avisa por email al cliente y a estas direcciones del equipo; aceptar o anular un pedido también avisa al cliente. Requiere <code>RESEND_API_KEY</code> configurada en el backend.</div>
+            <sc-if value="{{ hasNotifEmails }}" hint-placeholder-val="">
+              <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:14px">
+                <sc-for list="{{ notifEmailRows }}" as="n" hint-placeholder-count="2">
+                  <div style="display:flex;align-items:center;justify-content:space-between;gap:10px;padding:8px 12px;background:#fafaf8;border:1px solid #ededea;font-size:13px">
+                    <span style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ n.email }}</span>
+                    <button onClick="{{ n.remove }}" style="flex:none;background:none;border:none;color:#a7a7a0;font-size:16px;line-height:1;padding:0">×</button>
+                  </div>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ noNotifEmails }}" hint-placeholder-val="{{ true }}">
+              <div style="font-size:12.5px;color:#a7a7a0;margin-bottom:14px">Todavía no hay destinatarios del equipo configurados.</div>
+            </sc-if>
+            <div style="display:flex;gap:8px">
+              <input type="email" value="{{ notifEmailDraft }}" onInput="{{ setNotifEmailDraft }}" placeholder="nombre@masscob.com" style="flex:1;padding:10px 12px;border:1px solid #e2e2dd;font-size:13.5px;color:#161616">
+              <button onClick="{{ addNotifEmail }}" style="flex:none;background:#161616;color:#fff;border:none;padding:0 16px;font-size:12.5px;font-weight:600">{{ notifEmailsSavingLabel }}</button>
+            </div>
+            <sc-if value="{{ notifEmailsError }}" hint-placeholder-val="">
+              <div style="font-size:11.5px;color:#a5443b;margin-top:8px">{{ notifEmailsError }}</div>
+            </sc-if>
+          </div>
         </div>
 
         <div style="background:#fff;border:1px solid #ededea">
@@ -906,6 +931,10 @@ class Component extends DCLogic {
       pedidosLoading: false,
       pedidosError: null,
       mobileNavOpen: false,
+      notifEmails: [],
+      notifEmailDraft: '',
+      notifEmailsSaving: false,
+      notifEmailsError: null,
     };
   }
   componentDidMount(){
@@ -916,6 +945,7 @@ class Component extends DCLogic {
     this._fetchPedidos();
     this._fetchStock();
     this._fetchClientes();
+    this._fetchNotifEmails();
   }
   _key(){ return 'masscob_admin_v2'; }
   _load(){ try{ return JSON.parse(localStorage.getItem(this._key())) || {}; }catch(e){ return {}; } }
@@ -988,9 +1018,44 @@ class Component extends DCLogic {
       })
       .catch(()=>{}); // si falla, se queda con lo que ya hubiera en local
   }
+  // destinatarios internos (equipo MASSCOB) de los avisos de pedido nuevo —
+  // viven en el backend (no en local, como el resto de ajustes) porque es
+  // el backend quien manda los emails al crear/aceptar/anular un pedido.
+  _fetchNotifEmails=()=>{
+    if(!this.state.adminKey) return;
+    fetch(API_BASE+'/admin/notif-emails', {headers:this._adminHeaders()})
+      .then(res => { if(!res.ok) throw new Error(); return res.json(); })
+      .then(notifEmails => this.setState({notifEmails}))
+      .catch(()=>{});
+  }
+  _saveNotifEmails=(emails)=>{
+    if(!this.state.adminKey){ this.setState({notifEmailsError:'Configura la clave de administrador en Ajustes para poder guardar destinatarios.'}); return; }
+    this.setState({notifEmails:emails, notifEmailsSaving:true, notifEmailsError:null});
+    fetch(API_BASE+'/admin/notif-emails', {
+      method:'PUT',
+      headers:Object.assign({'Content-Type':'application/json'}, this._adminHeaders()),
+      body: JSON.stringify({emails}),
+    })
+      .then(async res=>{
+        const data=await res.json().catch(()=>[]);
+        if(!res.ok) throw new Error(data.detail || 'Error del servidor');
+        return data;
+      })
+      .then(saved => this.setState({notifEmails:saved, notifEmailsSaving:false}))
+      .catch(err => this.setState({notifEmailsError: err.message==='Failed to fetch' ? 'Backend no accesible' : err.message, notifEmailsSaving:false}));
+  }
+  setNotifEmailDraft=(e)=>{ this.setState({notifEmailDraft:e.target.value, notifEmailsError:null}); }
+  addNotifEmail=()=>{
+    const email=String(this.state.notifEmailDraft||'').trim().toLowerCase();
+    if(!email) return;
+    if(this.state.notifEmails.includes(email)){ this.setState({notifEmailDraft:''}); return; }
+    this._saveNotifEmails(this.state.notifEmails.concat([email]));
+    this.setState({notifEmailDraft:''});
+  }
+  removeNotifEmail=(email)=>()=>{ this._saveNotifEmails(this.state.notifEmails.filter(e=>e!==email)); }
   setAdminKey=(e)=>{
     const adminKey=e.target.value;
-    this.setState({adminKey}, ()=>{ this._save(); this._fetchPedidos(); this._fetchStock(); this._fetchClientes(); });
+    this.setState({adminKey}, ()=>{ this._save(); this._fetchPedidos(); this._fetchStock(); this._fetchClientes(); this._fetchNotifEmails(); });
   }
   fmtFechaPedido(iso){ try{ return new Date(iso).toLocaleDateString('es-ES', {day:'2-digit',month:'2-digit',year:'numeric'}); }catch(e){ return iso; } }
   estadoPedidoStyle(estado){
@@ -1649,6 +1714,13 @@ class Component extends DCLogic {
       refreshPedidosLabel: st.pedidosLoading ? 'Actualizando…' : 'Actualizar',
       pedidosConnStatus, pedidosConnColor,
       adminKey: st.adminKey, setAdminKey: this.setAdminKey,
+      notifEmailRows: st.notifEmails.map(email => ({ email, remove: this.removeNotifEmail(email) })),
+      hasNotifEmails: st.notifEmails.length>0,
+      noNotifEmails: st.notifEmails.length===0,
+      notifEmailDraft: st.notifEmailDraft, setNotifEmailDraft: this.setNotifEmailDraft,
+      addNotifEmail: this.addNotifEmail,
+      notifEmailsError: st.notifEmailsError,
+      notifEmailsSavingLabel: st.notifEmailsSaving ? 'Guardando…' : 'Añadir',
       orderDetail: orderDetail || {}, hasOrderDetail: !!orderDetail,
       backToOrders: this.backToOrders,
       printDoc: printDoc || {}, printDocStyle, appShellStyle,

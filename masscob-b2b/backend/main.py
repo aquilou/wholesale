@@ -17,7 +17,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from auth import get_current_client, require_admin
-from config import SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL
+from config import RESEND_API_KEY, RESEND_FROM_EMAIL, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL
 from db import get_conn
 
 app = FastAPI(title="MASSCOB Wholesale API")
@@ -37,6 +37,51 @@ _CLIENTE_CAMPOS = ["nombre_comercial", "razon_social", "cif", "direccion", "pais
 
 # Facturación y envío van por el ERP, no por aquí — solo estos 3 estados.
 ESTADOS_PEDIDO = {"PENDIENTE", "ACEPTADO", "ANULADO"}
+
+
+# ---- notificaciones de pedido por email (resend.com) ----
+# Best-effort a propósito: un fallo aquí (Resend caído, dominio sin
+# verificar, clave que falta...) no debe tumbar la creación del pedido ni
+# el cambio de estado, que ya se guardaron en la base de datos.
+def _enviar_email(destinatarios: List[str], asunto: str, html: str):
+    if not RESEND_API_KEY or not destinatarios:
+        return
+    req = urllib.request.Request(
+        "https://api.resend.com/emails",
+        data=json.dumps({
+            "from": RESEND_FROM_EMAIL, "to": destinatarios, "subject": asunto, "html": html,
+        }).encode(),
+        headers={
+            "Authorization": f"Bearer {RESEND_API_KEY}",
+            "Content-Type": "application/json",
+        },
+        method="POST",
+    )
+    try:
+        with urllib.request.urlopen(req) as res:
+            res.read()
+    except Exception as e:
+        print(f"[email] no se pudo enviar {asunto!r} a {destinatarios}: {e!r}")
+
+
+def _notif_emails_equipo(cur) -> List[str]:
+    cur.execute("select email from notif_emails order by email")
+    return [row[0] for row in cur.fetchall()]
+
+
+def _email_cliente(cur, cliente_id: str) -> Optional[str]:
+    cur.execute("select email from auth.users where id = %s", (cliente_id,))
+    row = cur.fetchone()
+    return row[0] if row else None
+
+
+def _items_html(items) -> str:
+    filas = "".join(
+        f"<li>{i.cantidad} x {i.nombre} — {i.color}, talla {i.talla} "
+        f"({i.precio_unit:.2f} €/ud)</li>"
+        for i in items
+    )
+    return f"<ul>{filas}</ul>"
 
 
 @app.get("/health")
@@ -126,6 +171,31 @@ def crear_pedido(pedido: PedidoIn, client: dict = Depends(get_current_client)):
         raise
     finally:
         conn.close()
+
+    resumen = (
+        f"<p>Referencia: <strong>{referencia}</strong></p>"
+        f"{_items_html(pedido.items)}"
+        f"<p>Total: <strong>{float(total):.2f} €</strong></p>"
+    )
+    if client.get("email"):
+        _enviar_email(
+            [client["email"]],
+            f"Hemos recibido tu pedido {referencia}",
+            f"<p>Hola,</p><p>Hemos recibido tu pedido. Te avisaremos en cuanto lo revisemos.</p>{resumen}",
+        )
+    conn2 = get_conn()
+    try:
+        with conn2.cursor() as cur:
+            equipo = _notif_emails_equipo(cur)
+    finally:
+        conn2.close()
+    if equipo:
+        _enviar_email(
+            equipo,
+            f"Nuevo pedido {referencia}",
+            f"<p>Nuevo pedido de <strong>{client.get('email','—')}</strong>.</p>{resumen}",
+        )
+
     return {
         "id": pedido_id, "referencia": referencia, "estado": estado,
         "total": float(total), "nota": nota, "fecha": created_at.isoformat(),
@@ -191,11 +261,14 @@ def actualizar_estado_pedido(pedido_id: int, body: EstadoIn, _: None = Depends(r
             # bloquea la fila del pedido para toda la transacción: evita que
             # dos PATCH concurrentes sobre el mismo pedido descuenten stock
             # dos veces (o restituyan dos veces)
-            cur.execute("select estado from pedidos where id = %s for update", (pedido_id,))
+            cur.execute(
+                "select estado, cliente_id, referencia from pedidos where id = %s for update",
+                (pedido_id,),
+            )
             row = cur.fetchone()
             if not row:
                 raise HTTPException(404, "Pedido no encontrado")
-            estado_actual = row[0]
+            estado_actual, cliente_id, referencia = row
 
             if estado_actual != body.estado:
                 entra_en_aceptado = body.estado == "ACEPTADO"
@@ -232,6 +305,24 @@ def actualizar_estado_pedido(pedido_id: int, body: EstadoIn, _: None = Depends(r
         raise
     finally:
         conn.close()
+
+    if body.estado != estado_actual and body.estado in ("ACEPTADO", "ANULADO"):
+        conn2 = get_conn()
+        try:
+            with conn2.cursor() as cur:
+                email_cliente = _email_cliente(cur, cliente_id)
+        finally:
+            conn2.close()
+        if email_cliente:
+            if body.estado == "ACEPTADO":
+                asunto, mensaje = f"Pedido {referencia} aceptado", "Tu pedido ha sido aceptado."
+            else:
+                asunto, mensaje = f"Pedido {referencia} anulado", "Tu pedido ha sido anulado."
+            _enviar_email(
+                [email_cliente], asunto,
+                f"<p>Hola,</p><p>{mensaje}</p><p>Referencia: <strong>{referencia}</strong></p>",
+            )
+
     return {"id": pedido_id, "estado": body.estado}
 
 
@@ -425,3 +516,38 @@ def listar_clientes_admin(_: None = Depends(require_admin)):
         conn.close()
     keys = ["id"] + _CLIENTE_CAMPOS + ["usuario"]
     return [dict(zip(keys, row)) for row in rows]
+
+
+# ---- notificaciones: destinatarios del equipo (además del cliente) ----
+
+class NotifEmailsIn(BaseModel):
+    emails: List[str]
+
+
+@app.get("/admin/notif-emails")
+def listar_notif_emails(_: None = Depends(require_admin)):
+    conn = get_conn()
+    try:
+        with conn.cursor() as cur:
+            emails = _notif_emails_equipo(cur)
+    finally:
+        conn.close()
+    return emails
+
+
+@app.put("/admin/notif-emails")
+def actualizar_notif_emails(body: NotifEmailsIn, _: None = Depends(require_admin)):
+    emails = sorted({e.strip().lower() for e in body.emails if e.strip()})
+    conn = get_conn()
+    try:
+        with conn.cursor() as cur:
+            cur.execute("delete from notif_emails")
+            for email in emails:
+                cur.execute("insert into notif_emails (email) values (%s)", (email,))
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+    return emails
