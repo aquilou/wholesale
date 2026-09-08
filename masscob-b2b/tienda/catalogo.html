@@ -49,37 +49,6 @@ header nav a.logout{color:#a5443b}
 .navToggle span{display:block;width:20px;height:2px;background:#161616}
 .navOverlay{position:fixed;inset:0;background:rgba(22,22,22,.35);z-index:79;opacity:0;pointer-events:none;transition:opacity .25s ease}
 .navOverlay.open{opacity:1;pointer-events:auto}
-@media (max-width:680px){
-  /* header pegajoso: sigue accesible (hamburguesa, logo, carrito) aunque
-     esté abierta la ficha de producto (u otro overlay) encima — antes se
-     perdía del todo detrás del modal y la única salida era la × pequeña.
-     z-index alto a propósito: por encima de TODOS los overlays (menú,
-     filtros, ficha de producto), y --stickyH (medido por JS, ver script)
-     hace que ninguno arranque debajo tapado por la cabecera. */
-  .stickyTop{z-index:90}
-  .navOverlay{top:var(--stickyH,0px)}
-  .filterOverlay{top:var(--stickyH,0px)}
-  .filterPanel{top:var(--stickyH,0px)}
-  header{padding:16px 20px}
-  .navToggle{display:flex}
-  header nav{position:fixed;top:var(--stickyH,0px);right:0;bottom:0;width:100%;max-width:320px;background:#fff;flex-direction:column;align-items:stretch;gap:0;padding:26px 28px;transform:translateX(100%);transition:transform .3s ease;box-shadow:-40px 0 70px rgba(0,0,0,.1);z-index:80;overflow-y:auto}
-  header nav.open{transform:translateX(0)}
-  header nav>a{padding:16px 0;border-bottom:1px solid #f2f2ef;font-size:14px}
-  header nav .profileMenu{width:100%}
-  header nav .profileBtn{width:100%;justify-content:space-between;padding:16px 0;font-size:14px}
-  header nav .profileDropdown{position:static;display:flex;box-shadow:none;border:none;min-width:0;padding:0 0 6px}
-  main{padding:20px 20px 8px}
-  .pageHead h1{font-size:24px}
-  .pageHead p{margin-bottom:16px}
-  .toolbar{flex-direction:column;align-items:stretch;gap:12px;padding-bottom:14px}
-  .toolbar .searchBox{max-width:none!important}
-  /* en móvil los filtros de talla se simplifican fuera (chips de prenda
-     directas debajo del buscador); el botón/panel completo queda solo
-     para desktop */
-  .filtersBtn{display:none}
-  .catChipsRow{display:flex}
-  .gridSection{padding-top:18px}
-}
 
 main{padding:40px 40px 22px}
 .pageHead h1{font-size:30px;font-weight:600;letter-spacing:-.01em;margin:0 0 8px}
@@ -187,7 +156,45 @@ main{padding:40px 40px 22px}
 .addBtn:disabled{background:#e2e2dd;color:#a7a7a0}
 .minNote{font-size:11.5px;color:#a7a7a0;margin-top:10px;text-align:center}
 
+/* Todo lo específico de móvil va en ESTE único bloque, al final de la
+   hoja de estilos — puesto antes (justo después de .navOverlay) perdía
+   sistemáticamente los empates de especificidad contra reglas base
+   declaradas más abajo en el archivo (p.ej. .toolbar{align-items:center}
+   ganaba a la versión móvil "stretch" solo por ir después en el código),
+   así que varios ajustes (chips de prenda, alineación) no llegaban a
+   aplicarse aunque el media query sí coincidiera con la pantalla. */
 @media (max-width:680px){
+  /* header pegajoso: sigue accesible (hamburguesa, logo, carrito) aunque
+     esté abierta la ficha de producto (u otro overlay) encima — antes se
+     perdía del todo detrás del modal y la única salida era la × pequeña.
+     z-index alto a propósito: por encima de TODOS los overlays (menú,
+     filtros, ficha de producto), y --stickyH (medido por JS, ver script)
+     hace que ninguno arranque debajo tapado por la cabecera. */
+  .stickyTop{z-index:90}
+  .navOverlay{top:var(--stickyH,0px)}
+  .filterOverlay{top:var(--stickyH,0px)}
+  .filterPanel{top:var(--stickyH,0px)}
+  header{padding:16px 20px}
+  .navToggle{display:flex}
+  header nav{position:fixed;top:var(--stickyH,0px);right:0;bottom:0;width:100%;max-width:320px;background:#fff;flex-direction:column;align-items:stretch;gap:0;padding:26px 28px;transform:translateX(100%);transition:transform .3s ease;box-shadow:-40px 0 70px rgba(0,0,0,.1);z-index:80;overflow-y:auto}
+  header nav.open{transform:translateX(0)}
+  header nav>a{padding:16px 0;border-bottom:1px solid #f2f2ef;font-size:14px}
+  header nav .profileMenu{width:100%}
+  header nav .profileBtn{width:100%;justify-content:space-between;padding:16px 0;font-size:14px}
+  header nav .profileDropdown{position:static;display:flex;box-shadow:none;border:none;min-width:0;padding:0 0 6px}
+
+  main{padding:18px 20px 8px;text-align:left}
+  .pageHead h1{font-size:19px}
+  .pageHead p{display:none}
+  .toolbar{flex-direction:column;align-items:stretch;gap:12px;padding-bottom:14px}
+  .toolbar .searchBox{max-width:none}
+  /* en móvil los filtros de talla se simplifican fuera (chips de prenda
+     directas debajo del buscador); el botón/panel completo queda solo
+     para desktop */
+  .filtersBtn{display:none}
+  .catChipsRow{display:flex}
+  .gridSection{padding-top:18px}
+
   .detail{grid-template-columns:1fr}
   /* aspect-ratio fijo recortaba las prendas largas (abrigos, vestidos);
      con altura automática se ve la foto entera, sin cortes */
