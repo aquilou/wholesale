@@ -20,7 +20,11 @@ button{font-family:inherit;cursor:pointer}
 input{font-family:inherit}
 ::placeholder{color:#a7a7a0}
 
-.preview-ribbon{position:sticky;top:0;z-index:50;background:#161616;color:#fff;text-align:center;font-size:11px;letter-spacing:.08em;padding:7px 12px;font-weight:600}
+/* ribbon + header van juntos en un único bloque sticky: si fueran sticky
+   cada uno por su lado habría que adivinar la altura del ribbon (varía
+   según si su texto ocupa una o dos líneas) para no solaparlos */
+.stickyTop{position:sticky;top:0;z-index:50}
+.preview-ribbon{background:#161616;color:#fff;text-align:center;font-size:11px;letter-spacing:.08em;padding:7px 12px;font-weight:600}
 
 header{display:flex;align-items:center;justify-content:space-between;padding:22px 40px;background:#fff;border-bottom:1px solid #ededea}
 .wordmark{font-size:16px;font-weight:600;letter-spacing:.16em;color:#161616;line-height:1}
@@ -47,11 +51,18 @@ header nav a.logout{color:#a5443b}
 .navOverlay.open{opacity:1;pointer-events:auto}
 @media (max-width:680px){
   /* header pegajoso: sigue accesible (hamburguesa, logo, carrito) aunque
-     esté abierta la ficha de producto encima — antes se perdía del todo
-     detrás del modal y la única salida era la × pequeña */
-  header{padding:16px 20px;position:sticky;top:28px;z-index:65}
+     esté abierta la ficha de producto (u otro overlay) encima — antes se
+     perdía del todo detrás del modal y la única salida era la × pequeña.
+     z-index alto a propósito: por encima de TODOS los overlays (menú,
+     filtros, ficha de producto), y --stickyH (medido por JS, ver script)
+     hace que ninguno arranque debajo tapado por la cabecera. */
+  .stickyTop{z-index:90}
+  .navOverlay{top:var(--stickyH,0px)}
+  .filterOverlay{top:var(--stickyH,0px)}
+  .filterPanel{top:var(--stickyH,0px)}
+  header{padding:16px 20px}
   .navToggle{display:flex}
-  header nav{position:fixed;top:0;right:0;bottom:0;width:100%;max-width:320px;background:#fff;flex-direction:column;align-items:stretch;gap:0;padding:26px 28px;transform:translateX(100%);transition:transform .3s ease;box-shadow:-40px 0 70px rgba(0,0,0,.1);z-index:80;overflow-y:auto}
+  header nav{position:fixed;top:var(--stickyH,0px);right:0;bottom:0;width:100%;max-width:320px;background:#fff;flex-direction:column;align-items:stretch;gap:0;padding:26px 28px;transform:translateX(100%);transition:transform .3s ease;box-shadow:-40px 0 70px rgba(0,0,0,.1);z-index:80;overflow-y:auto}
   header nav.open{transform:translateX(0)}
   header nav>a{padding:16px 0;border-bottom:1px solid #f2f2ef;font-size:14px}
   header nav .profileMenu{width:100%}
@@ -168,15 +179,16 @@ main{padding:40px 40px 22px}
   .detail .dimg{aspect-ratio:auto}
   .detail .dimg img{height:auto;object-fit:contain}
   .detail .dinfo{padding:28px 22px}
-  .backdrop{padding:0;top:92px}
+  .backdrop{padding:0;top:var(--stickyH,0px)}
   .colorRow .cname{width:auto;margin-right:4px}
 }
 @media (max-width:900px){ .grid{grid-template-columns:repeat(2,1fr)} }
-@media (max-width:560px){ .grid{grid-template-columns:1fr;gap:1px} .filterPanel{max-width:100%} }
+@media (max-width:560px){ .grid{grid-template-columns:repeat(2,1fr);gap:10px} .filterPanel{max-width:100%} }
 </style>
 </head>
 <body>
 
+<div class="stickyTop">
 <div class="preview-ribbon">VISTA PREVIA — catálogo de ejemplo, todavía sin conectar a cuentas de cliente reales (precios/stock por cliente llegan con el backend).</div>
 
 <header>
@@ -200,6 +212,7 @@ main{padding:40px 40px 22px}
     </div>
   </nav>
 </header>
+</div>
 <div class="navOverlay" id="navOverlay"></div>
 
 <main>
@@ -562,12 +575,42 @@ function openDetail(codigo, colorInicial){
       return;
     }
   };
+
+  // deslizar sobre la foto para cambiar de imagen (móvil) — mismo destino
+  // que las flechas ‹ › (dimgNav), solo que a partir de un gesto
+  let touchStartX = null;
+  const detailEl = document.getElementById('detail');
+  detailEl.addEventListener('touchstart', e => {
+    touchStartX = e.target.closest('.dimg') ? e.touches[0].clientX : null;
+  }, {passive:true});
+  detailEl.addEventListener('touchend', e => {
+    if(touchStartX==null) return;
+    const dx = e.changedTouches[0].clientX - touchStartX;
+    touchStartX = null;
+    if(Math.abs(dx) < 40) return; // umbral para no confundirlo con un tap
+    const gallery = galleryFor(p, colorMostrado);
+    if(gallery.length<=1) return;
+    galleryIndex = (galleryIndex + (dx<0?1:-1) + gallery.length) % gallery.length;
+    paint();
+  });
 }
 function closeDetail(){ document.getElementById('backdrop').classList.remove('open'); }
 document.getElementById('backdrop').addEventListener('click', e => {
   if(e.target.id==='backdrop') closeDetail();
 });
 document.addEventListener('keydown', e => { if(e.key==='Escape'){ closeDetail(); closeFilters(); } });
+
+// altura real del bloque sticky (ribbon + header) para --stickyH: el
+// ribbon pasa de una a dos líneas según el ancho, así que un valor fijo
+// se desincroniza — mejor medirlo (al cargar, al rotar/redimensionar, y
+// tras cargar la fuente por si eso cambia el reflow de línea del ribbon)
+function updateStickyOffset(){
+  const el = document.querySelector('.stickyTop');
+  if(el) document.documentElement.style.setProperty('--stickyH', el.offsetHeight + 'px');
+}
+window.addEventListener('resize', updateStickyOffset);
+updateStickyOffset();
+if(document.fonts && document.fonts.ready) document.fonts.ready.then(updateStickyOffset);
 
 (async function(){
   CLIENT = await requireSession();
