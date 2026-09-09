@@ -1,5 +1,49 @@
-// Generado por build_products.py + import_b2c_images.py — NO editar a mano.
+// Generado por build_products.py — NO editar a mano.
+// Fuente: ../stockmasscob.xlsx + ../precioserp.xlsx
 window.MASSCOB_PRODUCTS = [
+  {
+    "codigo": "W27/100T",
+    "name": "Coat Grace",
+    "category": "Abrigos",
+    "coleccion": "W27",
+    "coleccionLabel": "WINTER 26-27",
+    "colores": {
+      "FOREST": {
+        "XS/S": 1,
+        "M/L": 2
+      }
+    },
+    "stock": 3,
+    "tallaje": "numerico",
+    "price_erp": 193.0,
+    "tarifas": [
+      {
+        "nombre": "WHOLESALE EUROPA",
+        "pct": 0,
+        "precio": 193.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 10%",
+        "pct": 10,
+        "precio": 212.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 15%",
+        "pct": 15,
+        "precio": 222.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 30%",
+        "pct": 30,
+        "precio": 251.0
+      }
+    ],
+    "image": "../Fotos/Fotos W27/W27100TFOREST.jpeg",
+    "images": {
+      "_default": "../Fotos/Fotos W27/W27100T.jpeg",
+      "FOREST": "../Fotos/Fotos W27/W27100TFOREST.jpeg"
+    }
+  },
   {
     "codigo": "W27/101B",
     "name": "Coat Uma",
@@ -8,12 +52,12 @@ window.MASSCOB_PRODUCTS = [
     "coleccionLabel": "WINTER 26-27",
     "colores": {
       "BLACK": {
-        "XS": 45,
-        "S": 50,
+        "XS": 46,
+        "S": 51,
         "M": 5
       }
     },
-    "stock": 100,
+    "stock": 102,
     "tallaje": "numerico",
     "price_erp": 320.0,
     "tarifas": [
@@ -38,27 +82,11 @@ window.MASSCOB_PRODUCTS = [
         "precio": 416.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/101_1.1_46552960-66bf-4841-b378-fb58be780b6e.jpg?v=1783956403",
+    "image": "../Fotos/Fotos W27/W27101BBLACK.jpeg",
     "images": {
-      "BLACK": "https://cdn.shopify.com/s/files/1/0324/1401/files/101_1.1_46552960-66bf-4841-b378-fb58be780b6e.jpg?v=1783956403",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/101_1.1_46552960-66bf-4841-b378-fb58be780b6e.jpg?v=1783956403"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27101B.jpeg",
       "BLACK": "../Fotos/Fotos W27/W27101BBLACK.jpeg"
-    },
-    "gallery": {
-      "BLACK": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/101_1.1_46552960-66bf-4841-b378-fb58be780b6e.jpg?v=1783956403",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/101_1.2.jpg?v=1783063111",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/101_3.3.jpg?v=1783063111",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/101_2.1.jpg?v=1783063111",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/101_3.4.jpg?v=1783063111",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/101_4.jpg?v=1783063111",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/101B_55462303-4340-4c38-ad6c-643e0b977704.jpg?v=1784654595"
-      ]
-    },
-    "b2cHandle": "uma-coat"
+    }
   },
   {
     "codigo": "W27/102D",
@@ -101,10 +129,6 @@ window.MASSCOB_PRODUCTS = [
     "images": {
       "_default": "../Fotos/Fotos W27/W27102D.jpeg",
       "MARINE": "../Fotos/Fotos W27/W27102DMARINE.jpeg"
-    },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27102D.jpeg",
-      "MARINE": "../Fotos/Fotos W27/W27102DMARINE.jpeg"
     }
   },
   {
@@ -144,25 +168,11 @@ window.MASSCOB_PRODUCTS = [
         "precio": 278.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/104-1.jpg?v=1782478514",
+    "image": "../Fotos/Fotos W27/W27104AOLIVE.jpeg",
     "images": {
-      "OLIVE": "https://cdn.shopify.com/s/files/1/0324/1401/files/104-1.jpg?v=1782478514",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/104-1.jpg?v=1782478514"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27104A.jpeg",
       "OLIVE": "../Fotos/Fotos W27/W27104AOLIVE.jpeg"
-    },
-    "gallery": {
-      "OLIVE": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/104-1.jpg?v=1782478514",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/104-3o1-2f.jpg?v=1782478538",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/104-2-2.jpg?v=1782478568",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/104-4.jpg?v=1782478578",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/104A_298c4692-bc47-4901-8fbd-a34212686552.jpg?v=1783064802"
-      ]
-    },
-    "b2cHandle": "coat-maomi"
+    }
   },
   {
     "codigo": "W27/110B",
@@ -172,12 +182,12 @@ window.MASSCOB_PRODUCTS = [
     "coleccionLabel": "WINTER 26-27",
     "colores": {
       "TAUPE": {
-        "XS": 36,
-        "S": 35,
+        "XS": 35,
+        "S": 31,
         "M": 3
       }
     },
-    "stock": 74,
+    "stock": 69,
     "tallaje": "numerico",
     "price_erp": 311.0,
     "tarifas": [
@@ -206,10 +216,93 @@ window.MASSCOB_PRODUCTS = [
     "images": {
       "_default": "../Fotos/Fotos W27/W27110B.jpeg",
       "TAUPE": "../Fotos/Fotos W27/W27110BTAUPE.jpeg"
+    }
+  },
+  {
+    "codigo": "W27/200K",
+    "name": "Jacket Pauline",
+    "category": "Chaquetas",
+    "coleccion": "W27",
+    "coleccionLabel": "WINTER 26-27",
+    "colores": {
+      "ECRU": {
+        "XS": 2,
+        "S": 4
+      }
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27110B.jpeg",
-      "TAUPE": "../Fotos/Fotos W27/W27110BTAUPE.jpeg"
+    "stock": 6,
+    "tallaje": "numerico",
+    "price_erp": 667.0,
+    "tarifas": [
+      {
+        "nombre": "WHOLESALE EUROPA",
+        "pct": 0,
+        "precio": 667.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 10%",
+        "pct": 10,
+        "precio": 734.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 15%",
+        "pct": 15,
+        "precio": 767.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 30%",
+        "pct": 30,
+        "precio": 867.0
+      }
+    ],
+    "image": "../Fotos/Fotos W27/W27200KECRU.jpeg",
+    "images": {
+      "_default": "../Fotos/Fotos W27/W27200K.jpeg",
+      "ECRU": "../Fotos/Fotos W27/W27200KECRU.jpeg"
+    }
+  },
+  {
+    "codigo": "W27/202K",
+    "name": "Jacket Dora",
+    "category": "Chaquetas",
+    "coleccion": "W27",
+    "coleccionLabel": "WINTER 26-27",
+    "colores": {
+      "BROWN": {
+        "XS": 8,
+        "S": 9,
+        "M": 1
+      }
+    },
+    "stock": 18,
+    "tallaje": "numerico",
+    "price_erp": 191.0,
+    "tarifas": [
+      {
+        "nombre": "WHOLESALE EUROPA",
+        "pct": 0,
+        "precio": 191.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 10%",
+        "pct": 10,
+        "precio": 210.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 15%",
+        "pct": 15,
+        "precio": 220.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 30%",
+        "pct": 30,
+        "precio": 248.0
+      }
+    ],
+    "image": "../Fotos/Fotos W27/W27202KBROWN.jpeg",
+    "images": {
+      "_default": "../Fotos/Fotos W27/W27202K.jpeg",
+      "BROWN": "../Fotos/Fotos W27/W27202KBROWN.jpeg"
     }
   },
   {
@@ -250,26 +343,11 @@ window.MASSCOB_PRODUCTS = [
         "precio": 274.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/204_1.1.jpg?v=1783064457",
+    "image": "../Fotos/Fotos W27/W27204BTAUPE.jpeg",
     "images": {
-      "TAUPE": "https://cdn.shopify.com/s/files/1/0324/1401/files/204_1.1.jpg?v=1783064457",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/204_1.1.jpg?v=1783064457"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27204B.jpeg",
       "TAUPE": "../Fotos/Fotos W27/W27204BTAUPE.jpeg"
-    },
-    "gallery": {
-      "TAUPE": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/204_1.1.jpg?v=1783064457",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/204_2.3.jpg?v=1783064458",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/204_1.3.jpg?v=1783956436",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/204_2.2.jpg?v=1783064457",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/204_3.1.jpg?v=1783064458",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/204B_7e63cdfb-6538-4f3e-9347-7d2e312cc8ed.jpg?v=1783064639"
-      ]
-    },
-    "b2cHandle": "camille-jacket"
+    }
   },
   {
     "codigo": "W27/205B",
@@ -280,12 +358,12 @@ window.MASSCOB_PRODUCTS = [
     "colores": {
       "BLACK": {
         "XS": 17,
-        "S": 14,
+        "S": 13,
         "M": 10,
         "L": 20
       }
     },
-    "stock": 61,
+    "stock": 60,
     "tallaje": "numerico",
     "price_erp": 215.0,
     "tarifas": [
@@ -310,25 +388,55 @@ window.MASSCOB_PRODUCTS = [
         "precio": 280.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/205_1.1.jpg?v=1783063567",
+    "image": "../Fotos/Fotos W27/W27205BBLACK.jpeg",
     "images": {
-      "BLACK": "https://cdn.shopify.com/s/files/1/0324/1401/files/205_1.1.jpg?v=1783063567",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/205_1.1.jpg?v=1783063567"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27205B.jpeg",
       "BLACK": "../Fotos/Fotos W27/W27205BBLACK.jpeg"
+    }
+  },
+  {
+    "codigo": "W27/212F",
+    "name": "Jacket Clare",
+    "category": "Chaquetas",
+    "coleccion": "W27",
+    "coleccionLabel": "WINTER 26-27",
+    "colores": {
+      "ONYX": {
+        "34": 3,
+        "36": 3,
+        "38": 2
+      }
     },
-    "gallery": {
-      "BLACK": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/205_1.1.jpg?v=1783063567",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/205_3.1.jpg?v=1783063570",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/205_2.2.jpg?v=1783063567",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/205_4.jpg?v=1783063568",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/205B_2a0ff45d-00fb-4900-9d37-35af412ece93.jpg?v=1784654636"
-      ]
-    },
-    "b2cHandle": "greta-jacket"
+    "stock": 8,
+    "tallaje": "numerico",
+    "price_erp": 211.0,
+    "tarifas": [
+      {
+        "nombre": "WHOLESALE EUROPA",
+        "pct": 0,
+        "precio": 211.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 10%",
+        "pct": 10,
+        "precio": 232.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 15%",
+        "pct": 15,
+        "precio": 243.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 30%",
+        "pct": 30,
+        "precio": 274.0
+      }
+    ],
+    "image": "../Fotos/Fotos W27/W27212FONYX.jpeg",
+    "images": {
+      "_default": "../Fotos/Fotos W27/W27212F.jpeg",
+      "ONYX": "../Fotos/Fotos W27/W27212FONYX.jpeg"
+    }
   },
   {
     "codigo": "W27/214K",
@@ -371,10 +479,6 @@ window.MASSCOB_PRODUCTS = [
     "images": {
       "_default": "../Fotos/Fotos W27/W27214K.jpeg",
       "NOIR": "../Fotos/Fotos W27/W27214KNOIR.jpeg"
-    },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27214K.jpeg",
-      "NOIR": "../Fotos/Fotos W27/W27214KNOIR.jpeg"
     }
   },
   {
@@ -414,25 +518,96 @@ window.MASSCOB_PRODUCTS = [
         "precio": 248.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/216-1.jpg?v=1783951081",
+    "image": "../Fotos/Fotos W27/W27216TBLACK.jpeg",
     "images": {
-      "BLACK": "https://cdn.shopify.com/s/files/1/0324/1401/files/216-1.jpg?v=1783951081",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/216-1.jpg?v=1783951081"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27216T.jpeg",
       "BLACK": "../Fotos/Fotos W27/W27216TBLACK.jpeg"
+    }
+  },
+  {
+    "codigo": "W27/217C",
+    "name": "Jacket Gabriela",
+    "category": "Chaquetas",
+    "coleccion": "W27",
+    "coleccionLabel": "WINTER 26-27",
+    "colores": {
+      "CORTECCIA": {
+        "34": 2,
+        "36": 2
+      }
     },
-    "gallery": {
-      "BLACK": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/216-1.jpg?v=1783951081",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/216-3-2.jpg?v=1783951081",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/216-2.jpg?v=1783951081",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/216-4.jpg?v=1783951081",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/216D.jpg?v=1783951080"
-      ]
+    "stock": 4,
+    "tallaje": "numerico",
+    "price_erp": 210.0,
+    "tarifas": [
+      {
+        "nombre": "WHOLESALE EUROPA",
+        "pct": 0,
+        "precio": 210.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 10%",
+        "pct": 10,
+        "precio": 231.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 15%",
+        "pct": 15,
+        "precio": 242.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 30%",
+        "pct": 30,
+        "precio": 273.0
+      }
+    ],
+    "image": "../Fotos/Fotos W27/W27217CCORTECCIA.jpeg",
+    "images": {
+      "_default": "../Fotos/Fotos W27/W27217C.jpeg",
+      "CORTECCIA": "../Fotos/Fotos W27/W27217CCORTECCIA.jpeg"
+    }
+  },
+  {
+    "codigo": "W27/218N",
+    "name": "Jacket Alfonsina",
+    "category": "Chaquetas",
+    "coleccion": "W27",
+    "coleccionLabel": "WINTER 26-27",
+    "colores": {
+      "PIED DE POULE": {
+        "36": 2,
+        "38": 2
+      }
     },
-    "b2cHandle": "iesel-jacket"
+    "stock": 4,
+    "tallaje": "numerico",
+    "price_erp": 184.0,
+    "tarifas": [
+      {
+        "nombre": "WHOLESALE EUROPA",
+        "pct": 0,
+        "precio": 184.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 10%",
+        "pct": 10,
+        "precio": 202.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 15%",
+        "pct": 15,
+        "precio": 212.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 30%",
+        "pct": 30,
+        "precio": 239.0
+      }
+    ],
+    "image": "../Fotos/Fotos W27/W27218N.jpeg",
+    "images": {
+      "_default": "../Fotos/Fotos W27/W27218N.jpeg"
+    }
   },
   {
     "codigo": "W27/311KN",
@@ -475,11 +650,6 @@ window.MASSCOB_PRODUCTS = [
       "_default": "../Fotos/Fotos W27/W27311KN.jpeg",
       "NEPTUNE": "../Fotos/Fotos W27/W27311KNNEPTUNE.jpeg",
       "TILO": "../Fotos/Fotos W27/W27311KNTILO.jpeg"
-    },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27311KN.jpeg",
-      "NEPTUNE": "../Fotos/Fotos W27/W27311KNNEPTUNE.jpeg",
-      "TILO": "../Fotos/Fotos W27/W27311KNTILO.jpeg"
     }
   },
   {
@@ -518,34 +688,15 @@ window.MASSCOB_PRODUCTS = [
         "precio": 95.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/312-1-2f.jpg?v=1784105619",
+    "image": "../Fotos/Fotos W27/W27312KNLIGHT GREY.jpeg",
     "images": {
-      "LIGHT GREY": "https://cdn.shopify.com/s/files/1/0324/1401/files/312-1-2f.jpg?v=1784105619",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/312-1-2f.jpg?v=1784105619",
-      "LIPSTICK": "../Fotos/Fotos W27/W27312KNLIPSTICK.jpeg",
-      "MOKA": "../Fotos/Fotos W27/W27312KNMOKA.jpeg",
-      "NOIR": "../Fotos/Fotos W27/W27312KNNOIR.jpeg",
-      "OLIVE": "../Fotos/Fotos W27/W27312KNOLIVE.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27312KN.jpeg",
       "LIGHT GREY": "../Fotos/Fotos W27/W27312KNLIGHT GREY.jpeg",
       "LIPSTICK": "../Fotos/Fotos W27/W27312KNLIPSTICK.jpeg",
       "MOKA": "../Fotos/Fotos W27/W27312KNMOKA.jpeg",
       "NOIR": "../Fotos/Fotos W27/W27312KNNOIR.jpeg",
       "OLIVE": "../Fotos/Fotos W27/W27312KNOLIVE.jpeg"
-    },
-    "gallery": {
-      "LIGHT GREY": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/312-1-2f.jpg?v=1784105619",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/312-3-2.jpg?v=1784105619",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/312KN.jpg?v=1784105629",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/312-3.jpg?v=1784202909",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/312-2.jpg?v=1784202909",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/312KN_OLIVE.jpg?v=1784202888"
-      ]
-    },
-    "b2cHandle": "terry-scarf"
+    }
   },
   {
     "codigo": "W27/320KN",
@@ -585,12 +736,6 @@ window.MASSCOB_PRODUCTS = [
     ],
     "image": "../Fotos/Fotos W27/W27320KNMINERAL BLUE.jpeg",
     "images": {
-      "_default": "../Fotos/Fotos W27/W27320KN.jpeg",
-      "BLONDE": "../Fotos/Fotos W27/W27320KNBLONDE.jpeg",
-      "MINERAL BLUE": "../Fotos/Fotos W27/W27320KNMINERAL BLUE.jpeg",
-      "MUSCHIO": "../Fotos/Fotos W27/W27320KNMUSCHIO.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27320KN.jpeg",
       "BLONDE": "../Fotos/Fotos W27/W27320KNBLONDE.jpeg",
       "MINERAL BLUE": "../Fotos/Fotos W27/W27320KNMINERAL BLUE.jpeg",
@@ -635,11 +780,6 @@ window.MASSCOB_PRODUCTS = [
     ],
     "image": "../Fotos/Fotos W27/W27342LTHMUD.jpeg",
     "images": {
-      "_default": "../Fotos/Fotos W27/W27342LTH.jpeg",
-      "FONDANT": "../Fotos/Fotos W27/W27342LTHFONDANT.jpeg",
-      "MUD": "../Fotos/Fotos W27/W27342LTHMUD.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27342LTH.jpeg",
       "FONDANT": "../Fotos/Fotos W27/W27342LTHFONDANT.jpeg",
       "MUD": "../Fotos/Fotos W27/W27342LTHMUD.jpeg"
@@ -688,27 +828,55 @@ window.MASSCOB_PRODUCTS = [
         "precio": 137.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/400_1-1.jpg?v=1785938084",
+    "image": "../Fotos/Fotos W27/W27400RSEA SALT.jpeg",
     "images": {
-      "SEA SALT": "https://cdn.shopify.com/s/files/1/0324/1401/files/400_1-1.jpg?v=1785938084",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/400_1-1.jpg?v=1785938084",
-      "NIGHT": "../Fotos/Fotos W27/W27400RNIGHT.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27400R.jpeg",
       "NIGHT": "../Fotos/Fotos W27/W27400RNIGHT.jpeg",
       "SEA SALT": "../Fotos/Fotos W27/W27400RSEA SALT.jpeg"
+    }
+  },
+  {
+    "codigo": "W27/401R",
+    "name": "Top Sabina",
+    "category": "Tops",
+    "coleccion": "W27",
+    "coleccionLabel": "WINTER 26-27",
+    "colores": {
+      "SEA SALT": {
+        "M": 1
+      }
     },
-    "gallery": {
-      "SEA SALT": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/400_1-1.jpg?v=1785938084",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/400_2.1.jpg?v=1785938084",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/400_3-1.jpg?v=1785938085",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/400_4.1.jpg?v=1785938084",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/400R.jpg?v=1785938019"
-      ]
-    },
-    "b2cHandle": "milena-top"
+    "stock": 1,
+    "tallaje": "numerico",
+    "price_erp": 119.0,
+    "tarifas": [
+      {
+        "nombre": "WHOLESALE EUROPA",
+        "pct": 0,
+        "precio": 119.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 10%",
+        "pct": 10,
+        "precio": 131.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 15%",
+        "pct": 15,
+        "precio": 137.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 30%",
+        "pct": 30,
+        "precio": 155.0
+      }
+    ],
+    "image": "../Fotos/Fotos W27/W27401RSEA SALT.jpeg",
+    "images": {
+      "_default": "../Fotos/Fotos W27/W27401R.jpeg",
+      "NIGHT": "../Fotos/Fotos W27/W27401RNIGHT.jpeg",
+      "SEA SALT": "../Fotos/Fotos W27/W27401RSEA SALT.jpeg"
+    }
   },
   {
     "codigo": "W27/403M",
@@ -720,10 +888,10 @@ window.MASSCOB_PRODUCTS = [
       "TILLEUL": {
         "XS": 2,
         "S": 8,
-        "M": 5
+        "M": 4
       }
     },
-    "stock": 15,
+    "stock": 14,
     "tallaje": "numerico",
     "price_erp": 147.0,
     "tarifas": [
@@ -748,27 +916,12 @@ window.MASSCOB_PRODUCTS = [
         "precio": 191.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/403-1..jpg?v=1783077345",
+    "image": "../Fotos/Fotos W27/W27403MTILLEUL.jpeg",
     "images": {
-      "TILLEUL": "https://cdn.shopify.com/s/files/1/0324/1401/files/403-1..jpg?v=1783077345",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/403-1..jpg?v=1783077345",
-      "ARGENT": "../Fotos/Fotos W27/W27403MARGENT.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27403M.jpeg",
       "ARGENT": "../Fotos/Fotos W27/W27403MARGENT.jpeg",
       "TILLEUL": "../Fotos/Fotos W27/W27403MTILLEUL.jpeg"
-    },
-    "gallery": {
-      "TILLEUL": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/403-1..jpg?v=1783077345",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/403-3..jpg?v=1783077345",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/403-2..jpg?v=1783077344",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/403-4..jpg?v=1783077345",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/403M_e37055c8-61fb-4a12-9fbc-1db045b3fb07.jpg?v=1783077131"
-      ]
-    },
-    "b2cHandle": "anna-top"
+    }
   },
   {
     "codigo": "W27/500D",
@@ -808,27 +961,55 @@ window.MASSCOB_PRODUCTS = [
         "precio": 155.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/500-1_79c49e40-0c12-4f60-8378-f275dd5c4e74.jpg?v=1782478654",
+    "image": "../Fotos/Fotos W27/W27500DWHITE.jpeg",
     "images": {
-      "WHITE": "https://cdn.shopify.com/s/files/1/0324/1401/files/500-1_79c49e40-0c12-4f60-8378-f275dd5c4e74.jpg?v=1782478654",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/500-1_79c49e40-0c12-4f60-8378-f275dd5c4e74.jpg?v=1782478654",
-      "BLACK": "../Fotos/Fotos W27/W27500DBLACK.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27500D.jpeg",
       "BLACK": "../Fotos/Fotos W27/W27500DBLACK.jpeg",
       "WHITE": "../Fotos/Fotos W27/W27500DWHITE.jpeg"
+    }
+  },
+  {
+    "codigo": "W27/502U",
+    "name": "Shirt Ondine",
+    "category": "Camisas",
+    "coleccion": "W27",
+    "coleccionLabel": "WINTER 26-27",
+    "colores": {
+      "CYPRESS": {
+        "XS": 3,
+        "S": 3
+      }
     },
-    "gallery": {
-      "WHITE": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/500-1_79c49e40-0c12-4f60-8378-f275dd5c4e74.jpg?v=1782478654",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/500-3-2.jpg?v=1783078016",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/500-2_84746eb2-ef6d-4d74-af36-8d680b6c7fba.jpg?v=1782478622",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/500-4_e3f8adc0-6c34-43ba-b6d3-1b99ecd162aa.jpg?v=1782478670",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/500D.jpg?v=1782478673"
-      ]
-    },
-    "b2cHandle": "dorothea-shirt"
+    "stock": 6,
+    "tallaje": "numerico",
+    "price_erp": 117.0,
+    "tarifas": [
+      {
+        "nombre": "WHOLESALE EUROPA",
+        "pct": 0,
+        "precio": 117.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 10%",
+        "pct": 10,
+        "precio": 129.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 15%",
+        "pct": 15,
+        "precio": 135.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 30%",
+        "pct": 30,
+        "precio": 152.0
+      }
+    ],
+    "image": "../Fotos/Fotos W27/W27502UCYPRESS.jpeg",
+    "images": {
+      "_default": "../Fotos/Fotos W27/W27502U.jpeg",
+      "CYPRESS": "../Fotos/Fotos W27/W27502UCYPRESS.jpeg"
+    }
   },
   {
     "codigo": "W27/503G",
@@ -872,38 +1053,57 @@ window.MASSCOB_PRODUCTS = [
         "precio": 176.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/503-1-3.jpg?v=1784546126",
+    "image": "../Fotos/Fotos W27/W27503GINK BLACK.jpeg",
     "images": {
-      "INK BLACK": "https://cdn.shopify.com/s/files/1/0324/1401/files/503-1-3.jpg?v=1784546126",
-      "RED": "https://cdn.shopify.com/s/files/1/0324/1401/files/503_red_1.1.jpg?v=1784545187",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/503-1-3.jpg?v=1784546126",
-      "CHALK": "../Fotos/Fotos W27/W27503GCHALK.jpeg",
-      "SEPIA": "../Fotos/Fotos W27/W27503GSEPIA.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27503G.jpeg",
       "CHALK": "../Fotos/Fotos W27/W27503GCHALK.jpeg",
       "INK BLACK": "../Fotos/Fotos W27/W27503GINK BLACK.jpeg",
       "RED": "../Fotos/Fotos W27/W27503GRED.jpeg",
       "SEPIA": "../Fotos/Fotos W27/W27503GSEPIA.jpeg"
+    }
+  },
+  {
+    "codigo": "W27/505E",
+    "name": "Shirt Lauren",
+    "category": "Camisas",
+    "coleccion": "W27",
+    "coleccionLabel": "WINTER 26-27",
+    "colores": {
+      "BLEU": {
+        "XS": 4,
+        "S": 2
+      }
     },
-    "gallery": {
-      "INK BLACK": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/503-1-3.jpg?v=1784546126",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/503_3.2F.jpg?v=1782478711",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/503_2.2.jpg?v=1782478708",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/503_4_f2062bd9-5fb9-4f1f-8bfb-cac901510cab.jpg?v=1782478718",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/503G_black.jpg?v=1782478727"
-      ],
-      "RED": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/503_red_1.1.jpg?v=1784545187",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/503_red_2.jpg?v=1784545187",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/503_red_3.1.jpg?v=1784545188",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/503_red_4.2.jpg?v=1784545188",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/503G_red_7053cced-2e34-4d71-b84f-69b582480c44.jpg?v=1784546254"
-      ]
-    },
-    "b2cHandle": "nina-shirt"
+    "stock": 6,
+    "tallaje": "numerico",
+    "price_erp": 124.0,
+    "tarifas": [
+      {
+        "nombre": "WHOLESALE EUROPA",
+        "pct": 0,
+        "precio": 124.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 10%",
+        "pct": 10,
+        "precio": 136.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 15%",
+        "pct": 15,
+        "precio": 143.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 30%",
+        "pct": 30,
+        "precio": 161.0
+      }
+    ],
+    "image": "../Fotos/Fotos W27/W27505EBLEU.jpeg",
+    "images": {
+      "_default": "../Fotos/Fotos W27/W27505E.jpeg",
+      "BLEU": "../Fotos/Fotos W27/W27505EBLEU.jpeg"
+    }
   },
   {
     "codigo": "W27/506G",
@@ -941,32 +1141,58 @@ window.MASSCOB_PRODUCTS = [
         "precio": 186.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/506_1.12.jpg?v=1784105865",
+    "image": "../Fotos/Fotos W27/W27506GSEPIA.jpeg",
     "images": {
-      "SEPIA": "https://cdn.shopify.com/s/files/1/0324/1401/files/506_1.12.jpg?v=1784105865",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/506_1.12.jpg?v=1784105865",
-      "CHALK": "../Fotos/Fotos W27/W27506GCHALK.jpeg",
-      "INK BLACK": "../Fotos/Fotos W27/W27506GINK BLACK.jpeg",
-      "RED": "../Fotos/Fotos W27/W27506GRED.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27506G.jpeg",
       "CHALK": "../Fotos/Fotos W27/W27506GCHALK.jpeg",
       "INK BLACK": "../Fotos/Fotos W27/W27506GINK BLACK.jpeg",
       "RED": "../Fotos/Fotos W27/W27506GRED.jpeg",
       "SEPIA": "../Fotos/Fotos W27/W27506GSEPIA.jpeg"
+    }
+  },
+  {
+    "codigo": "W27/507E",
+    "name": "Shirt Elle",
+    "category": "Camisas",
+    "coleccion": "W27",
+    "coleccionLabel": "WINTER 26-27",
+    "colores": {
+      "LIGHT BLUE": {
+        "XS": 5,
+        "S": 5,
+        "M": 2
+      }
     },
-    "gallery": {
-      "SEPIA": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/506_1.12.jpg?v=1784105865",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/506_3.jpg?v=1784105865",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/506_2.12_5b659bd9-d7ab-4d56-b57d-c0950c1dcc7c.jpg?v=1784545263",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/506_3.12.jpg?v=1784545265",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/506_4.12.jpg?v=1784545266",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/506G_a9e52699-592f-47ac-86fe-e240640502c8.jpg?v=1784107577"
-      ]
-    },
-    "b2cHandle": "seren-shirt"
+    "stock": 12,
+    "tallaje": "numerico",
+    "price_erp": 110.0,
+    "tarifas": [
+      {
+        "nombre": "WHOLESALE EUROPA",
+        "pct": 0,
+        "precio": 110.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 10%",
+        "pct": 10,
+        "precio": 121.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 15%",
+        "pct": 15,
+        "precio": 127.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 30%",
+        "pct": 30,
+        "precio": 143.0
+      }
+    ],
+    "image": "../Fotos/Fotos W27/W27507ELIGHT BLUE.jpeg",
+    "images": {
+      "_default": "../Fotos/Fotos W27/W27507E.jpeg",
+      "LIGHT BLUE": "../Fotos/Fotos W27/W27507ELIGHT BLUE.jpeg"
+    }
   },
   {
     "codigo": "W27/509G",
@@ -1013,13 +1239,6 @@ window.MASSCOB_PRODUCTS = [
       "INK BLACK": "../Fotos/Fotos W27/W27509GINK BLACK.jpeg",
       "RED": "../Fotos/Fotos W27/W27509GRED.jpeg",
       "SEPIA": "../Fotos/Fotos W27/W27509GSEPIA.jpeg"
-    },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27509G.jpeg",
-      "CHALK": "../Fotos/Fotos W27/W27509GCHALK.jpeg",
-      "INK BLACK": "../Fotos/Fotos W27/W27509GINK BLACK.jpeg",
-      "RED": "../Fotos/Fotos W27/W27509GRED.jpeg",
-      "SEPIA": "../Fotos/Fotos W27/W27509GSEPIA.jpeg"
     }
   },
   {
@@ -1030,12 +1249,12 @@ window.MASSCOB_PRODUCTS = [
     "coleccionLabel": "WINTER 26-27",
     "colores": {
       "CLOUD": {
-        "XS": 5,
+        "XS": 6,
         "S": 7,
         "M": 2
       }
     },
-    "stock": 14,
+    "stock": 15,
     "tallaje": "numerico",
     "price_erp": 121.0,
     "tarifas": [
@@ -1060,25 +1279,11 @@ window.MASSCOB_PRODUCTS = [
         "precio": 157.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/514_1.2.jpg?v=1783063343",
+    "image": "../Fotos/Fotos W27/W27514ECLOUD.jpeg",
     "images": {
-      "CLOUD": "https://cdn.shopify.com/s/files/1/0324/1401/files/514_1.2.jpg?v=1783063343",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/514_1.2.jpg?v=1783063343"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27514E.jpeg",
       "CLOUD": "../Fotos/Fotos W27/W27514ECLOUD.jpeg"
-    },
-    "gallery": {
-      "CLOUD": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/514_1.2.jpg?v=1783063343",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/514_3.1.jpg?v=1783063344",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/514_2.1.jpg?v=1783063344",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/514_4.jpg?v=1783063343",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/514E_aee9fa48-af0e-46b0-a8e8-ee3b133b9ab3.jpg?v=1783066261"
-      ]
-    },
-    "b2cHandle": "jerry-shirt"
+    }
   },
   {
     "codigo": "W27/517S",
@@ -1088,11 +1293,10 @@ window.MASSCOB_PRODUCTS = [
     "coleccionLabel": "WINTER 26-27",
     "colores": {
       "TRAVERTINE": {
-        "XS": 3,
         "S": 3
       }
     },
-    "stock": 6,
+    "stock": 3,
     "tallaje": "numerico",
     "price_erp": 120.0,
     "tarifas": [
@@ -1119,10 +1323,6 @@ window.MASSCOB_PRODUCTS = [
     ],
     "image": "../Fotos/Fotos W27/W27517STRAVERTINE.jpeg",
     "images": {
-      "_default": "../Fotos/Fotos W27/W27517S.jpeg",
-      "TRAVERTINE": "../Fotos/Fotos W27/W27517STRAVERTINE.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27517S.jpeg",
       "TRAVERTINE": "../Fotos/Fotos W27/W27517STRAVERTINE.jpeg"
     }
@@ -1165,27 +1365,55 @@ window.MASSCOB_PRODUCTS = [
         "precio": 191.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/519-1.jpg?v=1782485275",
+    "image": "../Fotos/Fotos W27/W27519MARGENT.jpeg",
     "images": {
-      "ARGENT": "https://cdn.shopify.com/s/files/1/0324/1401/files/519-1.jpg?v=1782485275",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/519-1.jpg?v=1782485275",
-      "TILLEUL": "../Fotos/Fotos W27/W27519MTILLEUL.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27519M.jpeg",
       "ARGENT": "../Fotos/Fotos W27/W27519MARGENT.jpeg",
       "TILLEUL": "../Fotos/Fotos W27/W27519MTILLEUL.jpeg"
+    }
+  },
+  {
+    "codigo": "W27/600U",
+    "name": "Skirt Elizabeth",
+    "category": "Faldas",
+    "coleccion": "W27",
+    "coleccionLabel": "WINTER 26-27",
+    "colores": {
+      "CYPRESS": {
+        "34": 2,
+        "36": 2
+      }
     },
-    "gallery": {
-      "ARGENT": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/519-1.jpg?v=1782485275",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/519-3-2.jpg?v=1782485275",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/519-2.jpg?v=1782485304",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/519-4_lado.jpg?v=1782485275",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/519M_95b06993-62f7-455c-8316-4b7261a30c0a.jpg?v=1783065019"
-      ]
-    },
-    "b2cHandle": "carla-shirt"
+    "stock": 4,
+    "tallaje": "numerico",
+    "price_erp": 124.0,
+    "tarifas": [
+      {
+        "nombre": "WHOLESALE EUROPA",
+        "pct": 0,
+        "precio": 124.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 10%",
+        "pct": 10,
+        "precio": 136.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 15%",
+        "pct": 15,
+        "precio": 143.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 30%",
+        "pct": 30,
+        "precio": 161.0
+      }
+    ],
+    "image": "../Fotos/Fotos W27/W27600UCYPRESS.jpeg",
+    "images": {
+      "_default": "../Fotos/Fotos W27/W27600U.jpeg",
+      "CYPRESS": "../Fotos/Fotos W27/W27600UCYPRESS.jpeg"
+    }
   },
   {
     "codigo": "W27/603R",
@@ -1227,11 +1455,6 @@ window.MASSCOB_PRODUCTS = [
     ],
     "image": "../Fotos/Fotos W27/W27603RNIGHT.jpeg",
     "images": {
-      "_default": "../Fotos/Fotos W27/W27603R.jpeg",
-      "NIGHT": "../Fotos/Fotos W27/W27603RNIGHT.jpeg",
-      "SEA SALT": "../Fotos/Fotos W27/W27603RSEA SALT.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27603R.jpeg",
       "NIGHT": "../Fotos/Fotos W27/W27603RNIGHT.jpeg",
       "SEA SALT": "../Fotos/Fotos W27/W27603RSEA SALT.jpeg"
@@ -1279,10 +1502,6 @@ window.MASSCOB_PRODUCTS = [
     "images": {
       "_default": "../Fotos/Fotos W27/W27607P.jpeg",
       "KHOL": "../Fotos/Fotos W27/W27607PKHOL.jpeg"
-    },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27607P.jpeg",
-      "KHOL": "../Fotos/Fotos W27/W27607PKHOL.jpeg"
     }
   },
   {
@@ -1328,27 +1547,56 @@ window.MASSCOB_PRODUCTS = [
         "precio": 147.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/608-1.jpg?v=1785938289",
+    "image": "../Fotos/Fotos W27/W27608RSEA SALT.jpeg",
     "images": {
-      "SEA SALT": "https://cdn.shopify.com/s/files/1/0324/1401/files/608-1.jpg?v=1785938289",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/608-1.jpg?v=1785938289",
-      "NIGHT": "../Fotos/Fotos W27/W27608RNIGHT.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27608R.jpeg",
       "NIGHT": "../Fotos/Fotos W27/W27608RNIGHT.jpeg",
       "SEA SALT": "../Fotos/Fotos W27/W27608RSEA SALT.jpeg"
+    }
+  },
+  {
+    "codigo": "W27/609C",
+    "name": "Skirt Aria",
+    "category": "Faldas",
+    "coleccion": "W27",
+    "coleccionLabel": "WINTER 26-27",
+    "colores": {
+      "CORTECCIA": {
+        "34": 2,
+        "36": 4,
+        "38": 2
+      }
     },
-    "gallery": {
-      "SEA SALT": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/608-1.jpg?v=1785938289",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/608-3-f.jpg?v=1785938289",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/608-2.jpg?v=1785938289",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/608-4.jpg?v=1785938289",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/608R.jpg?v=1785938273"
-      ]
-    },
-    "b2cHandle": "nita-skirt"
+    "stock": 8,
+    "tallaje": "numerico",
+    "price_erp": 126.0,
+    "tarifas": [
+      {
+        "nombre": "WHOLESALE EUROPA",
+        "pct": 0,
+        "precio": 126.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 10%",
+        "pct": 10,
+        "precio": 139.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 15%",
+        "pct": 15,
+        "precio": 145.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 30%",
+        "pct": 30,
+        "precio": 164.0
+      }
+    ],
+    "image": "../Fotos/Fotos W27/W27609CCORTECCIA.jpeg",
+    "images": {
+      "_default": "../Fotos/Fotos W27/W27609C.jpeg",
+      "CORTECCIA": "../Fotos/Fotos W27/W27609CCORTECCIA.jpeg"
+    }
   },
   {
     "codigo": "W27/700V",
@@ -1393,11 +1641,6 @@ window.MASSCOB_PRODUCTS = [
       "_default": "../Fotos/Fotos W27/W27700V.jpeg",
       "HUILE": "../Fotos/Fotos W27/W27700VHUILE.jpeg",
       "NUIT": "../Fotos/Fotos W27/W27700VNUIT.jpeg"
-    },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27700V.jpeg",
-      "HUILE": "../Fotos/Fotos W27/W27700VHUILE.jpeg",
-      "NUIT": "../Fotos/Fotos W27/W27700VNUIT.jpeg"
     }
   },
   {
@@ -1412,7 +1655,7 @@ window.MASSCOB_PRODUCTS = [
         "36": 2
       },
       "TAUPE": {
-        "34": 2,
+        "34": 1,
         "36": 2,
         "38": 1
       },
@@ -1420,7 +1663,7 @@ window.MASSCOB_PRODUCTS = [
         "36": 1
       }
     },
-    "stock": 11,
+    "stock": 10,
     "tallaje": "numerico",
     "price_erp": 118.0,
     "tarifas": [
@@ -1445,30 +1688,13 @@ window.MASSCOB_PRODUCTS = [
         "precio": 153.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/701_rosso_1F.jpg?v=1784106361",
+    "image": "../Fotos/Fotos W27/W27701HROSSO.jpeg",
     "images": {
-      "ROSSO": "https://cdn.shopify.com/s/files/1/0324/1401/files/701_rosso_1F.jpg?v=1784106361",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/701_rosso_1F.jpg?v=1784106361",
-      "CEDAR": "../Fotos/Fotos W27/W27701HCEDAR.jpeg",
-      "TAUPE": "../Fotos/Fotos W27/W27701HTAUPE.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27701H.jpeg",
       "CEDAR": "../Fotos/Fotos W27/W27701HCEDAR.jpeg",
       "ROSSO": "../Fotos/Fotos W27/W27701HROSSO.jpeg",
       "TAUPE": "../Fotos/Fotos W27/W27701HTAUPE.jpeg"
-    },
-    "gallery": {
-      "ROSSO": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/701_rosso_1F.jpg?v=1784106361",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/701_rosso_3F.jpg?v=1784106361",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/701_rosso_3.2.jpg?v=1784545834",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/701_rosso_2.1.jpg?v=1784106363",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/701_rosso_4.jpg?v=1784106361",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/701H_ROSSO_d41d835b-de7c-453e-85f0-f373ab4f3056.jpg?v=1784107847"
-      ]
-    },
-    "b2cHandle": "amintha-pants"
+    }
   },
   {
     "codigo": "W27/703L",
@@ -1478,12 +1704,12 @@ window.MASSCOB_PRODUCTS = [
     "coleccionLabel": "WINTER 26-27",
     "colores": {
       "ONYX": {
-        "34": 6,
-        "36": 6,
-        "38": 4
+        "34": 3,
+        "36": 3,
+        "38": 2
       }
     },
-    "stock": 16,
+    "stock": 8,
     "tallaje": "numerico",
     "price_erp": 135.0,
     "tarifas": [
@@ -1508,29 +1734,13 @@ window.MASSCOB_PRODUCTS = [
         "precio": 176.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/703-1f_7191e088-0596-4448-a65a-17c8a276b988.jpg?v=1783426182",
+    "image": "../Fotos/Fotos W27/W27703LONYX.jpeg",
     "images": {
-      "ONYX": "https://cdn.shopify.com/s/files/1/0324/1401/files/703-1f_7191e088-0596-4448-a65a-17c8a276b988.jpg?v=1783426182",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/703-1f_7191e088-0596-4448-a65a-17c8a276b988.jpg?v=1783426182",
-      "CONCRETE GREY": "../Fotos/Fotos W27/W27703LCONCRETE GREY.jpeg",
-      "PEBBLE": "../Fotos/Fotos W27/W27703LPEBBLE.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27703L.jpeg",
       "CONCRETE GREY": "../Fotos/Fotos W27/W27703LCONCRETE GREY.jpeg",
       "ONYX": "../Fotos/Fotos W27/W27703LONYX.jpeg",
       "PEBBLE": "../Fotos/Fotos W27/W27703LPEBBLE.jpeg"
-    },
-    "gallery": {
-      "ONYX": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/703-1f_7191e088-0596-4448-a65a-17c8a276b988.jpg?v=1783426182",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/703-3_886d2013-2326-4344-b79b-7dff8adb9622.jpg?v=1782485331",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/703-2_a67956f1-a40b-499a-acd8-240509e0b3ec.jpg?v=1782485302",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/703-4_b870beb5-7a12-492d-93aa-3f83f0875d88.jpg?v=1782485302",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/703L.jpg?v=1782485302"
-      ]
-    },
-    "b2cHandle": "eudora-pants"
+    }
   },
   {
     "codigo": "W27/704O",
@@ -1540,12 +1750,15 @@ window.MASSCOB_PRODUCTS = [
     "coleccionLabel": "WINTER 26-27",
     "colores": {
       "NAVY": {
-        "34": 7,
-        "36": 5,
-        "38": 1
+        "34": 1
+      },
+      "BLUETTE": {
+        "34": 1,
+        "36": 2,
+        "40": 1
       }
     },
-    "stock": 13,
+    "stock": 5,
     "tallaje": "numerico",
     "price_erp": 105.0,
     "tarifas": [
@@ -1570,27 +1783,12 @@ window.MASSCOB_PRODUCTS = [
         "precio": 137.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/704f-948.jpg?v=1783063180",
+    "image": "../Fotos/Fotos W27/W27704ONAVY.jpeg",
     "images": {
-      "NAVY": "https://cdn.shopify.com/s/files/1/0324/1401/files/704f-948.jpg?v=1783063180",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/704f-948.jpg?v=1783063180",
-      "BLUETTE": "../Fotos/Fotos W27/W27704OBLUETTE.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27704O.jpeg",
       "BLUETTE": "../Fotos/Fotos W27/W27704OBLUETTE.jpeg",
       "NAVY": "../Fotos/Fotos W27/W27704ONAVY.jpeg"
-    },
-    "gallery": {
-      "NAVY": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/704f-948.jpg?v=1783063180",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/704-3.jpg?v=1783063180",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/704-2_f2dd1848-1fc1-45e0-b0dd-c0424836b1db.jpg?v=1783063180",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/704-4.jpg?v=1783063179",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/704O_a4ba5960-03c2-4f6f-a30c-5f2f2567e551.jpg?v=1783065929"
-      ]
-    },
-    "b2cHandle": "tyra-pants"
+    }
   },
   {
     "codigo": "W27/705H",
@@ -1630,30 +1828,13 @@ window.MASSCOB_PRODUCTS = [
         "precio": 133.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/705-1_302de475-7084-4541-837c-98d1cabaeeb0.jpg?v=1784545642",
+    "image": "../Fotos/Fotos W27/W27705H.jpeg",
     "images": {
-      "CEDAR": "https://cdn.shopify.com/s/files/1/0324/1401/files/705-1_302de475-7084-4541-837c-98d1cabaeeb0.jpg?v=1784545642",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/705-1_302de475-7084-4541-837c-98d1cabaeeb0.jpg?v=1784545642",
-      "ROSSO": "../Fotos/Fotos W27/W27705HROSSO.jpeg",
-      "_CEDAR": "../Fotos/Fotos W27/W27705H_CEDAR.jpeg",
-      "_TAUPE": "../Fotos/Fotos W27/W27705H_TAUPE.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27705H.jpeg",
       "ROSSO": "../Fotos/Fotos W27/W27705HROSSO.jpeg",
       "_CEDAR": "../Fotos/Fotos W27/W27705H_CEDAR.jpeg",
       "_TAUPE": "../Fotos/Fotos W27/W27705H_TAUPE.jpeg"
-    },
-    "gallery": {
-      "CEDAR": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/705-1_302de475-7084-4541-837c-98d1cabaeeb0.jpg?v=1784545642",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/705-3f.jpg?v=1784106320",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/705-980.jpg?v=1784545631",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/705-4.jpg?v=1784106319",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/705H_b4ddb333-b65c-4166-b8f1-fdb25f82fd8f.jpg?v=1784107797"
-      ]
-    },
-    "b2cHandle": "kate-pants"
+    }
   },
   {
     "codigo": "W27/708L",
@@ -1693,29 +1874,58 @@ window.MASSCOB_PRODUCTS = [
         "precio": 182.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/708_1.1_cadb07e6-155f-4af3-9466-85b260845df7.jpg?v=1783426272",
+    "image": "../Fotos/Fotos W27/W27708LPEBBLE.jpeg",
     "images": {
-      "PEBBLE": "https://cdn.shopify.com/s/files/1/0324/1401/files/708_1.1_cadb07e6-155f-4af3-9466-85b260845df7.jpg?v=1783426272",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/708_1.1_cadb07e6-155f-4af3-9466-85b260845df7.jpg?v=1783426272",
-      "CONCRETE GREY": "../Fotos/Fotos W27/W27708LCONCRETE GREY.jpeg",
-      "ONYX": "../Fotos/Fotos W27/W27708LONYX.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27708L.jpeg",
       "CONCRETE GREY": "../Fotos/Fotos W27/W27708LCONCRETE GREY.jpeg",
       "ONYX": "../Fotos/Fotos W27/W27708LONYX.jpeg",
       "PEBBLE": "../Fotos/Fotos W27/W27708LPEBBLE.jpeg"
+    }
+  },
+  {
+    "codigo": "W27/711M",
+    "name": "Pants Sigrid",
+    "category": "Pantalones",
+    "coleccion": "W27",
+    "coleccionLabel": "WINTER 26-27",
+    "colores": {
+      "BRUNETTE": {
+        "34": 7,
+        "36": 4,
+        "38": 7
+      }
     },
-    "gallery": {
-      "PEBBLE": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/708_1.1_cadb07e6-155f-4af3-9466-85b260845df7.jpg?v=1783426272",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/708_3.1.jpg?v=1782485380",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/708_2.1.jpg?v=1782485379",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/708_4.2.jpg?v=1782485379",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/708L_b80a0b93-75b2-40c0-91e4-128803a3667e.jpg?v=1783065841"
-      ]
-    },
-    "b2cHandle": "cheryl-pants"
+    "stock": 18,
+    "tallaje": "numerico",
+    "price_erp": 127.0,
+    "tarifas": [
+      {
+        "nombre": "WHOLESALE EUROPA",
+        "pct": 0,
+        "precio": 127.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 10%",
+        "pct": 10,
+        "precio": 140.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 15%",
+        "pct": 15,
+        "precio": 146.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 30%",
+        "pct": 30,
+        "precio": 165.0
+      }
+    ],
+    "image": "../Fotos/Fotos W27/W27711MBRUNETTE.jpeg",
+    "images": {
+      "_default": "../Fotos/Fotos W27/W27711M.jpeg",
+      "BRUNETTE": "../Fotos/Fotos W27/W27711MBRUNETTE.jpeg",
+      "GREY MELANGE": "../Fotos/Fotos W27/W27711MGREY MELANGE.jpeg"
+    }
   },
   {
     "codigo": "W27/712R",
@@ -1760,27 +1970,12 @@ window.MASSCOB_PRODUCTS = [
         "precio": 148.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/712_1.1.jpg?v=1785938412",
+    "image": "../Fotos/Fotos W27/W27712RSEA SALT.jpeg",
     "images": {
-      "SEA SALT": "https://cdn.shopify.com/s/files/1/0324/1401/files/712_1.1.jpg?v=1785938412",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/712_1.1.jpg?v=1785938412",
-      "NIGHT": "../Fotos/Fotos W27/W27712RNIGHT.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27712R.jpeg",
       "NIGHT": "../Fotos/Fotos W27/W27712RNIGHT.jpeg",
       "SEA SALT": "../Fotos/Fotos W27/W27712RSEA SALT.jpeg"
-    },
-    "gallery": {
-      "SEA SALT": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/712_1.1.jpg?v=1785938412",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/712_3.1_9f86989b-96f6-472e-ba38-7e356bdc459d.jpg?v=1785938412",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/712_2.1.jpg?v=1785938411",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/712_4.1.jpg?v=1785938412",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/712R.jpg?v=1785938389"
-      ]
-    },
-    "b2cHandle": "berthe-pants"
+    }
   },
   {
     "codigo": "W27/713A",
@@ -1820,25 +2015,55 @@ window.MASSCOB_PRODUCTS = [
         "precio": 176.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/713-1.jpg?v=1782485246",
+    "image": "../Fotos/Fotos W27/W27713ADUNE.jpeg",
     "images": {
-      "DUNE": "https://cdn.shopify.com/s/files/1/0324/1401/files/713-1.jpg?v=1782485246",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/713-1.jpg?v=1782485246"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27713A.jpeg",
       "DUNE": "../Fotos/Fotos W27/W27713ADUNE.jpeg"
+    }
+  },
+  {
+    "codigo": "W27/715F",
+    "name": "Pants Colette",
+    "category": "Pantalones",
+    "coleccion": "W27",
+    "coleccionLabel": "WINTER 26-27",
+    "colores": {
+      "ONYX": {
+        "34": 2,
+        "36": 2,
+        "38": 3
+      }
     },
-    "gallery": {
-      "DUNE": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/713-1.jpg?v=1782485246",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/713-3final.jpg?v=1782485246",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/713-2.jpg?v=1782485246",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/713-4.jpg?v=1782485213",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/713A.jpg?v=1782485246"
-      ]
-    },
-    "b2cHandle": "naia-pants"
+    "stock": 7,
+    "tallaje": "numerico",
+    "price_erp": 146.0,
+    "tarifas": [
+      {
+        "nombre": "WHOLESALE EUROPA",
+        "pct": 0,
+        "precio": 146.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 10%",
+        "pct": 10,
+        "precio": 161.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 15%",
+        "pct": 15,
+        "precio": 168.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 30%",
+        "pct": 30,
+        "precio": 190.0
+      }
+    ],
+    "image": "../Fotos/Fotos W27/W27715FONYX.jpeg",
+    "images": {
+      "_default": "../Fotos/Fotos W27/W27715F.jpeg",
+      "ONYX": "../Fotos/Fotos W27/W27715FONYX.jpeg"
+    }
   },
   {
     "codigo": "W27/718O",
@@ -1877,27 +2102,143 @@ window.MASSCOB_PRODUCTS = [
         "precio": 142.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/718_1.2.jpg?v=1783063419",
+    "image": "../Fotos/Fotos W27/W27718OBLUETTE.jpeg",
     "images": {
-      "BLUETTE": "https://cdn.shopify.com/s/files/1/0324/1401/files/718_1.2.jpg?v=1783063419",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/718_1.2.jpg?v=1783063419",
-      "NAVY": "../Fotos/Fotos W27/W27718ONAVY.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27718O.jpeg",
       "BLUETTE": "../Fotos/Fotos W27/W27718OBLUETTE.jpeg",
       "NAVY": "../Fotos/Fotos W27/W27718ONAVY.jpeg"
+    }
+  },
+  {
+    "codigo": "W27/721E",
+    "name": "Pants Yuna",
+    "category": "Pantalones",
+    "coleccion": "W27",
+    "coleccionLabel": "WINTER 26-27",
+    "colores": {
+      "BLEU": {
+        "34": 2,
+        "36": 2
+      }
     },
-    "gallery": {
-      "BLUETTE": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/718_1.2.jpg?v=1783063419",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/718_3.1_aa3e5c22-16b5-4c98-80f6-b13ca7685753.jpg?v=1783063420",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/718_4.1.jpg?v=1783063419",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/718_6.jpg?v=1783063428",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/718O_68c33fdc-f8f5-4a7a-9a53-d66155bc8693.jpg?v=1783066421"
-      ]
+    "stock": 4,
+    "tallaje": "numerico",
+    "price_erp": 110.0,
+    "tarifas": [
+      {
+        "nombre": "WHOLESALE EUROPA",
+        "pct": 0,
+        "precio": 110.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 10%",
+        "pct": 10,
+        "precio": 121.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 15%",
+        "pct": 15,
+        "precio": 127.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 30%",
+        "pct": 30,
+        "precio": 143.0
+      }
+    ],
+    "image": "../Fotos/Fotos W27/W27721EBLEU.jpeg",
+    "images": {
+      "_default": "../Fotos/Fotos W27/W27721E.jpeg",
+      "BLEU": "../Fotos/Fotos W27/W27721EBLEU.jpeg"
+    }
+  },
+  {
+    "codigo": "W27/722C",
+    "name": "Pants Leda",
+    "category": "Pantalones",
+    "coleccion": "W27",
+    "coleccionLabel": "WINTER 26-27",
+    "colores": {
+      "CORTECCIA": {
+        "34": 4,
+        "36": 5,
+        "38": 3
+      }
     },
-    "b2cHandle": "iman-pants"
+    "stock": 12,
+    "tallaje": "numerico",
+    "price_erp": 171.0,
+    "tarifas": [
+      {
+        "nombre": "WHOLESALE EUROPA",
+        "pct": 0,
+        "precio": 171.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 10%",
+        "pct": 10,
+        "precio": 188.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 15%",
+        "pct": 15,
+        "precio": 197.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 30%",
+        "pct": 30,
+        "precio": 222.0
+      }
+    ],
+    "image": "../Fotos/Fotos W27/W27722CCORTECCIA.jpeg",
+    "images": {
+      "_default": "../Fotos/Fotos W27/W27722C.jpeg",
+      "CORTECCIA": "../Fotos/Fotos W27/W27722CCORTECCIA.jpeg"
+    }
+  },
+  {
+    "codigo": "W27/800L",
+    "name": "Dress Isolina",
+    "category": "Vestidos",
+    "coleccion": "W27",
+    "coleccionLabel": "WINTER 26-27",
+    "colores": {
+      "ONYX": {
+        "S": 1
+      }
+    },
+    "stock": 1,
+    "tallaje": "numerico",
+    "price_erp": 146.0,
+    "tarifas": [
+      {
+        "nombre": "WHOLESALE EUROPA",
+        "pct": 0,
+        "precio": 146.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 10%",
+        "pct": 10,
+        "precio": 161.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 15%",
+        "pct": 15,
+        "precio": 168.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 30%",
+        "pct": 30,
+        "precio": 190.0
+      }
+    ],
+    "image": "../Fotos/Fotos W27/W27800LONYX.jpeg",
+    "images": {
+      "_default": "../Fotos/Fotos W27/W27800L.jpeg",
+      "CONCRETE GREY": "../Fotos/Fotos W27/W27800LCONCRETE GREY.jpeg",
+      "ONYX": "../Fotos/Fotos W27/W27800LONYX.jpeg",
+      "PEBBLE": "../Fotos/Fotos W27/W27800LPEBBLE.jpeg"
+    }
   },
   {
     "codigo": "W27/902CO",
@@ -1907,10 +2248,10 @@ window.MASSCOB_PRODUCTS = [
     "coleccionLabel": "WINTER 26-27",
     "colores": {
       "WHITE": {
-        "U": 122
+        "U": 125
       }
     },
-    "stock": 122,
+    "stock": 125,
     "tallaje": "numerico",
     "price_erp": 56.0,
     "tarifas": [
@@ -1939,10 +2280,56 @@ window.MASSCOB_PRODUCTS = [
     "images": {
       "_default": "../Fotos/Fotos W27/W27902CO.jpeg",
       "WHITE": "../Fotos/Fotos W27/W27902COWHITE.jpeg"
+    }
+  },
+  {
+    "codigo": "W27/906CO",
+    "name": "Shirt Vik",
+    "category": "Camisas",
+    "coleccion": "W27",
+    "coleccionLabel": "WINTER 26-27",
+    "colores": {
+      "BLACK DELAVE": {
+        "S": 12,
+        "M": 12
+      },
+      "TAUPE": {
+        "XS": 17,
+        "S": 27,
+        "M": 9
+      }
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27902CO.jpeg",
-      "WHITE": "../Fotos/Fotos W27/W27902COWHITE.jpeg"
+    "stock": 77,
+    "tallaje": "numerico",
+    "price_erp": 50.0,
+    "tarifas": [
+      {
+        "nombre": "WHOLESALE EUROPA",
+        "pct": 0,
+        "precio": 50.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 10%",
+        "pct": 10,
+        "precio": 55.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 15%",
+        "pct": 15,
+        "precio": 58.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 30%",
+        "pct": 30,
+        "precio": 65.0
+      }
+    ],
+    "image": "../Fotos/Fotos W27/W27906COTAUPE.jpeg",
+    "images": {
+      "_default": "../Fotos/Fotos W27/W27906CO.jpeg",
+      "BLOOD": "../Fotos/Fotos W27/W27906COBLOOD.jpeg",
+      "NUDE": "../Fotos/Fotos W27/W27906CONUDE.jpeg",
+      "TAUPE": "../Fotos/Fotos W27/W27906COTAUPE.jpeg"
     }
   },
   {
@@ -1953,21 +2340,21 @@ window.MASSCOB_PRODUCTS = [
     "coleccionLabel": "WINTER 26-27",
     "colores": {
       "BLACK DELAVE": {
-        "XS": 12,
-        "S": 11,
-        "M": 2
+        "XS": 13,
+        "S": 12,
+        "M": 5
       },
       "TAUPE": {
-        "XS": 4,
-        "S": 8
+        "XS": 5,
+        "S": 9
       },
       "NUDE": {
-        "XS": 6,
+        "XS": 7,
         "S": 8,
-        "M": 1
+        "M": 3
       }
     },
-    "stock": 52,
+    "stock": 62,
     "tallaje": "numerico",
     "price_erp": 54.0,
     "tarifas": [
@@ -1998,12 +2385,6 @@ window.MASSCOB_PRODUCTS = [
       "BLOOD": "../Fotos/Fotos W27/W27907COBLOOD.jpeg",
       "NUDE": "../Fotos/Fotos W27/W27907CONUDE.jpeg",
       "TAUPE": "../Fotos/Fotos W27/W27907COTAUPE.jpeg"
-    },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27907CO.jpeg",
-      "BLOOD": "../Fotos/Fotos W27/W27907COBLOOD.jpeg",
-      "NUDE": "../Fotos/Fotos W27/W27907CONUDE.jpeg",
-      "TAUPE": "../Fotos/Fotos W27/W27907COTAUPE.jpeg"
     }
   },
   {
@@ -2014,12 +2395,12 @@ window.MASSCOB_PRODUCTS = [
     "coleccionLabel": "WINTER 26-27",
     "colores": {
       "BLOOD": {
-        "XS": 5,
-        "S": 3,
-        "M": 2
+        "XS": 6,
+        "S": 4,
+        "M": 3
       }
     },
-    "stock": 10,
+    "stock": 13,
     "tallaje": "numerico",
     "price_erp": 54.0,
     "tarifas": [
@@ -2046,12 +2427,6 @@ window.MASSCOB_PRODUCTS = [
     ],
     "image": "../Fotos/Fotos W27/W27911COBLOOD.jpeg",
     "images": {
-      "_default": "../Fotos/Fotos W27/W27911CO.jpeg",
-      "BLOOD": "../Fotos/Fotos W27/W27911COBLOOD.jpeg",
-      "NUDE": "../Fotos/Fotos W27/W27911CONUDE.jpeg",
-      "TAUPE": "../Fotos/Fotos W27/W27911COTAUPE.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27911CO.jpeg",
       "BLOOD": "../Fotos/Fotos W27/W27911COBLOOD.jpeg",
       "NUDE": "../Fotos/Fotos W27/W27911CONUDE.jpeg",
@@ -2096,33 +2471,15 @@ window.MASSCOB_PRODUCTS = [
         "precio": 135.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/933-1.jpg?v=1783063142",
+    "image": "../Fotos/Fotos W27/W27933KNLIGHT GREY.jpeg",
     "images": {
-      "LIGHT GREY": "https://cdn.shopify.com/s/files/1/0324/1401/files/933-1.jpg?v=1783063142",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/933-1.jpg?v=1783063142",
-      "LIPSTICK": "../Fotos/Fotos W27/W27933KNLIPSTICK.jpeg",
-      "MOKA": "../Fotos/Fotos W27/W27933KNMOKA.jpeg",
-      "NOIR": "../Fotos/Fotos W27/W27933KNNOIR.jpeg",
-      "OLIVE": "../Fotos/Fotos W27/W27933KNOLIVE.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27933KN.jpeg",
       "LIGHT GREY": "../Fotos/Fotos W27/W27933KNLIGHT GREY.jpeg",
       "LIPSTICK": "../Fotos/Fotos W27/W27933KNLIPSTICK.jpeg",
       "MOKA": "../Fotos/Fotos W27/W27933KNMOKA.jpeg",
       "NOIR": "../Fotos/Fotos W27/W27933KNNOIR.jpeg",
       "OLIVE": "../Fotos/Fotos W27/W27933KNOLIVE.jpeg"
-    },
-    "gallery": {
-      "LIGHT GREY": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/933-1.jpg?v=1783063142",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/933-3f.jpg?v=1783063143",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/933-2.jpg?v=1783063142",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/933-4.jpg?v=1783063142",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/933KN_838e0278-95e8-406c-9b1c-9c00980c4467.jpg?v=1783063143"
-      ]
-    },
-    "b2cHandle": "simon-sweater"
+    }
   },
   {
     "codigo": "W27/936KN",
@@ -2135,9 +2492,13 @@ window.MASSCOB_PRODUCTS = [
         "XS": 4,
         "S": 6,
         "M": 4
+      },
+      "LIGHT GREY": {
+        "S": 2,
+        "M": 2
       }
     },
-    "stock": 14,
+    "stock": 18,
     "tallaje": "numerico",
     "price_erp": 135.0,
     "tarifas": [
@@ -2162,33 +2523,15 @@ window.MASSCOB_PRODUCTS = [
         "precio": 176.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/936-1.jpg?v=1783951361",
+    "image": "../Fotos/Fotos W27/W27936KNOLIVE.jpeg",
     "images": {
-      "OLIVE": "https://cdn.shopify.com/s/files/1/0324/1401/files/936-1.jpg?v=1783951361",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/936-1.jpg?v=1783951361",
-      "LIGHT GREY": "../Fotos/Fotos W27/W27936KNLIGHT GREY.jpeg",
-      "LIPSTICK": "../Fotos/Fotos W27/W27936KNLIPSTICK.jpeg",
-      "MOKA": "../Fotos/Fotos W27/W27936KNMOKA.jpeg",
-      "NOIR": "../Fotos/Fotos W27/W27936KNNOIR.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27936KN.jpeg",
       "LIGHT GREY": "../Fotos/Fotos W27/W27936KNLIGHT GREY.jpeg",
       "LIPSTICK": "../Fotos/Fotos W27/W27936KNLIPSTICK.jpeg",
       "MOKA": "../Fotos/Fotos W27/W27936KNMOKA.jpeg",
       "NOIR": "../Fotos/Fotos W27/W27936KNNOIR.jpeg",
       "OLIVE": "../Fotos/Fotos W27/W27936KNOLIVE.jpeg"
-    },
-    "gallery": {
-      "OLIVE": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/936-1.jpg?v=1783951361",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/936-3_c9ab4a52-5d85-4699-a398-820111df3112.jpg?v=1783951362",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/936-2-2.jpg?v=1784544719",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/936-4_e9599bc1-c84d-4a24-b349-9fe2b15f2400.jpg?v=1783951361",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/936KN_66c2bcdd-9d52-4d83-a820-d78e77eadb53.jpg?v=1783951362"
-      ]
-    },
-    "b2cHandle": "anais-cardigan"
+    }
   },
   {
     "codigo": "W27/937KN",
@@ -2227,26 +2570,56 @@ window.MASSCOB_PRODUCTS = [
         "precio": 170.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/937-1casif.jpg?v=1785932434",
+    "image": "../Fotos/Fotos W27/W27937KN.jpeg",
     "images": {
-      "PEARL": "https://cdn.shopify.com/s/files/1/0324/1401/files/937-1casif.jpg?v=1785932434",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/937-1casif.jpg?v=1785932434",
-      "_PEARL_1 COPIA": "../Fotos/Fotos W27/W27937KN_PEARL_1 copia.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27937KN.jpeg",
       "_PEARL_1 COPIA": "../Fotos/Fotos W27/W27937KN_PEARL_1 copia.jpeg"
+    }
+  },
+  {
+    "codigo": "W27/940KN",
+    "name": "Sweater Leonora",
+    "category": "Punto",
+    "coleccion": "W27",
+    "coleccionLabel": "WINTER 26-27",
+    "colores": {
+      "BLONDE": {
+        "M": 2,
+        "L": 1
+      }
     },
-    "gallery": {
-      "PEARL": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/937-1casif.jpg?v=1785932434",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/937-2_a4f3e627-a5c9-4cc8-871b-c3c18ecdf71f.jpg?v=1785932434",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/937-3_6c716b73-8770-4c34-bc2f-c8000adc9ad5.jpg?v=1785937210",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/937-4_a0a830a8-2440-4274-833d-4de416e8fe35.jpg?v=1785932435",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/937KN_23c1e27e-f776-4540-8727-f20a689c09cf.jpg?v=1785932469"
-      ]
-    },
-    "b2cHandle": "frida-sweater"
+    "stock": 3,
+    "tallaje": "numerico",
+    "price_erp": 119.0,
+    "tarifas": [
+      {
+        "nombre": "WHOLESALE EUROPA",
+        "pct": 0,
+        "precio": 119.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 10%",
+        "pct": 10,
+        "precio": 131.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 15%",
+        "pct": 15,
+        "precio": 137.0
+      },
+      {
+        "nombre": "WHOLESALE EUROPA + 30%",
+        "pct": 30,
+        "precio": 155.0
+      }
+    ],
+    "image": "../Fotos/Fotos W27/W27940KNBLONDE.jpeg",
+    "images": {
+      "_default": "../Fotos/Fotos W27/W27940KN.jpeg",
+      "BLONDE": "../Fotos/Fotos W27/W27940KNBLONDE.jpeg",
+      "MINERAL BLUE": "../Fotos/Fotos W27/W27940KNMINERAL BLUE.jpeg",
+      "MUSCHIO": "../Fotos/Fotos W27/W27940KNMUSCHIO.jpeg"
+    }
   },
   {
     "codigo": "W27/943KN",
@@ -2288,12 +2661,6 @@ window.MASSCOB_PRODUCTS = [
     ],
     "image": "../Fotos/Fotos W27/W27943KNCACAO.jpeg",
     "images": {
-      "_default": "../Fotos/Fotos W27/W27943KN.jpeg",
-      "CACAO": "../Fotos/Fotos W27/W27943KNCACAO.jpeg",
-      "ONYX": "../Fotos/Fotos W27/W27943KNONYX.jpeg",
-      "YUCA": "../Fotos/Fotos W27/W27943KNYUCA.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27943KN.jpeg",
       "CACAO": "../Fotos/Fotos W27/W27943KNCACAO.jpeg",
       "ONYX": "../Fotos/Fotos W27/W27943KNONYX.jpeg",
@@ -2344,12 +2711,6 @@ window.MASSCOB_PRODUCTS = [
       "CITRIC": "../Fotos/Fotos W27/W27946KNCITRIC.jpeg",
       "DUSTY ROSE": "../Fotos/Fotos W27/W27946KNDUSTY ROSE.jpeg",
       "MARRON GLACE": "../Fotos/Fotos W27/W27946KNMARRON GLACE.jpeg"
-    },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27946KN.jpeg",
-      "CITRIC": "../Fotos/Fotos W27/W27946KNCITRIC.jpeg",
-      "DUSTY ROSE": "../Fotos/Fotos W27/W27946KNDUSTY ROSE.jpeg",
-      "MARRON GLACE": "../Fotos/Fotos W27/W27946KNMARRON GLACE.jpeg"
     }
   },
   {
@@ -2390,28 +2751,12 @@ window.MASSCOB_PRODUCTS = [
         "precio": 173.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/948-1_dc97bf8e-b295-4d7c-b16f-0db882623ea3.jpg?v=1783063225",
+    "image": "../Fotos/Fotos W27/W27948KNNEPTUNE.jpeg",
     "images": {
-      "NEPTUNE": "https://cdn.shopify.com/s/files/1/0324/1401/files/948-1_dc97bf8e-b295-4d7c-b16f-0db882623ea3.jpg?v=1783063225",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/948-1_dc97bf8e-b295-4d7c-b16f-0db882623ea3.jpg?v=1783063225",
-      "TILO": "../Fotos/Fotos W27/W27948KNTILO.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27948KN.jpeg",
       "NEPTUNE": "../Fotos/Fotos W27/W27948KNNEPTUNE.jpeg",
       "TILO": "../Fotos/Fotos W27/W27948KNTILO.jpeg"
-    },
-    "gallery": {
-      "NEPTUNE": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/948-1_dc97bf8e-b295-4d7c-b16f-0db882623ea3.jpg?v=1783063225",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/948-3_4d857756-5b34-4ec6-97e1-a2d3d759346c.jpg?v=1784544844",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/948-3f.jpg?v=1783063225",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/948-2-2.jpg?v=1783063225",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/948-4_a6fd7305-8f85-4afb-9347-5b575b457d51.jpg?v=1783063225",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/948KN_131922af-6421-447d-95d0-fd96a61bdf2a.jpg?v=1783063225"
-      ]
-    },
-    "b2cHandle": "amae-sweater"
+    }
   },
   {
     "codigo": "W27/951KN",
@@ -2450,33 +2795,15 @@ window.MASSCOB_PRODUCTS = [
         "precio": 155.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/951_1.1.jpg?v=1784105284",
+    "image": "../Fotos/Fotos W27/W27951KNLIPSTICK.jpeg",
     "images": {
-      "LIPSTICK": "https://cdn.shopify.com/s/files/1/0324/1401/files/951_1.1.jpg?v=1784105284",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/951_1.1.jpg?v=1784105284",
-      "LIGHT GREY": "../Fotos/Fotos W27/W27951KNLIGHT GREY.jpeg",
-      "MOKA": "../Fotos/Fotos W27/W27951KNMOKA.jpeg",
-      "NOIR": "../Fotos/Fotos W27/W27951KNNOIR.jpeg",
-      "OLIVE": "../Fotos/Fotos W27/W27951KNOLIVE.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27951KN.jpeg",
       "LIGHT GREY": "../Fotos/Fotos W27/W27951KNLIGHT GREY.jpeg",
       "LIPSTICK": "../Fotos/Fotos W27/W27951KNLIPSTICK.jpeg",
       "MOKA": "../Fotos/Fotos W27/W27951KNMOKA.jpeg",
       "NOIR": "../Fotos/Fotos W27/W27951KNNOIR.jpeg",
       "OLIVE": "../Fotos/Fotos W27/W27951KNOLIVE.jpeg"
-    },
-    "gallery": {
-      "LIPSTICK": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/951_1.1.jpg?v=1784105284",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/951_2.jpg?v=1784105284",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/951_3f.jpg?v=1784105284",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/951_4.2.jpg?v=1784105284",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/951KN_a2ce615b-0e65-4a05-ac37-9d27c68f3c91.jpg?v=1784105288"
-      ]
-    },
-    "b2cHandle": "tilda-sweater"
+    }
   },
   {
     "codigo": "W27/956KN",
@@ -2515,29 +2842,13 @@ window.MASSCOB_PRODUCTS = [
         "precio": 173.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/956-1_47a01ba7-634a-4025-9e92-84e34c8e2ac6.jpg?v=1784104968",
+    "image": "../Fotos/Fotos W27/W27956KNDUSTY ROSE.jpeg",
     "images": {
-      "DUSTY ROSE": "https://cdn.shopify.com/s/files/1/0324/1401/files/956-1_47a01ba7-634a-4025-9e92-84e34c8e2ac6.jpg?v=1784104968",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/956-1_47a01ba7-634a-4025-9e92-84e34c8e2ac6.jpg?v=1784104968",
-      "CITRIC": "../Fotos/Fotos W27/W27956KNCITRIC.jpeg",
-      "MARRON GLACE": "../Fotos/Fotos W27/W27956KNMARRON GLACE.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27956KN.jpeg",
       "CITRIC": "../Fotos/Fotos W27/W27956KNCITRIC.jpeg",
       "DUSTY ROSE": "../Fotos/Fotos W27/W27956KNDUSTY ROSE.jpeg",
       "MARRON GLACE": "../Fotos/Fotos W27/W27956KNMARRON GLACE.jpeg"
-    },
-    "gallery": {
-      "DUSTY ROSE": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/956-1_47a01ba7-634a-4025-9e92-84e34c8e2ac6.jpg?v=1784104968",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/956-2_0ddcd721-a47d-40dd-9e16-9c0c3388c1e5.jpg?v=1784104967",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/956-3_18e30e75-0378-401b-8bf3-ace7db6f6177.jpg?v=1784104969",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/956-4_86ae3f89-7782-4aeb-b0f7-22db214065c7.jpg?v=1784104967",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/956KN_9da2f22e-a102-4fd0-bc61-5f466bd1022c.jpg?v=1784107204"
-      ]
-    },
-    "b2cHandle": "maya-sweater"
+    }
   },
   {
     "codigo": "W27/962KN",
@@ -2585,14 +2896,6 @@ window.MASSCOB_PRODUCTS = [
       "MOKA": "../Fotos/Fotos W27/W27962KNMOKA.jpeg",
       "NOIR": "../Fotos/Fotos W27/W27962KNNOIR.jpeg",
       "OLIVE": "../Fotos/Fotos W27/W27962KNOLIVE.jpeg"
-    },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27962KN.jpeg",
-      "LIGHT GREY": "../Fotos/Fotos W27/W27962KNLIGHT GREY.jpeg",
-      "LIPSTICK2": "../Fotos/Fotos W27/W27962KNLIPSTICK2.jpeg",
-      "MOKA": "../Fotos/Fotos W27/W27962KNMOKA.jpeg",
-      "NOIR": "../Fotos/Fotos W27/W27962KNNOIR.jpeg",
-      "OLIVE": "../Fotos/Fotos W27/W27962KNOLIVE.jpeg"
     }
   },
   {
@@ -2633,27 +2936,12 @@ window.MASSCOB_PRODUCTS = [
         "precio": 164.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/966-1.jpg?v=1784546369",
+    "image": "../Fotos/Fotos W27/W27966KNTILO.jpeg",
     "images": {
-      "TILO": "https://cdn.shopify.com/s/files/1/0324/1401/files/966-1.jpg?v=1784546369",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/966-1.jpg?v=1784546369",
-      "NEPTUNE": "../Fotos/Fotos W27/W27966KNNEPTUNE.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27966KN.jpeg",
       "NEPTUNE": "../Fotos/Fotos W27/W27966KNNEPTUNE.jpeg",
       "TILO": "../Fotos/Fotos W27/W27966KNTILO.jpeg"
-    },
-    "gallery": {
-      "TILO": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/966-1.jpg?v=1784546369",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/966-3f.jpg?v=1784546370",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/966-2-2.jpg?v=1784546370",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/966-4_23ce8443-caf3-4ad9-a06f-1aded8951477.jpg?v=1784546370",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/966KN_0e381d79-afe6-48b7-8b61-a0c6e9d153d3.jpg?v=1784546378"
-      ]
-    },
-    "b2cHandle": "elvan-sweater"
+    }
   },
   {
     "codigo": "W27/967KN",
@@ -2693,33 +2981,15 @@ window.MASSCOB_PRODUCTS = [
         "precio": 133.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/967-1.jpg?v=1783951424",
+    "image": "../Fotos/Fotos W27/W27967KNOLIVE.jpeg",
     "images": {
-      "OLIVE": "https://cdn.shopify.com/s/files/1/0324/1401/files/967-1.jpg?v=1783951424",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/967-1.jpg?v=1783951424",
-      "LIGHT GREY": "../Fotos/Fotos W27/W27967KNLIGHT GREY.jpeg",
-      "LIPSTICK": "../Fotos/Fotos W27/W27967KNLIPSTICK.jpeg",
-      "MOKA": "../Fotos/Fotos W27/W27967KNMOKA.jpeg",
-      "NOIR": "../Fotos/Fotos W27/W27967KNNOIR.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27967KN.jpeg",
       "LIGHT GREY": "../Fotos/Fotos W27/W27967KNLIGHT GREY.jpeg",
       "LIPSTICK": "../Fotos/Fotos W27/W27967KNLIPSTICK.jpeg",
       "MOKA": "../Fotos/Fotos W27/W27967KNMOKA.jpeg",
       "NOIR": "../Fotos/Fotos W27/W27967KNNOIR.jpeg",
       "OLIVE": "../Fotos/Fotos W27/W27967KNOLIVE.jpeg"
-    },
-    "gallery": {
-      "OLIVE": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/967-1.jpg?v=1783951424",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/967-3f.jpg?v=1783951424",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/967-2_997097c5-4758-4d0d-8b73-04d5cf50a652.jpg?v=1783951423",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/967-4.jpg?v=1783951424",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/967KN_caa12c90-456f-4f32-b4a0-6c11041a3944.jpg?v=1783951424"
-      ]
-    },
-    "b2cHandle": "moria-sweater"
+    }
   },
   {
     "codigo": "W27/971KN",
@@ -2771,12 +3041,6 @@ window.MASSCOB_PRODUCTS = [
       "CACAO": "../Fotos/Fotos W27/W27971KNCACAO.jpeg",
       "ONYXJPG": "../Fotos/Fotos W27/W27971KNONYXjpg.jpeg",
       "YUCA": "../Fotos/Fotos W27/W27971KNYUCA.jpeg"
-    },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27971KN.jpeg",
-      "CACAO": "../Fotos/Fotos W27/W27971KNCACAO.jpeg",
-      "ONYXJPG": "../Fotos/Fotos W27/W27971KNONYXjpg.jpeg",
-      "YUCA": "../Fotos/Fotos W27/W27971KNYUCA.jpeg"
     }
   },
   {
@@ -2823,12 +3087,6 @@ window.MASSCOB_PRODUCTS = [
       "BLACK": "../Fotos/Fotos W27/W27974KNBLACK.jpeg",
       "CAMEL": "../Fotos/Fotos W27/W27974KNCAMEL.jpeg",
       "NAVY": "../Fotos/Fotos W27/W27974KNNAVY.jpeg"
-    },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27974KN.jpeg",
-      "BLACK": "../Fotos/Fotos W27/W27974KNBLACK.jpeg",
-      "CAMEL": "../Fotos/Fotos W27/W27974KNCAMEL.jpeg",
-      "NAVY": "../Fotos/Fotos W27/W27974KNNAVY.jpeg"
     }
   },
   {
@@ -2869,33 +3127,15 @@ window.MASSCOB_PRODUCTS = [
         "precio": 108.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/990_1.jpg?v=1782485503",
+    "image": "../Fotos/Fotos W27/W27990KNWOOD.jpeg",
     "images": {
-      "WOOD": "https://cdn.shopify.com/s/files/1/0324/1401/files/990_1.jpg?v=1782485503",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/990_1.jpg?v=1782485503",
-      "BLACK DELAVE": "../Fotos/Fotos W27/W27990KNBLACK DELAVE.jpeg",
-      "GREY": "../Fotos/Fotos W27/W27990KNGREY.jpeg",
-      "LIQUEN": "../Fotos/Fotos W27/W27990KNLIQUEN.jpeg",
-      "MARINE": "../Fotos/Fotos W27/W27990KNMARINE.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27990KN.jpeg",
       "BLACK DELAVE": "../Fotos/Fotos W27/W27990KNBLACK DELAVE.jpeg",
       "GREY": "../Fotos/Fotos W27/W27990KNGREY.jpeg",
       "LIQUEN": "../Fotos/Fotos W27/W27990KNLIQUEN.jpeg",
       "MARINE": "../Fotos/Fotos W27/W27990KNMARINE.jpeg",
       "WOOD": "../Fotos/Fotos W27/W27990KNWOOD.jpeg"
-    },
-    "gallery": {
-      "WOOD": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/990_1.jpg?v=1782485503",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/990_3.1.jpg?v=1782485533",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/990_2.1.jpg?v=1782485532",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/990_4.jpg?v=1782485533",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/990KN_2c8497f8-c3ea-4be6-a1b5-764a33c05c25.jpg?v=1784707264"
-      ]
-    },
-    "b2cHandle": "greenville-sweater"
+    }
   },
   {
     "codigo": "W27/992KN",
@@ -2949,49 +3189,31 @@ window.MASSCOB_PRODUCTS = [
         "precio": 108.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/992-3f.jpg?v=1782485521",
+    "image": "../Fotos/Fotos W27/W27992KNLIQUEN.jpeg",
     "images": {
-      "LIQUEN": "https://cdn.shopify.com/s/files/1/0324/1401/files/992-3f.jpg?v=1782485521",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/992-3f.jpg?v=1782485521",
-      "BLACK DELAVE": "../Fotos/Fotos W27/W27992KNBLACK DELAVE.jpeg",
-      "GREY": "../Fotos/Fotos W27/W27992KNGREY.jpeg",
-      "MARINE": "../Fotos/Fotos W27/W27992KNMARINE.jpeg",
-      "WOOD": "../Fotos/Fotos W27/W27992KNWOOD.jpeg"
-    },
-    "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27992KN.jpeg",
       "BLACK DELAVE": "../Fotos/Fotos W27/W27992KNBLACK DELAVE.jpeg",
       "GREY": "../Fotos/Fotos W27/W27992KNGREY.jpeg",
       "LIQUEN": "../Fotos/Fotos W27/W27992KNLIQUEN.jpeg",
       "MARINE": "../Fotos/Fotos W27/W27992KNMARINE.jpeg",
       "WOOD": "../Fotos/Fotos W27/W27992KNWOOD.jpeg"
-    },
-    "gallery": {
-      "LIQUEN": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/992-3f.jpg?v=1782485521",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/992-1.jpg?v=1782485521",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/992-2.jpg?v=1782485521",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/992-4.jpg?v=1782485521",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/992KN_8c26a159-6a5c-46ea-b601-c3c6bccfbc27.jpg?v=1783065129"
-      ]
-    },
-    "b2cHandle": "troncoso-sweater"
+    }
   }
 ];
 window.MASSCOB_META = {
-  "recibidos": 51,
+  "recibidos": 70,
   "sinPrecio": 0,
-  "huerfanos": 102,
+  "huerfanos": 83,
   "insumos": 0,
-  "fechaStock": "2026-08-03",
+  "fechaStock": "2026-09-09",
   "colecciones": [
     {
       "codigo": "W27",
       "label": "WINTER 26-27",
-      "count": 51
+      "count": 70
     }
   ],
-  "conFoto": 51,
+  "conFoto": 70,
   "sinFoto": 0,
   "tarifas": [
     {
