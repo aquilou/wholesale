@@ -172,29 +172,37 @@ def crear_pedido(pedido: PedidoIn, client: dict = Depends(get_current_client)):
     finally:
         conn.close()
 
-    resumen = (
-        f"<p>Referencia: <strong>{referencia}</strong></p>"
-        f"{_items_html(pedido.items)}"
-        f"<p>Total: <strong>{float(total):.2f} €</strong></p>"
-    )
-    if client.get("email"):
-        _enviar_email(
-            [client["email"]],
-            f"Hemos recibido tu pedido {referencia}",
-            f"<p>Hola,</p><p>Hemos recibido tu pedido. Te avisaremos en cuanto lo revisemos.</p>{resumen}",
-        )
-    conn2 = get_conn()
+    # El pedido ya está guardado en este punto (commit hecho arriba). Un
+    # fallo desde aquí en adelante (Resend caído, notif_emails inexistente,
+    # etc.) es best-effort y NUNCA debe convertirse en un 500 de cara al
+    # cliente — si no, el pedido "falla" en la pantalla pero ya existe en
+    # la base de datos, y cada reintento crea uno duplicado.
     try:
-        with conn2.cursor() as cur:
-            equipo = _notif_emails_equipo(cur)
-    finally:
-        conn2.close()
-    if equipo:
-        _enviar_email(
-            equipo,
-            f"Nuevo pedido {referencia}",
-            f"<p>Nuevo pedido de <strong>{client.get('email','—')}</strong>.</p>{resumen}",
+        resumen = (
+            f"<p>Referencia: <strong>{referencia}</strong></p>"
+            f"{_items_html(pedido.items)}"
+            f"<p>Total: <strong>{float(total):.2f} €</strong></p>"
         )
+        if client.get("email"):
+            _enviar_email(
+                [client["email"]],
+                f"Hemos recibido tu pedido {referencia}",
+                f"<p>Hola,</p><p>Hemos recibido tu pedido. Te avisaremos en cuanto lo revisemos.</p>{resumen}",
+            )
+        conn2 = get_conn()
+        try:
+            with conn2.cursor() as cur:
+                equipo = _notif_emails_equipo(cur)
+        finally:
+            conn2.close()
+        if equipo:
+            _enviar_email(
+                equipo,
+                f"Nuevo pedido {referencia}",
+                f"<p>Nuevo pedido de <strong>{client.get('email','—')}</strong>.</p>{resumen}",
+            )
+    except Exception as e:
+        print(f"[email] aviso de pedido {referencia} no enviado: {e!r}")
 
     return {
         "id": pedido_id, "referencia": referencia, "estado": estado,
