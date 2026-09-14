@@ -12,12 +12,14 @@ import secrets
 import time
 import urllib.error
 import urllib.request
+from io import BytesIO
 from typing import List, Optional
 from urllib.parse import quote
 
 from fastapi import Depends, FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fpdf import FPDF
+from PIL import Image
 from pydantic import BaseModel
 
 from auth import get_current_client, require_admin, require_cron
@@ -188,11 +190,12 @@ def _pedido_pdf(
     cols = [col_foto, col_prod, col_color, col_talla, col_cant, col_precio, col_subtotal]
 
     headers = ["", "PRODUCTO", "COLOR", "TALLA", "CANT.", "PRECIO", "SUBTOTAL"]
+    header_aligns = ["L", "L", "L", "L", "C", "C", "C"]
     pdf.set_font("Helvetica", "B", 8)
     x, y = left, pdf.get_y()
-    for w, h in zip(cols, headers):
+    for w, h, al in zip(cols, headers, header_aligns):
         pdf.set_xy(x, y)
-        pdf.cell(w, 6, h, border="B")
+        pdf.cell(w, 6, h, border="B", align=al)
         x += w
     pdf.set_y(y + 7)
 
@@ -208,7 +211,20 @@ def _pedido_pdf(
         if it.get("imagen_url"):
             try:
                 pad = 2
-                pdf.image(it["imagen_url"], x=x + pad, y=y + pad, w=col_foto - 2 * pad, h=row_h - 2 * pad)
+                box_w, box_h = col_foto - 2 * pad, row_h - 2 * pad
+                req_img = urllib.request.Request(
+                    it["imagen_url"], headers={"User-Agent": "masscob-b2b-backend/1.0"}
+                )
+                with urllib.request.urlopen(req_img, timeout=8) as res_img:
+                    img = Image.open(BytesIO(res_img.read()))
+                # "contain": encajar sin deformar (antes se forzaba w y h
+                # fijos y la foto salía achatada) y centrar en la caja.
+                escala = min(box_w / img.width, box_h / img.height)
+                w_img, h_img = img.width * escala, img.height * escala
+                pdf.image(
+                    img, x=x + pad + (box_w - w_img) / 2, y=y + pad + (box_h - h_img) / 2,
+                    w=w_img, h=h_img,
+                )
             except Exception as e:
                 print(f"[pdf] no se pudo cargar la foto de {it['codigo']}: {e!r}")
         x += col_foto
@@ -230,7 +246,7 @@ def _pedido_pdf(
         ]
         for w, val, al in zip(
             [col_color, col_talla, col_cant, col_precio, col_subtotal],
-            vals, ["L", "L", "R", "R", "R"],
+            vals, ["L", "L", "C", "C", "C"],
         ):
             pdf.set_xy(x, y + row_h / 2 - 2.5)
             pdf.cell(w, 5, val, align=al)
