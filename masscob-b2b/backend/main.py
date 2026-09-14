@@ -6,6 +6,7 @@ valida el token resultante y sirve los datos que dependen de negocio.
 Correr en local:
     uvicorn main:app --reload
 """
+import base64
 import json
 import secrets
 import time
@@ -15,6 +16,7 @@ from typing import List, Optional
 
 from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from fpdf import FPDF
 from pydantic import BaseModel
 
 from auth import get_current_client, require_admin, require_cron
@@ -50,14 +52,17 @@ ESTADOS_PEDIDO = {"PENDIENTE", "ACEPTADO", "ANULADO"}
 # Best-effort a propósito: un fallo aquí (Resend caído, dominio sin
 # verificar, clave que falta...) no debe tumbar la creación del pedido ni
 # el cambio de estado, que ya se guardaron en la base de datos.
-def _enviar_email(destinatarios: List[str], asunto: str, html: str) -> bool:
+def _enviar_email(
+    destinatarios: List[str], asunto: str, html: str, adjuntos: Optional[List[dict]] = None
+) -> bool:
     if not RESEND_API_KEY or not destinatarios:
         return False
+    payload = {"from": RESEND_FROM_EMAIL, "to": destinatarios, "subject": asunto, "html": html}
+    if adjuntos:
+        payload["attachments"] = adjuntos
     req = urllib.request.Request(
         "https://api.resend.com/emails",
-        data=json.dumps({
-            "from": RESEND_FROM_EMAIL, "to": destinatarios, "subject": asunto, "html": html,
-        }).encode(),
+        data=json.dumps(payload).encode(),
         headers={
             "Authorization": f"Bearer {RESEND_API_KEY}",
             "Content-Type": "application/json",
@@ -95,13 +100,47 @@ def _email_cliente(cur, cliente_id: str) -> Optional[str]:
     return row[0] if row else None
 
 
-def _items_html(items) -> str:
-    filas = "".join(
-        f"<li>{i.cantidad} x {i.nombre} — {i.color}, talla {i.talla} "
-        f"({i.precio_unit:.2f} €/ud)</li>"
-        for i in items
-    )
-    return f"<ul>{filas}</ul>"
+def _pedido_pdf(referencia: str, cliente_email: str, fecha_iso: str, items, total: float) -> bytes:
+    # Fuentes core de FPDF (Helvetica) van en latin-1, no soportan "€" —
+    # se usa "EUR" en el PDF en vez del símbolo para no arriesgar un fallo
+    # de codificación con nombres/colores con acentos.
+    pdf = FPDF()
+    pdf.set_auto_page_break(auto=True, margin=15)
+    pdf.add_page()
+
+    pdf.set_font("Helvetica", "B", 16)
+    pdf.cell(0, 10, "MASSCOB Wholesale", new_x="LMARGIN", new_y="NEXT")
+    pdf.set_font("Helvetica", "", 11)
+    pdf.cell(0, 7, f"Pedido {referencia}", new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(0, 6, f"Cliente: {cliente_email}", new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(0, 6, f"Fecha: {fecha_iso}", new_x="LMARGIN", new_y="NEXT")
+    pdf.set_font("Helvetica", "B", 11)
+    pdf.cell(0, 8, "Estado: PENDIENTE DE ACEPTACION", new_x="LMARGIN", new_y="NEXT")
+    pdf.ln(4)
+
+    col_widths = [22, 50, 25, 18, 15, 27, 27]
+    headers = ["Codigo", "Nombre", "Color", "Talla", "Cant.", "Precio/ud", "Subtotal"]
+    pdf.set_font("Helvetica", "B", 9)
+    for w, h in zip(col_widths, headers):
+        pdf.cell(w, 7, h, border=1)
+    pdf.ln()
+
+    pdf.set_font("Helvetica", "", 9)
+    for item in items:
+        subtotal = item.cantidad * item.precio_unit
+        fila = [
+            item.codigo, item.nombre, item.color, item.talla,
+            str(item.cantidad), f"{item.precio_unit:.2f} EUR", f"{subtotal:.2f} EUR",
+        ]
+        for w, val in zip(col_widths, fila):
+            pdf.cell(w, 6, val, border=1)
+        pdf.ln()
+
+    pdf.ln(4)
+    pdf.set_font("Helvetica", "B", 12)
+    pdf.cell(0, 8, f"Total: {total:.2f} EUR", new_x="LMARGIN", new_y="NEXT")
+
+    return bytes(pdf.output())
 
 
 @app.get("/health")
@@ -198,16 +237,33 @@ def crear_pedido(pedido: PedidoIn, client: dict = Depends(get_current_client)):
     # cliente — si no, el pedido "falla" en la pantalla pero ya existe en
     # la base de datos, y cada reintento crea uno duplicado.
     try:
+        adjuntos = None
+        try:
+            pdf_bytes = _pedido_pdf(
+                referencia, client.get("email", "—"), created_at.isoformat(),
+                pedido.items, float(total),
+            )
+            adjuntos = [{
+                "filename": f"pedido-{referencia}.pdf",
+                "content": base64.b64encode(pdf_bytes).decode(),
+            }]
+        except Exception as e:
+            # El PDF es un extra sobre el aviso por email — si falla al
+            # generarlo, mejor mandar el correo sin adjunto que no mandar
+            # ningún aviso.
+            print(f"[pdf] no se pudo generar el PDF del pedido {referencia}: {e!r}")
+
         resumen = (
-            f"<p>Referencia: <strong>{referencia}</strong></p>"
-            f"{_items_html(pedido.items)}"
-            f"<p>Total: <strong>{float(total):.2f} €</strong></p>"
+            f"<p>Referencia: <strong>{referencia}</strong> — "
+            f"Total: <strong>{float(total):.2f} €</strong></p>"
+            "<p>Adjuntamos el PDF con el detalle completo del pedido.</p>"
         )
         if client.get("email"):
             _enviar_email(
                 [client["email"]],
                 f"Hemos recibido tu pedido {referencia}",
                 f"<p>Hola,</p><p>Hemos recibido tu pedido. Te avisaremos en cuanto lo revisemos.</p>{resumen}",
+                adjuntos=adjuntos,
             )
         conn2 = get_conn()
         try:
@@ -219,7 +275,10 @@ def crear_pedido(pedido: PedidoIn, client: dict = Depends(get_current_client)):
             _enviar_email(
                 equipo,
                 f"Nuevo pedido {referencia}",
-                f"<p>Nuevo pedido de <strong>{client.get('email','—')}</strong>.</p>{resumen}",
+                f"<p>Nuevo pedido de <strong>{client.get('email','—')}</strong> — "
+                "Estado: <strong>PENDIENTE DE ACEPTACIÓN</strong>.</p>"
+                f"{resumen}",
+                adjuntos=adjuntos,
             )
     except Exception as e:
         print(f"[email] aviso de pedido {referencia} no enviado: {e!r}")
