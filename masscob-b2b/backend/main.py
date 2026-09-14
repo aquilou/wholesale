@@ -13,8 +13,9 @@ import time
 import urllib.error
 import urllib.request
 from typing import List, Optional
+from urllib.parse import quote
 
-from fastapi import Depends, FastAPI, HTTPException
+from fastapi import Depends, FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fpdf import FPDF
 from pydantic import BaseModel
@@ -100,7 +101,57 @@ def _email_cliente(cur, cliente_id: str) -> Optional[str]:
     return row[0] if row else None
 
 
-def _pedido_pdf(referencia: str, cliente_email: str, fecha_iso: str, items, total: float) -> bytes:
+# ---- fotos del pedido en el PDF: mismo banco de fotos del ERP (no la de la
+# web) que ya usa el botón "Descargar PDF" del panel admin, para que el PDF
+# del email tenga la misma calidad — ver buildOrderItemRows() en
+# "Panel Admin MASSCOB.dc.html".
+_catalogo_fotos_cache: dict = {}
+
+
+def _catalogo_fotos(base_url: str) -> dict:
+    """codigo -> producto (con imagesLocal/image), leído de products.js tal
+    cual lo sirve el sitio — no vive en la base de datos, lo genera
+    build_products.py. Se cachea en memoria del proceso: si falla, un
+    pedido no debe quedarse sin avisar por un problema de fotos."""
+    if base_url in _catalogo_fotos_cache:
+        return _catalogo_fotos_cache[base_url]
+    catalogo = {}
+    try:
+        req = urllib.request.Request(
+            base_url + "/masscob-b2b/products.js",
+            headers={"User-Agent": "masscob-b2b-backend/1.0"},
+        )
+        with urllib.request.urlopen(req, timeout=10) as res:
+            raw = res.read().decode("utf-8")
+        inicio = raw.index("[")
+        fin = raw.index("];") + 1
+        catalogo = {p["codigo"]: p for p in json.loads(raw[inicio:fin])}
+    except Exception as e:
+        print(f"[pdf] no se pudo cargar products.js para las fotos: {e!r}")
+    _catalogo_fotos_cache[base_url] = catalogo
+    return catalogo
+
+
+def _imagen_item(base_url: str, codigo: str, color: str) -> Optional[str]:
+    prod = _catalogo_fotos(base_url).get(codigo)
+    if not prod:
+        return None
+    local = prod.get("imagesLocal") or {}
+    rel = local.get(color) or local.get(str(color).upper()) or local.get("_default")
+    if rel:
+        # rutas tipo "../Fotos/Fotos W27/W27100T.jpeg", relativas a
+        # masscob-b2b/ (una carpeta por encima de Fotos/, que se sirve como
+        # estático desde la raíz del sitio) — de ahí en adelante hay que
+        # url-encodearla (los nombres de fichero llevan espacios).
+        idx = rel.find("Fotos/")
+        if idx != -1:
+            return base_url + "/" + quote(rel[idx:], safe="/")
+    return prod.get("image")
+
+
+def _pedido_pdf(
+    referencia: str, cliente_email: str, fecha_iso: str, items: List[dict], total: float
+) -> bytes:
     # Fuentes core de FPDF (Helvetica) van en latin-1, no soportan "€" —
     # se usa "EUR" en el PDF en vez del símbolo para no arriesgar un fallo
     # de codificación con nombres/colores con acentos.
@@ -108,37 +159,82 @@ def _pedido_pdf(referencia: str, cliente_email: str, fecha_iso: str, items, tota
     pdf.set_auto_page_break(auto=True, margin=15)
     pdf.add_page()
 
-    pdf.set_font("Helvetica", "B", 16)
-    pdf.cell(0, 10, "MASSCOB Wholesale", new_x="LMARGIN", new_y="NEXT")
-    pdf.set_font("Helvetica", "", 11)
-    pdf.cell(0, 7, f"Pedido {referencia}", new_x="LMARGIN", new_y="NEXT")
-    pdf.cell(0, 6, f"Cliente: {cliente_email}", new_x="LMARGIN", new_y="NEXT")
-    pdf.cell(0, 6, f"Fecha: {fecha_iso}", new_x="LMARGIN", new_y="NEXT")
-    pdf.set_font("Helvetica", "B", 11)
-    pdf.cell(0, 8, "Estado: PENDIENTE DE ACEPTACION", new_x="LMARGIN", new_y="NEXT")
-    pdf.ln(4)
+    pdf.set_font("Helvetica", "B", 18)
+    pdf.cell(0, 10, "MASSCOB", new_x="LMARGIN", new_y="NEXT")
+    pdf.set_font("Helvetica", "", 10)
+    pdf.cell(0, 6, f"Pedido {referencia}", new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(0, 5, f"Cliente: {cliente_email}", new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(0, 5, f"Fecha {fecha_iso} - Estado PENDIENTE DE ACEPTACION", new_x="LMARGIN", new_y="NEXT")
+    pdf.ln(3)
+    pdf.set_font("Helvetica", "B", 10)
+    pdf.set_text_color(150, 150, 150)
+    pdf.cell(0, 6, "RESUMEN DE PEDIDO", new_x="LMARGIN", new_y="NEXT")
+    pdf.set_text_color(0, 0, 0)
+    pdf.ln(2)
 
-    col_widths = [22, 50, 25, 18, 15, 27, 27]
-    headers = ["Codigo", "Nombre", "Color", "Talla", "Cant.", "Precio/ud", "Subtotal"]
-    pdf.set_font("Helvetica", "B", 9)
-    for w, h in zip(col_widths, headers):
-        pdf.cell(w, 7, h, border=1)
-    pdf.ln()
+    left = pdf.l_margin
+    col_foto, col_prod, col_color, col_talla, col_cant, col_precio, col_subtotal = (
+        20, 55, 25, 18, 15, 27, 27,
+    )
+    cols = [col_foto, col_prod, col_color, col_talla, col_cant, col_precio, col_subtotal]
 
-    pdf.set_font("Helvetica", "", 9)
-    for item in items:
-        subtotal = item.cantidad * item.precio_unit
-        fila = [
-            item.codigo, item.nombre, item.color, item.talla,
-            str(item.cantidad), f"{item.precio_unit:.2f} EUR", f"{subtotal:.2f} EUR",
+    headers = ["", "PRODUCTO", "COLOR", "TALLA", "CANT.", "PRECIO", "SUBTOTAL"]
+    pdf.set_font("Helvetica", "B", 8)
+    x, y = left, pdf.get_y()
+    for w, h in zip(cols, headers):
+        pdf.set_xy(x, y)
+        pdf.cell(w, 6, h, border="B")
+        x += w
+    pdf.set_y(y + 7)
+
+    row_h = 18
+    for it in items:
+        if pdf.get_y() + row_h > pdf.page_break_trigger:
+            pdf.add_page()
+        y = pdf.get_y()
+        x = left
+
+        pdf.set_fill_color(247, 247, 244)
+        pdf.rect(x, y, col_foto, row_h, style="F")
+        if it.get("imagen_url"):
+            try:
+                pad = 2
+                pdf.image(it["imagen_url"], x=x + pad, y=y + pad, w=col_foto - 2 * pad, h=row_h - 2 * pad)
+            except Exception as e:
+                print(f"[pdf] no se pudo cargar la foto de {it['codigo']}: {e!r}")
+        x += col_foto
+
+        pdf.set_xy(x, y + 2)
+        pdf.set_font("Helvetica", "", 9)
+        pdf.multi_cell(col_prod, 4.5, it["nombre"], align="L")
+        pdf.set_xy(x, pdf.get_y())
+        pdf.set_font("Helvetica", "", 7)
+        pdf.set_text_color(150, 150, 150)
+        pdf.cell(col_prod, 4, it["codigo"])
+        pdf.set_text_color(0, 0, 0)
+        x += col_prod
+
+        pdf.set_font("Helvetica", "", 9)
+        vals = [
+            it["color"], it["talla"], str(it["cantidad"]),
+            f"{it['precio_unit']:.2f} EUR", f"{it['cantidad'] * it['precio_unit']:.2f} EUR",
         ]
-        for w, val in zip(col_widths, fila):
-            pdf.cell(w, 6, val, border=1)
-        pdf.ln()
+        for w, val, al in zip(
+            [col_color, col_talla, col_cant, col_precio, col_subtotal],
+            vals, ["L", "L", "R", "R", "R"],
+        ):
+            pdf.set_xy(x, y + row_h / 2 - 2.5)
+            pdf.cell(w, 5, val, align=al)
+            x += w
+
+        pdf.set_draw_color(230, 230, 225)
+        pdf.line(left, y + row_h, left + sum(cols), y + row_h)
+        pdf.set_y(y + row_h)
 
     pdf.ln(4)
     pdf.set_font("Helvetica", "B", 12)
-    pdf.cell(0, 8, f"Total: {total:.2f} EUR", new_x="LMARGIN", new_y="NEXT")
+    pdf.cell(sum(cols[:-1]), 8, "Total", border="T")
+    pdf.cell(cols[-1], 8, f"{total:.2f} EUR", border="T", align="R")
 
     return bytes(pdf.output())
 
@@ -202,7 +298,7 @@ def _fetch_items(cur, pedido_id):
 
 
 @app.post("/pedidos")
-def crear_pedido(pedido: PedidoIn, client: dict = Depends(get_current_client)):
+def crear_pedido(pedido: PedidoIn, request: Request, client: dict = Depends(get_current_client)):
     if not pedido.items:
         raise HTTPException(400, "El pedido no tiene items")
     referencia = "PED-" + str(int(time.time() * 1000))[-8:]
@@ -239,9 +335,18 @@ def crear_pedido(pedido: PedidoIn, client: dict = Depends(get_current_client)):
     try:
         adjuntos = None
         try:
+            base_url = str(request.base_url).rstrip("/")
+            items_pdf = [
+                {
+                    "codigo": item.codigo, "nombre": item.nombre, "color": item.color,
+                    "talla": item.talla, "cantidad": item.cantidad, "precio_unit": item.precio_unit,
+                    "imagen_url": _imagen_item(base_url, item.codigo, item.color),
+                }
+                for item in pedido.items
+            ]
             pdf_bytes = _pedido_pdf(
                 referencia, client.get("email", "—"), created_at.isoformat(),
-                pedido.items, float(total),
+                items_pdf, float(total),
             )
             adjuntos = [{
                 "filename": f"pedido-{referencia}.pdf",
