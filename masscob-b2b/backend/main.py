@@ -68,6 +68,13 @@ def _enviar_email(destinatarios: List[str], asunto: str, html: str) -> bool:
         with urllib.request.urlopen(req) as res:
             res.read()
         return True
+    except urllib.error.HTTPError as e:
+        # El motivo real (dominio no verificado, cuenta restringida, etc.)
+        # va en el cuerpo de la respuesta, no en el código de estado — sin
+        # esto un 403 no dice nada útil en los logs.
+        body = e.read().decode(errors="replace")
+        print(f"[email] no se pudo enviar {asunto!r} a {destinatarios}: HTTP {e.code} {body}")
+        return False
     except Exception as e:
         print(f"[email] no se pudo enviar {asunto!r} a {destinatarios}: {e!r}")
         return False
