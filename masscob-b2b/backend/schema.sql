@@ -14,6 +14,12 @@ create table if not exists clientes (
   created_at timestamptz not null default now()
 );
 
+-- Última vez que se generó o regeneró la contraseña de este cliente (alta
+-- inicial, botón "Generar nueva contraseña" del panel, o el cron diario de
+-- reseteo — ver GET /admin/cron/reset-passwords). Null = cliente creado
+-- antes de este cambio, se resetea en el primer paso del cron.
+alter table clientes add column if not exists password_updated_at timestamptz;
+
 create table if not exists pedidos (
   id bigserial primary key,
   cliente_id uuid not null references clientes(id),

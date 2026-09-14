@@ -725,12 +725,20 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
             </label>
             <label style="display:flex;flex-direction:column;gap:6px">
               <span style="font-size:11px;color:#6b6b64;font-weight:600;letter-spacing:.04em">CONTRASEÑA</span>
-              <input value="{{ clientDraft.password }}" onInput="{{ setPassword }}" placeholder="mínimo 4 caracteres" style="{{ fieldStyle }}">
+              <div style="{{ fieldStyle }};background:#faf9f6;color:#a7a7a0;box-sizing:border-box">{{ clientPasswordUpdatedLabel }}</div>
             </label>
           </div>
           <div style="font-size:11.5px;color:#a7a7a0;margin-top:10px;line-height:1.5">{{ clientAccesoHelp }}</div>
           <sc-if value="{{ clientUsuarioError }}" hint-placeholder-val="">
             <div style="font-size:11.5px;color:#a5443b;margin-top:8px">{{ clientUsuarioError }}</div>
+          </sc-if>
+          <sc-if value="{{ clientHasAccount }}" hint-placeholder-val="">
+          <div style="margin-top:16px;display:flex;align-items:center;gap:14px;flex-wrap:wrap">
+            <button onClick="{{ regenerarPassword }}" style="{{ regenPasswordBtnStyle }}">{{ regenPasswordBtnLabel }}</button>
+            <sc-if value="{{ hasClientRegenMsg }}" hint-placeholder-val="">
+              <div style="font-size:11.5px;color:{{ clientRegenMsgColor }}">{{ clientRegenMsg }}</div>
+            </sc-if>
+          </div>
           </sc-if>
         </div>
 
@@ -923,6 +931,8 @@ class Component extends DCLogic {
       clientEditingId: null,
       clientUsuarioError: null,
       clientSaving: false,
+      clientRegenSaving: false,
+      clientRegenMsg: null,
       paisTarifas: saved.paisTarifas || [],
       overrides: saved.overrides || {},
       logo: saved.logo || null,
@@ -1010,7 +1020,7 @@ class Component extends DCLogic {
         const norm = remotos.map(r => ({
           id: r.id, nombreComercial: r.nombre_comercial, razonSocial: r.razon_social,
           cif: r.cif, direccion: r.direccion, pais: r.pais, agente: r.agente,
-          usuario: r.usuario, synced: true,
+          usuario: r.usuario, passwordUpdatedAt: r.password_updated_at, synced: true,
         }));
         const locales = this.state.clients.filter(c => !norm.some(r => r.id===c.id));
         const clients = locales.concat(norm);
@@ -1226,9 +1236,9 @@ class Component extends DCLogic {
   removeLogo=()=>{ this.setState({logo:null}, ()=>this._save()); }
 
   // ---- clients handlers
-  newClient=()=>{ this.setState({clientDraft:{nombreComercial:'',razonSocial:'',cif:'',direccion:'',pais:'',agente:'',usuario:'',password:''}, clientEditingId:null, clientUsuarioError:null}); }
-  editClient=(id)=>{ const c=this.state.clients.find(x=>x.id===id); if(c) this.setState({clientDraft:Object.assign({},c), clientEditingId:id, clientUsuarioError:null}); }
-  cancelClientForm=()=>{ this.setState({clientDraft:null, clientEditingId:null, clientUsuarioError:null}); }
+  newClient=()=>{ this.setState({clientDraft:{nombreComercial:'',razonSocial:'',cif:'',direccion:'',pais:'',agente:'',usuario:''}, clientEditingId:null, clientUsuarioError:null, clientRegenMsg:null}); }
+  editClient=(id)=>{ const c=this.state.clients.find(x=>x.id===id); if(c) this.setState({clientDraft:Object.assign({},c), clientEditingId:id, clientUsuarioError:null, clientRegenMsg:null}); }
+  cancelClientForm=()=>{ this.setState({clientDraft:null, clientEditingId:null, clientUsuarioError:null, clientRegenMsg:null}); }
   setClientDraftField=(field)=>(e)=>{ const cd=Object.assign({}, this.state.clientDraft); cd[field]=e.target.value; this.setState({clientDraft:cd, clientUsuarioError:null}); }
   saveClient=()=>{
     if(this.state.clientSaving) return;
@@ -1246,11 +1256,12 @@ class Component extends DCLogic {
     }
 
     // si todavía no tiene cuenta real (cliente nuevo, o uno local al que se
-    // le añade acceso ahora) y hay email+contraseña, hay que crear primero
+    // le añade acceso ahora) y hay email de acceso, hay que crear primero
     // el usuario de verdad en Supabase antes de guardar nada — si no, el
     // acceso nunca funcionaría (los clientes creados solo en local nunca
-    // pudieron entrar en la tienda).
-    if(!cd.synced && cd.usuario && cd.password){
+    // pudieron entrar en la tienda). La contraseña la genera el backend y
+    // se la manda al cliente por email; aquí no se escribe a mano.
+    if(!cd.synced && cd.usuario){
       if(!this.state.adminKey){ this.setState({clientUsuarioError:'Configura la clave de administrador en Ajustes para poder crear accesos.'}); return; }
       this.setState({clientSaving:true, clientUsuarioError:null});
       fetch(API_BASE+'/admin/clientes', {
@@ -1259,7 +1270,7 @@ class Component extends DCLogic {
         body: JSON.stringify({
           nombre_comercial: cd.nombreComercial, razon_social: cd.razonSocial, cif: cd.cif,
           direccion: cd.direccion, pais: cd.pais, agente: cd.agente,
-          usuario: cd.usuario, password: cd.password,
+          usuario: cd.usuario,
         }),
       })
         .then(async res=>{
@@ -1282,17 +1293,16 @@ class Component extends DCLogic {
       return;
     }
 
-    // cliente ya sincronizado al que se le pone/cambia la contraseña: hay
-    // que avisar a Supabase Auth, si no el acceso se queda con la
-    // contraseña vieja aunque el panel muestre la nueva (bug real: pasaba
-    // antes con felipe@berrizmoda.com, que nunca pudo entrar).
-    if(cd.synced && cd.password){
+    // cliente ya sincronizado al que se le cambia el email de acceso (la
+    // contraseña se gestiona aparte, con el botón "Generar nueva
+    // contraseña" — ver regenerarPassword).
+    if(cd.synced){
       if(!this.state.adminKey){ this.setState({clientUsuarioError:'Configura la clave de administrador en Ajustes para poder modificar el acceso.'}); return; }
       this.setState({clientSaving:true, clientUsuarioError:null});
       fetch(API_BASE+'/admin/clientes/'+this.state.clientEditingId+'/acceso', {
         method:'PUT',
         headers:Object.assign({'Content-Type':'application/json'}, this._adminHeaders()),
-        body: JSON.stringify({ usuario: cd.usuario, password: cd.password }),
+        body: JSON.stringify({ usuario: cd.usuario }),
       })
         .then(async res=>{
           const data=await res.json().catch(()=>({}));
@@ -1324,6 +1334,40 @@ class Component extends DCLogic {
   removeClient=(id)=>{
     if(!window.confirm('¿Eliminar este cliente?')) return;
     this.setState({clients:this.state.clients.filter(c=>c.id!==id)}, ()=>this._save());
+  }
+  // Genera una contraseña nueva en el backend (Supabase Auth) y se la manda
+  // al cliente por email — el panel nunca llega a verla. Mismo endpoint que
+  // usa el cron de los 30 días.
+  regenerarPassword=()=>{
+    if(this.state.clientRegenSaving) return;
+    const id=this.state.clientEditingId;
+    if(!id) return;
+    if(!this.state.adminKey){ this.setState({clientRegenMsg:{ok:false, text:'Configura la clave de administrador en Ajustes.'}}); return; }
+    if(!window.confirm('¿Generar una contraseña nueva para este cliente? Se le enviará por email y la anterior dejará de funcionar.')) return;
+    this.setState({clientRegenSaving:true, clientRegenMsg:null});
+    fetch(API_BASE+'/admin/clientes/'+id+'/regenerar-password', {
+      method:'POST',
+      headers:this._adminHeaders(),
+    })
+      .then(async res=>{
+        const data=await res.json().catch(()=>({}));
+        if(!res.ok) throw new Error(data.detail || 'Error del servidor');
+        return data;
+      })
+      .then(data=>{
+        const now=new Date().toISOString();
+        const clients=this.state.clients.map(c=>c.id===id ? Object.assign({}, c, {passwordUpdatedAt:now}) : c);
+        const clientDraft=this.state.clientDraft ? Object.assign({}, this.state.clientDraft, {passwordUpdatedAt:now}) : this.state.clientDraft;
+        this.setState({
+          clients, clientDraft, clientRegenSaving:false,
+          clientRegenMsg: data.email_enviado
+            ? {ok:true, text:'Contraseña nueva enviada a '+data.usuario+'.'}
+            : {ok:false, text:'Contraseña regenerada, pero el email no se pudo enviar (revisa RESEND_API_KEY / dominio verificado en Resend).'},
+        }, ()=>this._save());
+      })
+      .catch(err=>{
+        this.setState({clientRegenSaving:false, clientRegenMsg:{ok:false, text: err.message==='Failed to fetch' ? 'Backend no accesible' : err.message}});
+      });
   }
 
   pct(v){ return (v>0?'+':'')+v+'%'; }
@@ -1799,11 +1843,25 @@ class Component extends DCLogic {
       setPais: this.setClientDraftField('pais'),
       setAgente: this.setClientDraftField('agente'),
       setUsuario: this.setClientDraftField('usuario'),
-      setPassword: this.setClientDraftField('password'),
       clientUsuarioError: st.clientUsuarioError,
+      clientHasAccount: !!(st.clientDraft && st.clientDraft.synced),
       clientAccesoHelp: (st.clientDraft && st.clientDraft.synced)
-        ? 'Este cliente ya tiene acceso. Escribe una contraseña nueva solo si quieres cambiarla; déjala en blanco para no tocarla.'
-        : 'Con esto el cliente ya puede entrar en la tienda (masscob-b2b/tienda) con este email y contraseña. Déjalo en blanco si todavía no debe tener acceso.',
+        ? 'La contraseña no se ve ni se edita aquí: usa el botón de abajo para generar una nueva y se la mandamos al cliente por email. También se renueva sola cada 30 días.'
+        : 'Al guardar, se genera automáticamente una contraseña y se le manda por email a este cliente junto con su usuario de acceso.',
+      clientPasswordUpdatedLabel: (()=>{
+        const iso = st.clientDraft && st.clientDraft.passwordUpdatedAt;
+        if(!iso) return 'Sin contraseña generada todavía';
+        const dias = Math.floor((Date.now() - new Date(iso).getTime()) / 86400000);
+        if(dias<=0) return 'Generada hoy';
+        if(dias===1) return 'Generada hace 1 día';
+        return 'Generada hace '+dias+' días';
+      })(),
+      regenerarPassword: this.regenerarPassword,
+      regenPasswordBtnStyle: 'background:none;border:1px solid #e2e2dd;color:#161616;padding:10px 18px;font-size:12.5px;font-weight:600'+(st.clientRegenSaving?';opacity:.5;pointer-events:none':''),
+      regenPasswordBtnLabel: st.clientRegenSaving ? 'Generando…' : 'Generar nueva contraseña',
+      hasClientRegenMsg: !!st.clientRegenMsg,
+      clientRegenMsg: st.clientRegenMsg ? st.clientRegenMsg.text : '',
+      clientRegenMsgColor: (st.clientRegenMsg && st.clientRegenMsg.ok) ? '#6E7150' : '#a5443b',
       saveClient:this.saveClient, saveClientBtnStyle,
       saveClientBtnLabel: st.clientSaving ? 'Guardando…' : 'Guardar cliente',
       cancelClientForm:this.cancelClientForm, cancelClientBtnStyle,

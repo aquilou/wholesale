@@ -7,6 +7,7 @@ Correr en local:
     uvicorn main:app --reload
 """
 import json
+import secrets
 import time
 import urllib.error
 import urllib.request
@@ -16,8 +17,14 @@ from fastapi import Depends, FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from auth import get_current_client, require_admin
-from config import RESEND_API_KEY, RESEND_FROM_EMAIL, SUPABASE_SERVICE_ROLE_KEY, SUPABASE_URL
+from auth import get_current_client, require_admin, require_cron
+from config import (
+    RESEND_API_KEY,
+    RESEND_FROM_EMAIL,
+    STORE_LOGIN_URL,
+    SUPABASE_SERVICE_ROLE_KEY,
+    SUPABASE_URL,
+)
 from db import get_conn
 
 app = FastAPI(title="MASSCOB Wholesale API")
@@ -43,9 +50,9 @@ ESTADOS_PEDIDO = {"PENDIENTE", "ACEPTADO", "ANULADO"}
 # Best-effort a propósito: un fallo aquí (Resend caído, dominio sin
 # verificar, clave que falta...) no debe tumbar la creación del pedido ni
 # el cambio de estado, que ya se guardaron en la base de datos.
-def _enviar_email(destinatarios: List[str], asunto: str, html: str):
+def _enviar_email(destinatarios: List[str], asunto: str, html: str) -> bool:
     if not RESEND_API_KEY or not destinatarios:
-        return
+        return False
     req = urllib.request.Request(
         "https://api.resend.com/emails",
         data=json.dumps({
@@ -60,8 +67,10 @@ def _enviar_email(destinatarios: List[str], asunto: str, html: str):
     try:
         with urllib.request.urlopen(req) as res:
             res.read()
+        return True
     except Exception as e:
         print(f"[email] no se pudo enviar {asunto!r} a {destinatarios}: {e!r}")
+        return False
 
 
 def _notif_emails_equipo(cur) -> List[str]:
@@ -367,6 +376,33 @@ def listar_stock(client: dict = Depends(get_current_client)):
 
 
 # ---- clientes ----
+#
+# La contraseña de acceso ya no la escribe el admin a mano: se genera aquí
+# (alta de cliente, botón "Generar nueva contraseña" del panel, o el cron de
+# los 30 días) y se manda por email al cliente — el admin nunca llega a
+# verla, solo puede disparar que se genere una nueva.
+
+
+def _generar_password() -> str:
+    return secrets.token_urlsafe(9)  # 12 caracteres, aleatorio-seguro
+
+
+def _html_credenciales(usuario: str, password: str, es_regeneracion: bool) -> str:
+    intro = (
+        "Se ha generado una nueva contraseña para tu cuenta de acceso a la "
+        "tienda mayorista de MASSCOB. La anterior ha dejado de funcionar."
+        if es_regeneracion else
+        "Ya tienes acceso a la tienda mayorista de MASSCOB."
+    )
+    enlace = f'<p><a href="{STORE_LOGIN_URL}">Entrar en la tienda</a></p>' if STORE_LOGIN_URL else ""
+    return (
+        f"<p>Hola,</p><p>{intro}</p>"
+        f"<p>Usuario: <strong>{usuario}</strong><br>"
+        f"Contraseña: <strong>{password}</strong></p>"
+        f"{enlace}"
+        "<p>Por seguridad, no compartas esta contraseña con nadie.</p>"
+    )
+
 
 class ClienteIn(BaseModel):
     nombre_comercial: str
@@ -376,7 +412,6 @@ class ClienteIn(BaseModel):
     pais: Optional[str] = None
     agente: Optional[str] = None
     usuario: str  # email de acceso a la tienda
-    password: str
 
 
 def _crear_auth_user(email: str, password: str) -> str:
@@ -425,7 +460,6 @@ def _crear_auth_user(email: str, password: str) -> str:
 
 class ClienteAccesoIn(BaseModel):
     usuario: Optional[str] = None
-    password: Optional[str] = None
 
 
 def _actualizar_auth_user(user_id: str, email: Optional[str], password: Optional[str]):
@@ -478,24 +512,109 @@ def _actualizar_auth_user(user_id: str, email: Optional[str], password: Optional
 def actualizar_acceso_cliente(
     cliente_id: str, datos: ClienteAccesoIn, _: None = Depends(require_admin)
 ):
-    if datos.password and len(datos.password) < 6:
-        raise HTTPException(400, "La contraseña debe tener al menos 6 caracteres")
     usuario = datos.usuario.strip().lower() if datos.usuario else None
-    _actualizar_auth_user(cliente_id, usuario, datos.password)
+    _actualizar_auth_user(cliente_id, usuario, None)
     return {"ok": True}
 
 
-@app.post("/admin/clientes")
-def crear_cliente(cliente: ClienteIn, _: None = Depends(require_admin)):
-    if len(cliente.password) < 6:
-        raise HTTPException(400, "La contraseña debe tener al menos 6 caracteres")
-    user_id = _crear_auth_user(cliente.usuario.strip().lower(), cliente.password)
+@app.post("/admin/clientes/{cliente_id}/regenerar-password")
+def regenerar_password_cliente(cliente_id: str, _: None = Depends(require_admin)):
+    """Genera una contraseña nueva para un cliente ya existente y se la
+    manda por email. El admin dispara la acción pero nunca ve la
+    contraseña — solo llega al cliente."""
+    conn = get_conn()
+    try:
+        with conn.cursor() as cur:
+            email = _email_cliente(cur, cliente_id)
+    finally:
+        conn.close()
+    if not email:
+        raise HTTPException(404, "Cliente no encontrado")
+
+    password = _generar_password()
+    _actualizar_auth_user(cliente_id, None, password)
+
     conn = get_conn()
     try:
         with conn.cursor() as cur:
             cur.execute(
-                f"insert into clientes (id, {', '.join(_CLIENTE_CAMPOS)}) "
-                f"values (%s, %s, %s, %s, %s, %s, %s) returning id, {', '.join(_CLIENTE_CAMPOS)}",
+                "update clientes set password_updated_at = now() where id = %s",
+                (cliente_id,),
+            )
+        conn.commit()
+    except Exception:
+        conn.rollback()
+        raise
+    finally:
+        conn.close()
+
+    enviado = _enviar_email(
+        [email],
+        "Tu nueva contraseña de acceso a MASSCOB Wholesale",
+        _html_credenciales(email, password, es_regeneracion=True),
+    )
+    return {"ok": True, "usuario": email, "email_enviado": enviado}
+
+
+@app.get("/admin/cron/reset-passwords")
+def cron_reset_passwords(_: None = Depends(require_cron)):
+    """Reseteo automático de contraseñas cada 30 días — llamado a diario
+    por el cron de Vercel (ver vercel.json). Idempotente: cada día solo
+    toca a quien ya lleve 30 días o más desde su último reseteo, así que da
+    igual si un día el cron no llega a ejecutarse."""
+    conn = get_conn()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                "select c.id, u.email from clientes c join auth.users u on u.id = c.id "
+                "where c.password_updated_at is null "
+                "or c.password_updated_at < now() - interval '30 days'"
+            )
+            pendientes = cur.fetchall()
+    finally:
+        conn.close()
+
+    resultados = []
+    for cliente_id, email in pendientes:
+        try:
+            password = _generar_password()
+            _actualizar_auth_user(cliente_id, None, password)
+            conn = get_conn()
+            try:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        "update clientes set password_updated_at = now() where id = %s",
+                        (cliente_id,),
+                    )
+                conn.commit()
+            except Exception:
+                conn.rollback()
+                raise
+            finally:
+                conn.close()
+            enviado = _enviar_email(
+                [email],
+                "Tu contraseña de acceso a MASSCOB Wholesale se ha renovado",
+                _html_credenciales(email, password, es_regeneracion=True),
+            )
+            resultados.append({"usuario": email, "email_enviado": enviado})
+        except Exception as e:
+            resultados.append({"usuario": email, "error": str(e)})
+    return {"procesados": len(resultados), "resultados": resultados}
+
+
+@app.post("/admin/clientes")
+def crear_cliente(cliente: ClienteIn, _: None = Depends(require_admin)):
+    usuario = cliente.usuario.strip().lower()
+    password = _generar_password()
+    user_id = _crear_auth_user(usuario, password)
+    conn = get_conn()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                f"insert into clientes (id, {', '.join(_CLIENTE_CAMPOS)}, password_updated_at) "
+                f"values (%s, %s, %s, %s, %s, %s, %s, now()) "
+                f"returning id, {', '.join(_CLIENTE_CAMPOS)}",
                 (user_id, cliente.nombre_comercial, cliente.razon_social, cliente.cif,
                  cliente.direccion, cliente.pais, cliente.agente),
             )
@@ -506,6 +625,14 @@ def crear_cliente(cliente: ClienteIn, _: None = Depends(require_admin)):
         raise
     finally:
         conn.close()
+
+    # Igual que el resto de emails: best-effort, un fallo aquí no debe
+    # tumbar el alta del cliente, que ya se guardó.
+    _enviar_email(
+        [usuario],
+        "Tus credenciales de acceso a MASSCOB Wholesale",
+        _html_credenciales(usuario, password, es_regeneracion=False),
+    )
     return dict(zip(["id"] + _CLIENTE_CAMPOS, row))
 
 
@@ -515,15 +642,23 @@ def listar_clientes_admin(_: None = Depends(require_admin)):
     try:
         with conn.cursor() as cur:
             cur.execute(
-                f"select c.id, {', '.join('c.' + f for f in _CLIENTE_CAMPOS)}, u.email "
+                f"select c.id, {', '.join('c.' + f for f in _CLIENTE_CAMPOS)}, "
+                "u.email, c.password_updated_at "
                 "from clientes c join auth.users u on u.id = c.id "
                 "order by c.created_at desc"
             )
             rows = cur.fetchall()
     finally:
         conn.close()
-    keys = ["id"] + _CLIENTE_CAMPOS + ["usuario"]
-    return [dict(zip(keys, row)) for row in rows]
+    keys = ["id"] + _CLIENTE_CAMPOS + ["usuario", "password_updated_at"]
+    result = []
+    for row in rows:
+        d = dict(zip(keys, row))
+        d["password_updated_at"] = (
+            d["password_updated_at"].isoformat() if d["password_updated_at"] else None
+        )
+        result.append(d)
+    return result
 
 
 # ---- notificaciones: destinatarios del equipo (además del cliente) ----

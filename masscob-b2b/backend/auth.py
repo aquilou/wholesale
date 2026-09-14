@@ -13,7 +13,7 @@ import jwt
 from jwt import PyJWKClient
 from fastapi import Header, HTTPException
 
-from config import ADMIN_API_KEY, SUPABASE_URL
+from config import ADMIN_API_KEY, CRON_SECRET, SUPABASE_URL
 
 _jwk_client = PyJWKClient(f"{SUPABASE_URL}/auth/v1/.well-known/jwks.json")
 
@@ -39,3 +39,13 @@ def get_current_client(authorization: str = Header(...)):
 def require_admin(x_admin_key: str = Header(...)):
     if not secrets.compare_digest(x_admin_key, ADMIN_API_KEY):
         raise HTTPException(401, "Clave de administrador incorrecta")
+
+
+# Para el cron de reseteo de contraseñas (Vercel Cron manda
+# "Authorization: Bearer $CRON_SECRET" solo, no la clave de admin del panel).
+def require_cron(authorization: str = Header(...)):
+    if not CRON_SECRET or not authorization.startswith("Bearer "):
+        raise HTTPException(401, "No autorizado")
+    token = authorization[len("Bearer "):]
+    if not secrets.compare_digest(token, CRON_SECRET):
+        raise HTTPException(401, "No autorizado")
