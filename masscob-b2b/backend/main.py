@@ -61,6 +61,10 @@ def _enviar_email(destinatarios: List[str], asunto: str, html: str) -> bool:
         headers={
             "Authorization": f"Bearer {RESEND_API_KEY}",
             "Content-Type": "application/json",
+            # Sin esto, Cloudflare (delante de api.resend.com) bloquea la
+            # petición con un 403 (error 1010): el User-Agent por defecto de
+            # urllib ("Python-urllib/3.x") coincide con firmas de bot.
+            "User-Agent": "masscob-b2b-backend/1.0",
         },
         method="POST",
     )
