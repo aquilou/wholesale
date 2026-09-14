@@ -73,7 +73,7 @@ async function loginClient(usuario, password){
 // ---- pedidos (backend real) ----
 function _pedidoFromApi(p){
   return {
-    ref: p.referencia, fecha: p.fecha, estado: p.estado, total: p.total, nota: p.nota,
+    id: p.id, ref: p.referencia, fecha: p.fecha, estado: p.estado, total: p.total, nota: p.nota,
     items: p.items.map(i => ({
       codigo: i.codigo, name: i.nombre, color: i.color, talla: i.talla,
       cantidad: i.cantidad, precioUnit: i.precio_unit,
@@ -105,6 +105,30 @@ async function crearPedido({items, total, nota}){
   });
   if(!res.ok) return null;
   return _pedidoFromApi(await res.json());
+}
+async function descargarPedidoPDF(id, ref){
+  const headers = await _authHeader();
+  if(!headers) return;
+  let res;
+  try{
+    res = await fetch(API_BASE + '/pedidos/' + id + '/pdf', { headers });
+  }catch(e){
+    alert('No se pudo descargar el PDF: backend no accesible.');
+    return;
+  }
+  if(!res.ok){
+    alert('No se pudo descargar el PDF.');
+    return;
+  }
+  const blob = await res.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'pedido-' + ref + '.pdf';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
 }
 async function stockActual(){
   const headers = await _authHeader();

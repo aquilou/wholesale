@@ -15,7 +15,7 @@ import urllib.request
 from typing import List, Optional
 from urllib.parse import quote
 
-from fastapi import Depends, FastAPI, HTTPException, Request
+from fastapi import Depends, FastAPI, HTTPException, Request, Response
 from fastapi.middleware.cors import CORSMiddleware
 from fpdf import FPDF
 from pydantic import BaseModel
@@ -149,8 +149,16 @@ def _imagen_item(base_url: str, codigo: str, color: str) -> Optional[str]:
     return prod.get("image")
 
 
+_ESTADO_PDF_LABEL = {
+    "PENDIENTE": "PENDIENTE DE ACEPTACION",
+    "ACEPTADO": "ACEPTADO",
+    "ANULADO": "ANULADO",
+}
+
+
 def _pedido_pdf(
-    referencia: str, cliente_email: str, fecha_iso: str, items: List[dict], total: float
+    referencia: str, cliente_email: str, fecha_iso: str, items: List[dict], total: float,
+    estado: str = "PENDIENTE",
 ) -> bytes:
     # Fuentes core de FPDF (Helvetica) van en latin-1, no soportan "€" —
     # se usa "EUR" en el PDF en vez del símbolo para no arriesgar un fallo
@@ -164,7 +172,8 @@ def _pedido_pdf(
     pdf.set_font("Helvetica", "", 10)
     pdf.cell(0, 6, f"Pedido {referencia}", new_x="LMARGIN", new_y="NEXT")
     pdf.cell(0, 5, f"Cliente: {cliente_email}", new_x="LMARGIN", new_y="NEXT")
-    pdf.cell(0, 5, f"Fecha {fecha_iso} - Estado PENDIENTE DE ACEPTACION", new_x="LMARGIN", new_y="NEXT")
+    estado_label = _ESTADO_PDF_LABEL.get(estado, estado)
+    pdf.cell(0, 5, f"Fecha {fecha_iso} - Estado {estado_label}", new_x="LMARGIN", new_y="NEXT")
     pdf.ln(3)
     pdf.set_font("Helvetica", "B", 10)
     pdf.set_text_color(150, 150, 150)
@@ -346,7 +355,7 @@ def crear_pedido(pedido: PedidoIn, request: Request, client: dict = Depends(get_
             ]
             pdf_bytes = _pedido_pdf(
                 referencia, client.get("email", "—"), created_at.isoformat(),
-                items_pdf, float(total),
+                items_pdf, float(total), estado=estado,
             )
             adjuntos = [{
                 "filename": f"pedido-{referencia}.pdf",
@@ -416,6 +425,44 @@ def listar_pedidos(client: dict = Depends(get_current_client)):
     finally:
         conn.close()
     return result
+
+
+@app.get("/pedidos/{pedido_id}/pdf")
+def descargar_pedido_pdf(
+    pedido_id: int, request: Request, client: dict = Depends(get_current_client)
+):
+    conn = get_conn()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                "select referencia, estado, total, created_at, cliente_id "
+                "from pedidos where id = %s",
+                (pedido_id,),
+            )
+            row = cur.fetchone()
+            # 404 también si el pedido es de otro cliente — no distinguir
+            # "no existe" de "no es tuyo" para no filtrar qué ids existen.
+            if not row or str(row[4]) != str(client["user_id"]):
+                raise HTTPException(404, "Pedido no encontrado")
+            referencia, estado, total, created_at, _cliente_id = row
+            items = _fetch_items(cur, pedido_id)
+    finally:
+        conn.close()
+
+    base_url = str(request.base_url).rstrip("/")
+    items_pdf = [
+        dict(item, imagen_url=_imagen_item(base_url, item["codigo"], item["color"]))
+        for item in items
+    ]
+    pdf_bytes = _pedido_pdf(
+        referencia, client.get("email", "—"), created_at.isoformat(),
+        items_pdf, float(total), estado=estado,
+    )
+    return Response(
+        content=pdf_bytes,
+        media_type="application/pdf",
+        headers={"Content-Disposition": f'attachment; filename="pedido-{referencia}.pdf"'},
+    )
 
 
 @app.get("/admin/pedidos")
