@@ -65,6 +65,11 @@ function cartTotal(){ return cartLoad().reduce((t,i)=>t+i.cantidad*i.precioUnit,
 function updateCartBadge(){
   const el = document.getElementById('cartCount');
   if(el) el.textContent = cartCount();
+  // punto en el toggle del menú móvil, para ver que hay algo en el carrito
+  // sin tener que abrir el menú (el badge de "Carrito" vive dentro del nav,
+  // que en móvil está oculto hasta que se abre)
+  const toggle = document.getElementById('navToggle');
+  if(toggle) toggle.classList.toggle('hasCart', cartCount() > 0);
 }
 
 function showToast(msg){
