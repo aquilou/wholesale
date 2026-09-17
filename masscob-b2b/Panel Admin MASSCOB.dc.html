@@ -1115,7 +1115,7 @@ class Component extends DCLogic {
           const body = await res.json().catch(()=>({}));
           throw new Error(body.detail || 'No se pudo actualizar el estado');
         }
-        this._fetchStock(); // aceptar/revertir puede haber movido stock
+        this._fetchStock(); // anular/reabrir puede haber movido stock (aceptar ya no lo toca: se reserva al crear el pedido)
       })
       .catch(err => {
         window.alert(err.message==='Failed to fetch' ? 'Backend no accesible' : err.message);

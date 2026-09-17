@@ -200,10 +200,10 @@ async function submitOrder(){
   if(!client) return;
 
   const pedido = await crearPedido({ items, total, nota });
-  if(!pedido){
+  if(!pedido || pedido.error){
     document.getElementById('content').innerHTML = `
       <div class="box" style="text-align:center;color:#a5443b">
-        No se pudo registrar el pedido. Inténtalo de nuevo en unos segundos.
+        ${pedido && pedido.error ? pedido.error : 'No se pudo registrar el pedido. Inténtalo de nuevo en unos segundos.'}
       </div>`;
     return;
   }

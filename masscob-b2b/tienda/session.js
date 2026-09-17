@@ -103,7 +103,13 @@ async function crearPedido({items, total, nota}){
     headers: Object.assign({ 'Content-Type': 'application/json' }, headers),
     body: JSON.stringify(body),
   });
-  if(!res.ok) return null;
+  if(!res.ok){
+    // 409 = alguna talla/color se ha quedado sin stock (puede que otro
+    // pedido se lo haya reservado justo antes) — se lo decimos al cliente
+    // en vez de un error genérico, porque reintentar igual no lo arregla.
+    const errBody = await res.json().catch(()=>({}));
+    return { error: errBody.detail || 'No se pudo registrar el pedido.' };
+  }
   return _pedidoFromApi(await res.json());
 }
 async function descargarPedidoPDF(id, ref){

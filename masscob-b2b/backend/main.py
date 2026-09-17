@@ -345,6 +345,20 @@ def crear_pedido(pedido: PedidoIn, request: Request, client: dict = Depends(get_
                     (pedido_id, item.codigo, item.nombre, item.color, item.talla,
                      item.cantidad, item.precio_unit),
                 )
+                # el stock se reserva ya en PENDIENTE (no al ACEPTAR) para que
+                # dos pedidos no puedan pisarse la misma unidad mientras el
+                # primero espera revisión
+                cur.execute(
+                    "update stock set cantidad = cantidad - %s "
+                    "where codigo=%s and color=%s and talla=%s and cantidad >= %s "
+                    "returning cantidad",
+                    (item.cantidad, item.codigo, item.color, item.talla, item.cantidad),
+                )
+                if cur.fetchone() is None:
+                    raise HTTPException(
+                        409,
+                        f"Stock insuficiente para {item.codigo} / {item.color} / {item.talla}",
+                    )
         conn.commit()
     except Exception:
         conn.rollback()
@@ -526,12 +540,23 @@ def actualizar_estado_pedido(pedido_id: int, body: EstadoIn, _: None = Depends(r
             estado_actual, cliente_id, referencia = row
 
             if estado_actual != body.estado:
-                entra_en_aceptado = body.estado == "ACEPTADO"
-                sale_de_aceptado = estado_actual == "ACEPTADO"
-                if entra_en_aceptado or sale_de_aceptado:
+                # el stock ya se reservó al crear el pedido (PENDIENTE), así
+                # que Pendiente<->Aceptado no lo vuelve a tocar. Solo entrar
+                # o salir de ANULADO mueve stock: anular lo devuelve, y
+                # reabrir un pedido anulado (hacia Pendiente o Aceptado) lo
+                # vuelve a reservar (puede fallar si ya no hay unidades).
+                entra_en_anulado = body.estado == "ANULADO"
+                sale_de_anulado = estado_actual == "ANULADO"
+                if entra_en_anulado or sale_de_anulado:
                     items = _fetch_items(cur, pedido_id)
                     for item in items:
-                        if entra_en_aceptado:
+                        if entra_en_anulado:
+                            cur.execute(
+                                "update stock set cantidad = cantidad + %s "
+                                "where codigo=%s and color=%s and talla=%s",
+                                (item["cantidad"], item["codigo"], item["color"], item["talla"]),
+                            )
+                        else:
                             cur.execute(
                                 "update stock set cantidad = cantidad - %s "
                                 "where codigo=%s and color=%s and talla=%s and cantidad >= %s "
@@ -543,12 +568,6 @@ def actualizar_estado_pedido(pedido_id: int, body: EstadoIn, _: None = Depends(r
                                     409,
                                     f"Stock insuficiente para {item['codigo']} / {item['color']} / {item['talla']}",
                                 )
-                        else:
-                            cur.execute(
-                                "update stock set cantidad = cantidad + %s "
-                                "where codigo=%s and color=%s and talla=%s",
-                                (item["cantidad"], item["codigo"], item["color"], item["talla"]),
-                            )
 
             cur.execute(
                 "update pedidos set estado = %s where id = %s",
