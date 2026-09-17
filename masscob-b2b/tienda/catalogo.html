@@ -357,7 +357,9 @@ function miniSizesHTML(p, color){
 function cardHTML(p){
   const colors = colorsOf(p);
   const color = previewColor[p.codigo] || colors[0];
-  const low = p.stock <= lowStockThreshold();
+  const outOfStock = p.stock <= 0;
+  const low = !outOfStock && p.stock <= lowStockThreshold();
+  const stockLabel = outOfStock ? 'Agotado' : (low ? 'Pocas unidades' : '');
   return `
     <div class="card" data-codigo="${p.codigo}">
       <div class="imgwrap"><img src="${imgSrc(imageFor(p,color),900)}" alt="${p.name} — ${color}" loading="lazy"></div>
@@ -367,7 +369,7 @@ function cardHTML(p){
         <div class="code">${p.codigo}</div>
         <div class="swatches">${colors.map(c=>`<button class="swatch${c===color?' active':''}" data-swatch data-codigo="${p.codigo}" data-color="${c}" style="background:${colorHex(c)}" title="${c}"></button>`).join('')}</div>
         <div class="miniSizes">${miniSizesHTML(p,color)}</div>
-        <div class="foot"><span class="stock${low?' low':''}">${low?'Pocas unidades':''}</span><span class="price">${fmt(priceFor(p))}</span></div>
+        <div class="foot"><span class="stock${(low||outOfStock)?' low':''}">${stockLabel}</span><span class="price">${fmt(priceFor(p))}</span></div>
       </div>
     </div>`;
 }
