@@ -957,7 +957,9 @@ class Component extends DCLogic {
       clientRegenMsg: null,
       paisTarifas: saved.paisTarifas || [],
       overrides: saved.overrides || {},
-      logo: saved.logo || null,
+      // si no hay un logo custom guardado en este navegador (drag&drop), usa
+      // el logo por defecto del repo -> se ve igual en cualquier equipo.
+      logo: saved.logo || 'masscob-logo-black.jpg',
       adminKey: saved.adminKey || '',
       pedidosRemote: [],
       pedidosLoading: false,
