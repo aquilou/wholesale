@@ -42,10 +42,7 @@ window.MASSCOB_PRODUCTS = [
       "FOREST": "https://cdn.shopify.com/s/files/1/0324/1401/files/100-1.jpg?v=1785937068",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/100-1.jpg?v=1785937068"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27100T.jpeg",
-      "FOREST": "../Fotos/Fotos W27/W27100TFOREST.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "FOREST": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/100-1.jpg?v=1785937068",
@@ -100,10 +97,7 @@ window.MASSCOB_PRODUCTS = [
       "BLACK": "https://cdn.shopify.com/s/files/1/0324/1401/files/101_1.1_46552960-66bf-4841-b378-fb58be780b6e.jpg?v=1783956403",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/101_1.1_46552960-66bf-4841-b378-fb58be780b6e.jpg?v=1783956403"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27101B.jpeg",
-      "BLACK": "../Fotos/Fotos W27/W27101BBLACK.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "BLACK": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/101_1.1_46552960-66bf-4841-b378-fb58be780b6e.jpg?v=1783956403",
@@ -159,10 +153,7 @@ window.MASSCOB_PRODUCTS = [
       "MARINE": "https://cdn.shopify.com/s/files/1/0324/1401/files/102-1-4_32d30832-e731-4e68-a592-501e299e621e.jpg?v=1785932659",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/102-1-4_32d30832-e731-4e68-a592-501e299e621e.jpg?v=1785932659"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27102D.jpeg",
-      "MARINE": "../Fotos/Fotos W27/W27102DMARINE.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "MARINE": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/102-1-4_32d30832-e731-4e68-a592-501e299e621e.jpg?v=1785932659",
@@ -212,21 +203,18 @@ window.MASSCOB_PRODUCTS = [
         "precio": 352.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/103_1.1.jpg?v=1789381449",
+    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/103_1.2.jpg?v=1789630426",
     "images": {
-      "PECAN": "https://cdn.shopify.com/s/files/1/0324/1401/files/103_1.1.jpg?v=1789381449",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/103_1.1.jpg?v=1789381449"
+      "PECAN": "https://cdn.shopify.com/s/files/1/0324/1401/files/103_1.2.jpg?v=1789630426",
+      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/103_1.2.jpg?v=1789630426"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27103I.jpeg",
-      "PECAN": "../Fotos/Fotos W27/W27103IPECAN.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "PECAN": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/103_1.1.jpg?v=1789381449",
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/103_1.2.jpg?v=1789630426",
         "https://cdn.shopify.com/s/files/1/0324/1401/files/103_3.2.jpg?v=1789381449",
         "https://cdn.shopify.com/s/files/1/0324/1401/files/103_1.3.jpg?v=1789381449",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/103_2.1.F.jpg?v=1789381449",
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/103_2.1.F_3da5e44e-03ab-4e10-a863-0ee5fd663c4a.jpg?v=1789630403",
         "https://cdn.shopify.com/s/files/1/0324/1401/files/103_4.jpg?v=1789381449",
         "https://cdn.shopify.com/s/files/1/0324/1401/files/103I_98537f24-48a9-4bfc-8bf9-ecd8fb74c0ad.jpg?v=1789381522"
       ]
@@ -275,10 +263,7 @@ window.MASSCOB_PRODUCTS = [
       "OLIVE": "https://cdn.shopify.com/s/files/1/0324/1401/files/104-1.jpg?v=1782478514",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/104-1.jpg?v=1782478514"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27104A.jpeg",
-      "OLIVE": "../Fotos/Fotos W27/W27104AOLIVE.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "OLIVE": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/104-1.jpg?v=1782478514",
@@ -326,15 +311,26 @@ window.MASSCOB_PRODUCTS = [
         "precio": 248.0
       }
     ],
-    "image": "../Fotos/Fotos W27/W27106QSTEEL.jpeg",
+    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/106-1-2.jpg?v=1785937827",
     "images": {
-      "_default": "../Fotos/Fotos W27/W27106Q.jpeg",
-      "STEEL": "../Fotos/Fotos W27/W27106QSTEEL.jpeg"
+      "STEEL": "https://cdn.shopify.com/s/files/1/0324/1401/files/106-1-2.jpg?v=1785937827",
+      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/106-1-2.jpg?v=1785937827"
     },
     "imagesLocal": {
       "_default": "../Fotos/Fotos W27/W27106Q.jpeg",
       "STEEL": "../Fotos/Fotos W27/W27106QSTEEL.jpeg"
-    }
+    },
+    "gallery": {
+      "STEEL": [
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/106-1-2.jpg?v=1785937827",
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/106-3.jpg?v=1785937827",
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/106-2.jpg?v=1785937826",
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/106-3-2_cerrado.jpg?v=1785937826",
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/106-4.jpg?v=1785937826",
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/106Q.jpg?v=1785937841"
+      ]
+    },
+    "b2cHandle": "bette-coat"
   },
   {
     "codigo": "W27/110B",
@@ -379,10 +375,7 @@ window.MASSCOB_PRODUCTS = [
       "TAUPE": "https://cdn.shopify.com/s/files/1/0324/1401/files/110-1f.jpg?v=1784106184",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/110-1f.jpg?v=1784106184"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27110B.jpeg",
-      "TAUPE": "../Fotos/Fotos W27/W27110BTAUPE.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "TAUPE": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/110-1f.jpg?v=1784106184",
@@ -437,10 +430,7 @@ window.MASSCOB_PRODUCTS = [
       "ECRU": "https://cdn.shopify.com/s/files/1/0324/1401/files/200_1.12_5495d0e3-859b-45ea-b780-9e8140d27948.jpg?v=1788510865",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/200_1.12_5495d0e3-859b-45ea-b780-9e8140d27948.jpg?v=1788510865"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27200K.jpeg",
-      "ECRU": "../Fotos/Fotos W27/W27200KECRU.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "ECRU": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/200_1.12_5495d0e3-859b-45ea-b780-9e8140d27948.jpg?v=1788510865",
@@ -496,10 +486,7 @@ window.MASSCOB_PRODUCTS = [
       "BROWN": "https://cdn.shopify.com/s/files/1/0324/1401/files/202-1f.jpg?v=1788510912",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/202-1f.jpg?v=1788510912"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27202K.jpeg",
-      "BROWN": "../Fotos/Fotos W27/W27202KBROWN.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "BROWN": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/202-1f.jpg?v=1788510912",
@@ -554,10 +541,7 @@ window.MASSCOB_PRODUCTS = [
       "TAUPE": "https://cdn.shopify.com/s/files/1/0324/1401/files/204_1.1.jpg?v=1783064457",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/204_1.1.jpg?v=1783064457"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27204B.jpeg",
-      "TAUPE": "../Fotos/Fotos W27/W27204BTAUPE.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "TAUPE": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/204_1.1.jpg?v=1783064457",
@@ -614,10 +598,7 @@ window.MASSCOB_PRODUCTS = [
       "BLACK": "https://cdn.shopify.com/s/files/1/0324/1401/files/205_1.1.jpg?v=1783063567",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/205_1.1.jpg?v=1783063567"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27205B.jpeg",
-      "BLACK": "../Fotos/Fotos W27/W27205BBLACK.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "BLACK": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/205_1.1.jpg?v=1783063567",
@@ -672,10 +653,7 @@ window.MASSCOB_PRODUCTS = [
       "ONYX": "https://cdn.shopify.com/s/files/1/0324/1401/files/212-1f.jpg?v=1785937893",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/212-1f.jpg?v=1785937893"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27212F.jpeg",
-      "ONYX": "../Fotos/Fotos W27/W27212FONYX.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "ONYX": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/212-1f.jpg?v=1785937893",
@@ -730,10 +708,7 @@ window.MASSCOB_PRODUCTS = [
       "NOIR": "https://cdn.shopify.com/s/files/1/0324/1401/files/214-1.jpg?v=1784106428",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/214-1.jpg?v=1784106428"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27214K.jpeg",
-      "NOIR": "../Fotos/Fotos W27/W27214KNOIR.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "NOIR": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/214-1.jpg?v=1784106428",
@@ -788,10 +763,7 @@ window.MASSCOB_PRODUCTS = [
       "BLACK": "https://cdn.shopify.com/s/files/1/0324/1401/files/216-1.jpg?v=1783951081",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/216-1.jpg?v=1783951081"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27216T.jpeg",
-      "BLACK": "../Fotos/Fotos W27/W27216TBLACK.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "BLACK": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/216-1.jpg?v=1783951081",
@@ -845,10 +817,7 @@ window.MASSCOB_PRODUCTS = [
       "CORTECCIA": "https://cdn.shopify.com/s/files/1/0324/1401/files/217_1-1.jpg?v=1788511355",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/217_1-1.jpg?v=1788511355"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27217C.jpeg",
-      "CORTECCIA": "../Fotos/Fotos W27/W27217CCORTECCIA.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "CORTECCIA": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/217_1-1.jpg?v=1788511355",
@@ -903,9 +872,7 @@ window.MASSCOB_PRODUCTS = [
       "PIED DE POULE": "https://cdn.shopify.com/s/files/1/0324/1401/files/218_1.1.jpg?v=1785937988",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/218_1.1.jpg?v=1785937988"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27218N.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "PIED DE POULE": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/218_1.1.jpg?v=1785937988",
@@ -961,8 +928,6 @@ window.MASSCOB_PRODUCTS = [
       "TILO": "../Fotos/Fotos W27/W27311KNTILO.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27311KN.jpeg",
-      "NEPTUNE": "../Fotos/Fotos W27/W27311KNNEPTUNE.jpeg",
       "TILO": "../Fotos/Fotos W27/W27311KNTILO.jpeg"
     },
     "gallery": {
@@ -1010,18 +975,16 @@ window.MASSCOB_PRODUCTS = [
         "precio": 95.0
       }
     ],
-    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/312KN.jpg?v=1784105629",
+    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/312KNnew_62ec9e00-d2ff-4df6-b9f5-699f0f071b77.jpg?v=1789718251",
     "images": {
-      "LIGHT GREY": "https://cdn.shopify.com/s/files/1/0324/1401/files/312KN.jpg?v=1784105629",
-      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/312KN.jpg?v=1784105629",
+      "LIGHT GREY": "https://cdn.shopify.com/s/files/1/0324/1401/files/312KNnew_62ec9e00-d2ff-4df6-b9f5-699f0f071b77.jpg?v=1789718251",
+      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/312KNnew_62ec9e00-d2ff-4df6-b9f5-699f0f071b77.jpg?v=1789718251",
       "LIPSTICK": "../Fotos/Fotos W27/W27312KNLIPSTICK.jpeg",
       "MOKA": "../Fotos/Fotos W27/W27312KNMOKA.jpeg",
       "NOIR": "../Fotos/Fotos W27/W27312KNNOIR.jpeg",
       "OLIVE": "../Fotos/Fotos W27/W27312KNOLIVE.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27312KN.jpeg",
-      "LIGHT GREY": "../Fotos/Fotos W27/W27312KNLIGHT GREY.jpeg",
       "LIPSTICK": "../Fotos/Fotos W27/W27312KNLIPSTICK.jpeg",
       "MOKA": "../Fotos/Fotos W27/W27312KNMOKA.jpeg",
       "NOIR": "../Fotos/Fotos W27/W27312KNNOIR.jpeg",
@@ -1029,10 +992,10 @@ window.MASSCOB_PRODUCTS = [
     },
     "gallery": {
       "LIGHT GREY": [
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/312KN.jpg?v=1784105629",
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/312KNnew_62ec9e00-d2ff-4df6-b9f5-699f0f071b77.jpg?v=1789718251",
         "https://cdn.shopify.com/s/files/1/0324/1401/files/312-1-2f.jpg?v=1784105619",
         "https://cdn.shopify.com/s/files/1/0324/1401/files/312-3-2.jpg?v=1784105619",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/312KN_OLIVE.jpg?v=1784202888",
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/312KN_OLIVEnew_a0c7d806-1519-4f23-9448-0997e1b06151.jpg?v=1789715066",
         "https://cdn.shopify.com/s/files/1/0324/1401/files/312-3.jpg?v=1784202909",
         "https://cdn.shopify.com/s/files/1/0324/1401/files/312-2.jpg?v=1784202909"
       ]
@@ -1075,11 +1038,11 @@ window.MASSCOB_PRODUCTS = [
         "precio": 52.0
       }
     ],
-    "image": "../Fotos/Fotos W27/W27320KNMINERAL BLUE.jpeg",
+    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/320KN_376d5b4c-5165-436b-93c8-6f0d7d45d06e.jpg?v=1789381391",
     "images": {
-      "_default": "../Fotos/Fotos W27/W27320KN.jpeg",
+      "MINERAL BLUE": "https://cdn.shopify.com/s/files/1/0324/1401/files/320KN_376d5b4c-5165-436b-93c8-6f0d7d45d06e.jpg?v=1789381391",
+      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/320KN_376d5b4c-5165-436b-93c8-6f0d7d45d06e.jpg?v=1789381391",
       "BLONDE": "../Fotos/Fotos W27/W27320KNBLONDE.jpeg",
-      "MINERAL BLUE": "../Fotos/Fotos W27/W27320KNMINERAL BLUE.jpeg",
       "MUSCHIO": "../Fotos/Fotos W27/W27320KNMUSCHIO.jpeg"
     },
     "imagesLocal": {
@@ -1087,7 +1050,13 @@ window.MASSCOB_PRODUCTS = [
       "BLONDE": "../Fotos/Fotos W27/W27320KNBLONDE.jpeg",
       "MINERAL BLUE": "../Fotos/Fotos W27/W27320KNMINERAL BLUE.jpeg",
       "MUSCHIO": "../Fotos/Fotos W27/W27320KNMUSCHIO.jpeg"
-    }
+    },
+    "gallery": {
+      "MINERAL BLUE": [
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/320KN_376d5b4c-5165-436b-93c8-6f0d7d45d06e.jpg?v=1789381391"
+      ]
+    },
+    "b2cHandle": "abel-scarf"
   },
   {
     "codigo": "W27/342LTH",
@@ -1187,9 +1156,7 @@ window.MASSCOB_PRODUCTS = [
       "NIGHT": "../Fotos/Fotos W27/W27400RNIGHT.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27400R.jpeg",
-      "NIGHT": "../Fotos/Fotos W27/W27400RNIGHT.jpeg",
-      "SEA SALT": "../Fotos/Fotos W27/W27400RSEA SALT.jpeg"
+      "NIGHT": "../Fotos/Fotos W27/W27400RNIGHT.jpeg"
     },
     "gallery": {
       "SEA SALT": [
@@ -1245,9 +1212,7 @@ window.MASSCOB_PRODUCTS = [
       "NIGHT": "../Fotos/Fotos W27/W27401RNIGHT.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27401R.jpeg",
-      "NIGHT": "../Fotos/Fotos W27/W27401RNIGHT.jpeg",
-      "SEA SALT": "../Fotos/Fotos W27/W27401RSEA SALT.jpeg"
+      "NIGHT": "../Fotos/Fotos W27/W27401RNIGHT.jpeg"
     },
     "gallery": {
       "SEA SALT": [
@@ -1306,9 +1271,7 @@ window.MASSCOB_PRODUCTS = [
       "ARGENT": "../Fotos/Fotos W27/W27403MARGENT.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27403M.jpeg",
-      "ARGENT": "../Fotos/Fotos W27/W27403MARGENT.jpeg",
-      "TILLEUL": "../Fotos/Fotos W27/W27403MTILLEUL.jpeg"
+      "ARGENT": "../Fotos/Fotos W27/W27403MARGENT.jpeg"
     },
     "gallery": {
       "TILLEUL": [
@@ -1366,9 +1329,7 @@ window.MASSCOB_PRODUCTS = [
       "BLACK": "../Fotos/Fotos W27/W27500DBLACK.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27500D.jpeg",
-      "BLACK": "../Fotos/Fotos W27/W27500DBLACK.jpeg",
-      "WHITE": "../Fotos/Fotos W27/W27500DWHITE.jpeg"
+      "BLACK": "../Fotos/Fotos W27/W27500DBLACK.jpeg"
     },
     "gallery": {
       "WHITE": [
@@ -1423,10 +1384,7 @@ window.MASSCOB_PRODUCTS = [
       "CYPRESS": "https://cdn.shopify.com/s/files/1/0324/1401/files/502_1.22_4c4801a1-ab4c-4d0f-8ecb-e60aba7a540f.jpg?v=1788878400",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/502_1.22_4c4801a1-ab4c-4d0f-8ecb-e60aba7a540f.jpg?v=1788878400"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27502U.jpeg",
-      "CYPRESS": "../Fotos/Fotos W27/W27502UCYPRESS.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "CYPRESS": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/502_1.22_4c4801a1-ab4c-4d0f-8ecb-e60aba7a540f.jpg?v=1788878400",
@@ -1489,10 +1447,7 @@ window.MASSCOB_PRODUCTS = [
       "SEPIA": "../Fotos/Fotos W27/W27503GSEPIA.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27503G.jpeg",
       "CHALK": "../Fotos/Fotos W27/W27503GCHALK.jpeg",
-      "INK BLACK": "../Fotos/Fotos W27/W27503GINK BLACK.jpeg",
-      "RED": "../Fotos/Fotos W27/W27503GRED.jpeg",
       "SEPIA": "../Fotos/Fotos W27/W27503GSEPIA.jpeg"
     },
     "gallery": {
@@ -1555,10 +1510,7 @@ window.MASSCOB_PRODUCTS = [
       "BLEU": "https://cdn.shopify.com/s/files/1/0324/1401/files/505-1.jpg?v=1785937118",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/505-1.jpg?v=1785937118"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27505E.jpeg",
-      "BLEU": "../Fotos/Fotos W27/W27505EBLEU.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "BLEU": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/505-1.jpg?v=1785937118",
@@ -1616,11 +1568,9 @@ window.MASSCOB_PRODUCTS = [
       "RED": "../Fotos/Fotos W27/W27506GRED.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27506G.jpeg",
       "CHALK": "../Fotos/Fotos W27/W27506GCHALK.jpeg",
       "INK BLACK": "../Fotos/Fotos W27/W27506GINK BLACK.jpeg",
-      "RED": "../Fotos/Fotos W27/W27506GRED.jpeg",
-      "SEPIA": "../Fotos/Fotos W27/W27506GSEPIA.jpeg"
+      "RED": "../Fotos/Fotos W27/W27506GRED.jpeg"
     },
     "gallery": {
       "SEPIA": [
@@ -1677,10 +1627,7 @@ window.MASSCOB_PRODUCTS = [
       "LIGHT BLUE": "https://cdn.shopify.com/s/files/1/0324/1401/files/507-1_436779f2-794c-4175-9265-6a2936b8ba96.jpg?v=1785938175",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/507-1_436779f2-794c-4175-9265-6a2936b8ba96.jpg?v=1785938175"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27507E.jpeg",
-      "LIGHT BLUE": "../Fotos/Fotos W27/W27507ELIGHT BLUE.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "LIGHT BLUE": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/507-1_436779f2-794c-4175-9265-6a2936b8ba96.jpg?v=1785938175",
@@ -1739,8 +1686,6 @@ window.MASSCOB_PRODUCTS = [
       "SEPIA": "../Fotos/Fotos W27/W27509GSEPIA.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27509G.jpeg",
-      "CHALK": "../Fotos/Fotos W27/W27509GCHALK.jpeg",
       "INK BLACK": "../Fotos/Fotos W27/W27509GINK BLACK.jpeg",
       "RED": "../Fotos/Fotos W27/W27509GRED.jpeg",
       "SEPIA": "../Fotos/Fotos W27/W27509GSEPIA.jpeg"
@@ -1799,10 +1744,7 @@ window.MASSCOB_PRODUCTS = [
       "CLOUD": "https://cdn.shopify.com/s/files/1/0324/1401/files/514_1.2.jpg?v=1783063343",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/514_1.2.jpg?v=1783063343"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27514E.jpeg",
-      "CLOUD": "../Fotos/Fotos W27/W27514ECLOUD.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "CLOUD": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/514_1.2.jpg?v=1783063343",
@@ -1855,10 +1797,7 @@ window.MASSCOB_PRODUCTS = [
       "TRAVERTINE": "https://cdn.shopify.com/s/files/1/0324/1401/files/517-1.jpg?v=1784105732",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/517-1.jpg?v=1784105732"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27517S.jpeg",
-      "TRAVERTINE": "../Fotos/Fotos W27/W27517STRAVERTINE.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "TRAVERTINE": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/517-1.jpg?v=1784105732",
@@ -1915,8 +1854,6 @@ window.MASSCOB_PRODUCTS = [
       "TILLEUL": "../Fotos/Fotos W27/W27519MTILLEUL.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27519M.jpeg",
-      "ARGENT": "../Fotos/Fotos W27/W27519MARGENT.jpeg",
       "TILLEUL": "../Fotos/Fotos W27/W27519MTILLEUL.jpeg"
     },
     "gallery": {
@@ -1972,10 +1909,7 @@ window.MASSCOB_PRODUCTS = [
       "CYPRESS": "https://cdn.shopify.com/s/files/1/0324/1401/files/600-1.jpg?v=1788510539",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/600-1.jpg?v=1788510539"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27600U.jpeg",
-      "CYPRESS": "../Fotos/Fotos W27/W27600UCYPRESS.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "CYPRESS": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/600-1.jpg?v=1788510539",
@@ -2032,8 +1966,6 @@ window.MASSCOB_PRODUCTS = [
       "SEA SALT": "../Fotos/Fotos W27/W27603RSEA SALT.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27603R.jpeg",
-      "NIGHT": "../Fotos/Fotos W27/W27603RNIGHT.jpeg",
       "SEA SALT": "../Fotos/Fotos W27/W27603RSEA SALT.jpeg"
     },
     "gallery": {
@@ -2090,10 +2022,7 @@ window.MASSCOB_PRODUCTS = [
       "KHOL": "https://cdn.shopify.com/s/files/1/0324/1401/files/607-1_125b068f-2cd1-4bd9-93f8-231d025290bd.jpg?v=1785936996",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/607-1_125b068f-2cd1-4bd9-93f8-231d025290bd.jpg?v=1785936996"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27607P.jpeg",
-      "KHOL": "../Fotos/Fotos W27/W27607PKHOL.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "KHOL": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/607-1_125b068f-2cd1-4bd9-93f8-231d025290bd.jpg?v=1785936996",
@@ -2155,9 +2084,7 @@ window.MASSCOB_PRODUCTS = [
       "NIGHT": "../Fotos/Fotos W27/W27608RNIGHT.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27608R.jpeg",
-      "NIGHT": "../Fotos/Fotos W27/W27608RNIGHT.jpeg",
-      "SEA SALT": "../Fotos/Fotos W27/W27608RSEA SALT.jpeg"
+      "NIGHT": "../Fotos/Fotos W27/W27608RNIGHT.jpeg"
     },
     "gallery": {
       "SEA SALT": [
@@ -2213,10 +2140,7 @@ window.MASSCOB_PRODUCTS = [
       "CORTECCIA": "https://cdn.shopify.com/s/files/1/0324/1401/files/609-1f.jpg?v=1788511237",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/609-1f.jpg?v=1788511237"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27609C.jpeg",
-      "CORTECCIA": "../Fotos/Fotos W27/W27609CCORTECCIA.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "CORTECCIA": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/609-1f.jpg?v=1788511237",
@@ -2273,8 +2197,6 @@ window.MASSCOB_PRODUCTS = [
       "NUIT": "../Fotos/Fotos W27/W27700VNUIT.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27700V.jpeg",
-      "HUILE": "../Fotos/Fotos W27/W27700VHUILE.jpeg",
       "NUIT": "../Fotos/Fotos W27/W27700VNUIT.jpeg"
     },
     "gallery": {
@@ -2341,10 +2263,7 @@ window.MASSCOB_PRODUCTS = [
       "CEDAR": "../Fotos/Fotos W27/W27701HCEDAR.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27701H.jpeg",
-      "CEDAR": "../Fotos/Fotos W27/W27701HCEDAR.jpeg",
-      "ROSSO": "../Fotos/Fotos W27/W27701HROSSO.jpeg",
-      "TAUPE": "../Fotos/Fotos W27/W27701HTAUPE.jpeg"
+      "CEDAR": "../Fotos/Fotos W27/W27701HCEDAR.jpeg"
     },
     "gallery": {
       "ROSSO": [
@@ -2411,9 +2330,7 @@ window.MASSCOB_PRODUCTS = [
       "PEBBLE": "../Fotos/Fotos W27/W27703LPEBBLE.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27703L.jpeg",
       "CONCRETE GREY": "../Fotos/Fotos W27/W27703LCONCRETE GREY.jpeg",
-      "ONYX": "../Fotos/Fotos W27/W27703LONYX.jpeg",
       "PEBBLE": "../Fotos/Fotos W27/W27703LPEBBLE.jpeg"
     },
     "gallery": {
@@ -2475,9 +2392,7 @@ window.MASSCOB_PRODUCTS = [
       "BLUETTE": "../Fotos/Fotos W27/W27704OBLUETTE.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27704O.jpeg",
-      "BLUETTE": "../Fotos/Fotos W27/W27704OBLUETTE.jpeg",
-      "NAVY": "../Fotos/Fotos W27/W27704ONAVY.jpeg"
+      "BLUETTE": "../Fotos/Fotos W27/W27704OBLUETTE.jpeg"
     },
     "gallery": {
       "NAVY": [
@@ -2537,7 +2452,6 @@ window.MASSCOB_PRODUCTS = [
       "_TAUPE": "../Fotos/Fotos W27/W27705H_TAUPE.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27705H.jpeg",
       "ROSSO": "../Fotos/Fotos W27/W27705HROSSO.jpeg",
       "_CEDAR": "../Fotos/Fotos W27/W27705H_CEDAR.jpeg",
       "_TAUPE": "../Fotos/Fotos W27/W27705H_TAUPE.jpeg"
@@ -2599,10 +2513,8 @@ window.MASSCOB_PRODUCTS = [
       "ONYX": "../Fotos/Fotos W27/W27708LONYX.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27708L.jpeg",
       "CONCRETE GREY": "../Fotos/Fotos W27/W27708LCONCRETE GREY.jpeg",
-      "ONYX": "../Fotos/Fotos W27/W27708LONYX.jpeg",
-      "PEBBLE": "../Fotos/Fotos W27/W27708LPEBBLE.jpeg"
+      "ONYX": "../Fotos/Fotos W27/W27708LONYX.jpeg"
     },
     "gallery": {
       "PEBBLE": [
@@ -2660,8 +2572,6 @@ window.MASSCOB_PRODUCTS = [
       "GREY MELANGE": "../Fotos/Fotos W27/W27711MGREY MELANGE.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27711M.jpeg",
-      "BRUNETTE": "../Fotos/Fotos W27/W27711MBRUNETTE.jpeg",
       "GREY MELANGE": "../Fotos/Fotos W27/W27711MGREY MELANGE.jpeg"
     },
     "gallery": {
@@ -2726,9 +2636,7 @@ window.MASSCOB_PRODUCTS = [
       "NIGHT": "../Fotos/Fotos W27/W27712RNIGHT.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27712R.jpeg",
-      "NIGHT": "../Fotos/Fotos W27/W27712RNIGHT.jpeg",
-      "SEA SALT": "../Fotos/Fotos W27/W27712RSEA SALT.jpeg"
+      "NIGHT": "../Fotos/Fotos W27/W27712RNIGHT.jpeg"
     },
     "gallery": {
       "SEA SALT": [
@@ -2784,10 +2692,7 @@ window.MASSCOB_PRODUCTS = [
       "DUNE": "https://cdn.shopify.com/s/files/1/0324/1401/files/713-1.jpg?v=1782485246",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/713-1.jpg?v=1782485246"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27713A.jpeg",
-      "DUNE": "../Fotos/Fotos W27/W27713ADUNE.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "DUNE": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/713-1.jpg?v=1782485246",
@@ -2842,10 +2747,7 @@ window.MASSCOB_PRODUCTS = [
       "ONYX": "https://cdn.shopify.com/s/files/1/0324/1401/files/715-1.jpg?v=1788511294",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/715-1.jpg?v=1788511294"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27715F.jpeg",
-      "ONYX": "../Fotos/Fotos W27/W27715FONYX.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "ONYX": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/715-1.jpg?v=1788511294",
@@ -2901,8 +2803,6 @@ window.MASSCOB_PRODUCTS = [
       "NAVY": "../Fotos/Fotos W27/W27718ONAVY.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27718O.jpeg",
-      "BLUETTE": "../Fotos/Fotos W27/W27718OBLUETTE.jpeg",
       "NAVY": "../Fotos/Fotos W27/W27718ONAVY.jpeg"
     },
     "gallery": {
@@ -2958,10 +2858,7 @@ window.MASSCOB_PRODUCTS = [
       "BLEU": "https://cdn.shopify.com/s/files/1/0324/1401/files/721_1.1.jpg?v=1785937715",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/721_1.1.jpg?v=1785937715"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27721E.jpeg",
-      "BLEU": "../Fotos/Fotos W27/W27721EBLEU.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "BLEU": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/721_1.1.jpg?v=1785937715",
@@ -3016,10 +2913,7 @@ window.MASSCOB_PRODUCTS = [
       "CORTECCIA": "https://cdn.shopify.com/s/files/1/0324/1401/files/722-1.jpg?v=1788510403",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/722-1.jpg?v=1788510403"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27722C.jpeg",
-      "CORTECCIA": "../Fotos/Fotos W27/W27722CCORTECCIA.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "CORTECCIA": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/722-1.jpg?v=1788510403",
@@ -3075,9 +2969,7 @@ window.MASSCOB_PRODUCTS = [
       "PEBBLE": "../Fotos/Fotos W27/W27800LPEBBLE.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27800L.jpeg",
       "CONCRETE GREY": "../Fotos/Fotos W27/W27800LCONCRETE GREY.jpeg",
-      "ONYX": "../Fotos/Fotos W27/W27800LONYX.jpeg",
       "PEBBLE": "../Fotos/Fotos W27/W27800LPEBBLE.jpeg"
     },
     "gallery": {
@@ -3132,10 +3024,7 @@ window.MASSCOB_PRODUCTS = [
       "WHITE": "https://cdn.shopify.com/s/files/1/0324/1401/files/902-1f.jpg?v=1785938631",
       "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/902-1f.jpg?v=1785938631"
     },
-    "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27902CO.jpeg",
-      "WHITE": "../Fotos/Fotos W27/W27902COWHITE.jpeg"
-    },
+    "imagesLocal": {},
     "gallery": {
       "WHITE": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/902-1f.jpg?v=1785938631",
@@ -3198,10 +3087,8 @@ window.MASSCOB_PRODUCTS = [
       "NUDE": "../Fotos/Fotos W27/W27906CONUDE.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27906CO.jpeg",
       "BLOOD": "../Fotos/Fotos W27/W27906COBLOOD.jpeg",
-      "NUDE": "../Fotos/Fotos W27/W27906CONUDE.jpeg",
-      "TAUPE": "../Fotos/Fotos W27/W27906COTAUPE.jpeg"
+      "NUDE": "../Fotos/Fotos W27/W27906CONUDE.jpeg"
     },
     "gallery": {
       "BLACK DELAVE": [
@@ -3263,11 +3150,12 @@ window.MASSCOB_PRODUCTS = [
         "precio": 70.0
       }
     ],
-    "image": "../Fotos/Fotos W27/W27907COTAUPE.jpeg",
+    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/907b-3.jpg?v=1789380465",
     "images": {
-      "_default": "../Fotos/Fotos W27/W27907CO.jpeg",
+      "BLACK DELAVE": "https://cdn.shopify.com/s/files/1/0324/1401/files/907b-3.jpg?v=1789380465",
+      "NUDE": "https://cdn.shopify.com/s/files/1/0324/1401/files/907CO_NUDE.jpg?v=1789380286",
+      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/907b-3.jpg?v=1789380465",
       "BLOOD": "../Fotos/Fotos W27/W27907COBLOOD.jpeg",
-      "NUDE": "../Fotos/Fotos W27/W27907CONUDE.jpeg",
       "TAUPE": "../Fotos/Fotos W27/W27907COTAUPE.jpeg"
     },
     "imagesLocal": {
@@ -3275,7 +3163,24 @@ window.MASSCOB_PRODUCTS = [
       "BLOOD": "../Fotos/Fotos W27/W27907COBLOOD.jpeg",
       "NUDE": "../Fotos/Fotos W27/W27907CONUDE.jpeg",
       "TAUPE": "../Fotos/Fotos W27/W27907COTAUPE.jpeg"
-    }
+    },
+    "gallery": {
+      "BLACK DELAVE": [
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/907b-3.jpg?v=1789380465",
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/907b-1-pruebadetopoabeigue.jpg?v=1789380465",
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/907b-2.jpg?v=1789380465",
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/907b-4.jpg?v=1789380465",
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/907n-3.jpg?v=1789380465",
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/907n-1.jpg?v=1789380465",
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/907n-2-2.jpg?v=1789380465",
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/907n-4.jpg?v=1789380465",
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/907CO_BLACKDELAVE.jpg?v=1789380286"
+      ],
+      "NUDE": [
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/907CO_NUDE.jpg?v=1789380286"
+      ]
+    },
+    "b2cHandle": "theda-t-shirt"
   },
   {
     "codigo": "W27/911CO",
@@ -3315,10 +3220,10 @@ window.MASSCOB_PRODUCTS = [
         "precio": 70.0
       }
     ],
-    "image": "../Fotos/Fotos W27/W27911COBLOOD.jpeg",
+    "image": "https://cdn.shopify.com/s/files/1/0324/1401/files/911r-4.jpg?v=1789380635",
     "images": {
-      "_default": "../Fotos/Fotos W27/W27911CO.jpeg",
-      "BLOOD": "../Fotos/Fotos W27/W27911COBLOOD.jpeg",
+      "BLOOD": "https://cdn.shopify.com/s/files/1/0324/1401/files/911r-4.jpg?v=1789380635",
+      "_default": "https://cdn.shopify.com/s/files/1/0324/1401/files/911r-4.jpg?v=1789380635",
       "NUDE": "../Fotos/Fotos W27/W27911CONUDE.jpeg",
       "TAUPE": "../Fotos/Fotos W27/W27911COTAUPE.jpeg"
     },
@@ -3327,7 +3232,16 @@ window.MASSCOB_PRODUCTS = [
       "BLOOD": "../Fotos/Fotos W27/W27911COBLOOD.jpeg",
       "NUDE": "../Fotos/Fotos W27/W27911CONUDE.jpeg",
       "TAUPE": "../Fotos/Fotos W27/W27911COTAUPE.jpeg"
-    }
+    },
+    "gallery": {
+      "BLOOD": [
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/911r-4.jpg?v=1789380635",
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/911r-1.jpg?v=1789380635",
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/911r-2.jpg?v=1789380635",
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/911CO_BLOOD.jpg?v=1785938895"
+      ]
+    },
+    "b2cHandle": "sumac-t-shirt-1"
   },
   {
     "codigo": "W27/933KN",
@@ -3377,8 +3291,6 @@ window.MASSCOB_PRODUCTS = [
       "OLIVE": "../Fotos/Fotos W27/W27933KNOLIVE.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27933KN.jpeg",
-      "LIGHT GREY": "../Fotos/Fotos W27/W27933KNLIGHT GREY.jpeg",
       "LIPSTICK": "../Fotos/Fotos W27/W27933KNLIPSTICK.jpeg",
       "MOKA": "../Fotos/Fotos W27/W27933KNMOKA.jpeg",
       "NOIR": "../Fotos/Fotos W27/W27933KNNOIR.jpeg",
@@ -3447,12 +3359,10 @@ window.MASSCOB_PRODUCTS = [
       "NOIR": "../Fotos/Fotos W27/W27936KNNOIR.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27936KN.jpeg",
       "LIGHT GREY": "../Fotos/Fotos W27/W27936KNLIGHT GREY.jpeg",
       "LIPSTICK": "../Fotos/Fotos W27/W27936KNLIPSTICK.jpeg",
       "MOKA": "../Fotos/Fotos W27/W27936KNMOKA.jpeg",
-      "NOIR": "../Fotos/Fotos W27/W27936KNNOIR.jpeg",
-      "OLIVE": "../Fotos/Fotos W27/W27936KNOLIVE.jpeg"
+      "NOIR": "../Fotos/Fotos W27/W27936KNNOIR.jpeg"
     },
     "gallery": {
       "OLIVE": [
@@ -3509,7 +3419,6 @@ window.MASSCOB_PRODUCTS = [
       "_PEARL_1 COPIA": "../Fotos/Fotos W27/W27937KN_PEARL_1 copia.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27937KN.jpeg",
       "_PEARL_1 COPIA": "../Fotos/Fotos W27/W27937KN_PEARL_1 copia.jpeg"
     },
     "gallery": {
@@ -3568,8 +3477,6 @@ window.MASSCOB_PRODUCTS = [
       "MUSCHIO": "../Fotos/Fotos W27/W27940KNMUSCHIO.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27940KN.jpeg",
-      "BLONDE": "../Fotos/Fotos W27/W27940KNBLONDE.jpeg",
       "MINERAL BLUE": "../Fotos/Fotos W27/W27940KNMINERAL BLUE.jpeg",
       "MUSCHIO": "../Fotos/Fotos W27/W27940KNMUSCHIO.jpeg"
     },
@@ -3630,8 +3537,6 @@ window.MASSCOB_PRODUCTS = [
       "YUCA": "../Fotos/Fotos W27/W27943KNYUCA.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27943KN.jpeg",
-      "CACAO": "../Fotos/Fotos W27/W27943KNCACAO.jpeg",
       "ONYX": "../Fotos/Fotos W27/W27943KNONYX.jpeg",
       "YUCA": "../Fotos/Fotos W27/W27943KNYUCA.jpeg"
     },
@@ -3692,10 +3597,8 @@ window.MASSCOB_PRODUCTS = [
       "DUSTY ROSE": "../Fotos/Fotos W27/W27946KNDUSTY ROSE.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27946KN.jpeg",
       "CITRIC": "../Fotos/Fotos W27/W27946KNCITRIC.jpeg",
-      "DUSTY ROSE": "../Fotos/Fotos W27/W27946KNDUSTY ROSE.jpeg",
-      "MARRON GLACE": "../Fotos/Fotos W27/W27946KNMARRON GLACE.jpeg"
+      "DUSTY ROSE": "../Fotos/Fotos W27/W27946KNDUSTY ROSE.jpeg"
     },
     "gallery": {
       "MARRON GLACE": [
@@ -3753,8 +3656,6 @@ window.MASSCOB_PRODUCTS = [
       "TILO": "../Fotos/Fotos W27/W27948KNTILO.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27948KN.jpeg",
-      "NEPTUNE": "../Fotos/Fotos W27/W27948KNNEPTUNE.jpeg",
       "TILO": "../Fotos/Fotos W27/W27948KNTILO.jpeg"
     },
     "gallery": {
@@ -3816,9 +3717,7 @@ window.MASSCOB_PRODUCTS = [
       "OLIVE": "../Fotos/Fotos W27/W27951KNOLIVE.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27951KN.jpeg",
       "LIGHT GREY": "../Fotos/Fotos W27/W27951KNLIGHT GREY.jpeg",
-      "LIPSTICK": "../Fotos/Fotos W27/W27951KNLIPSTICK.jpeg",
       "MOKA": "../Fotos/Fotos W27/W27951KNMOKA.jpeg",
       "NOIR": "../Fotos/Fotos W27/W27951KNNOIR.jpeg",
       "OLIVE": "../Fotos/Fotos W27/W27951KNOLIVE.jpeg"
@@ -3879,9 +3778,7 @@ window.MASSCOB_PRODUCTS = [
       "MARRON GLACE": "../Fotos/Fotos W27/W27956KNMARRON GLACE.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27956KN.jpeg",
       "CITRIC": "../Fotos/Fotos W27/W27956KNCITRIC.jpeg",
-      "DUSTY ROSE": "../Fotos/Fotos W27/W27956KNDUSTY ROSE.jpeg",
       "MARRON GLACE": "../Fotos/Fotos W27/W27956KNMARRON GLACE.jpeg"
     },
     "gallery": {
@@ -3943,11 +3840,9 @@ window.MASSCOB_PRODUCTS = [
       "OLIVE": "../Fotos/Fotos W27/W27962KNOLIVE.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27962KN.jpeg",
       "LIGHT GREY": "../Fotos/Fotos W27/W27962KNLIGHT GREY.jpeg",
       "LIPSTICK2": "../Fotos/Fotos W27/W27962KNLIPSTICK2.jpeg",
       "MOKA": "../Fotos/Fotos W27/W27962KNMOKA.jpeg",
-      "NOIR": "../Fotos/Fotos W27/W27962KNNOIR.jpeg",
       "OLIVE": "../Fotos/Fotos W27/W27962KNOLIVE.jpeg"
     },
     "gallery": {
@@ -4006,9 +3901,7 @@ window.MASSCOB_PRODUCTS = [
       "NEPTUNE": "../Fotos/Fotos W27/W27966KNNEPTUNE.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27966KN.jpeg",
-      "NEPTUNE": "../Fotos/Fotos W27/W27966KNNEPTUNE.jpeg",
-      "TILO": "../Fotos/Fotos W27/W27966KNTILO.jpeg"
+      "NEPTUNE": "../Fotos/Fotos W27/W27966KNNEPTUNE.jpeg"
     },
     "gallery": {
       "TILO": [
@@ -4069,12 +3962,10 @@ window.MASSCOB_PRODUCTS = [
       "NOIR": "../Fotos/Fotos W27/W27967KNNOIR.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27967KN.jpeg",
       "LIGHT GREY": "../Fotos/Fotos W27/W27967KNLIGHT GREY.jpeg",
       "LIPSTICK": "../Fotos/Fotos W27/W27967KNLIPSTICK.jpeg",
       "MOKA": "../Fotos/Fotos W27/W27967KNMOKA.jpeg",
-      "NOIR": "../Fotos/Fotos W27/W27967KNNOIR.jpeg",
-      "OLIVE": "../Fotos/Fotos W27/W27967KNOLIVE.jpeg"
+      "NOIR": "../Fotos/Fotos W27/W27967KNNOIR.jpeg"
     },
     "gallery": {
       "OLIVE": [
@@ -4139,10 +4030,8 @@ window.MASSCOB_PRODUCTS = [
       "ONYXJPG": "../Fotos/Fotos W27/W27971KNONYXjpg.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27971KN.jpeg",
       "CACAO": "../Fotos/Fotos W27/W27971KNCACAO.jpeg",
-      "ONYXJPG": "../Fotos/Fotos W27/W27971KNONYXjpg.jpeg",
-      "YUCA": "../Fotos/Fotos W27/W27971KNYUCA.jpeg"
+      "ONYXJPG": "../Fotos/Fotos W27/W27971KNONYXjpg.jpeg"
     },
     "gallery": {
       "YUCA": [
@@ -4201,10 +4090,8 @@ window.MASSCOB_PRODUCTS = [
       "CAMEL": "../Fotos/Fotos W27/W27974KNCAMEL.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27974KN.jpeg",
       "BLACK": "../Fotos/Fotos W27/W27974KNBLACK.jpeg",
-      "CAMEL": "../Fotos/Fotos W27/W27974KNCAMEL.jpeg",
-      "NAVY": "../Fotos/Fotos W27/W27974KNNAVY.jpeg"
+      "CAMEL": "../Fotos/Fotos W27/W27974KNCAMEL.jpeg"
     },
     "gallery": {
       "NAVY": [
@@ -4265,12 +4152,10 @@ window.MASSCOB_PRODUCTS = [
       "MARINE": "../Fotos/Fotos W27/W27990KNMARINE.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27990KN.jpeg",
       "BLACK DELAVE": "../Fotos/Fotos W27/W27990KNBLACK DELAVE.jpeg",
       "GREY": "../Fotos/Fotos W27/W27990KNGREY.jpeg",
       "LIQUEN": "../Fotos/Fotos W27/W27990KNLIQUEN.jpeg",
-      "MARINE": "../Fotos/Fotos W27/W27990KNMARINE.jpeg",
-      "WOOD": "../Fotos/Fotos W27/W27990KNWOOD.jpeg"
+      "MARINE": "../Fotos/Fotos W27/W27990KNMARINE.jpeg"
     },
     "gallery": {
       "WOOD": [
@@ -4345,10 +4230,8 @@ window.MASSCOB_PRODUCTS = [
       "WOOD": "../Fotos/Fotos W27/W27992KNWOOD.jpeg"
     },
     "imagesLocal": {
-      "_default": "../Fotos/Fotos W27/W27992KN.jpeg",
       "BLACK DELAVE": "../Fotos/Fotos W27/W27992KNBLACK DELAVE.jpeg",
       "GREY": "../Fotos/Fotos W27/W27992KNGREY.jpeg",
-      "LIQUEN": "../Fotos/Fotos W27/W27992KNLIQUEN.jpeg",
       "MARINE": "../Fotos/Fotos W27/W27992KNMARINE.jpeg",
       "WOOD": "../Fotos/Fotos W27/W27992KNWOOD.jpeg"
     },
