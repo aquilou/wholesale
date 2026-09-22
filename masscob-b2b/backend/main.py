@@ -635,9 +635,10 @@ def listar_stock(client: dict = Depends(get_current_client)):
 # ---- clientes ----
 #
 # La contraseña de acceso ya no la escribe el admin a mano: se genera aquí
-# (alta de cliente, botón "Generar nueva contraseña" del panel, o el cron de
-# los 30 días) y se manda por email al cliente — el admin nunca llega a
-# verla, solo puede disparar que se genere una nueva.
+# (alta de cliente, botón "Generar nueva contraseña" del panel, el propio
+# cliente desde "¿Has olvidado tu contraseña?" en el login, o el cron de las
+# 48h) y se manda por email al cliente — el admin nunca llega a verla, solo
+# puede disparar que se genere una nueva.
 
 
 def _generar_password() -> str:
@@ -815,17 +816,20 @@ def regenerar_password_cliente(cliente_id: str, _: None = Depends(require_admin)
 
 @app.get("/admin/cron/reset-passwords")
 def cron_reset_passwords(_: None = Depends(require_cron)):
-    """Reseteo automático de contraseñas cada 30 días — llamado a diario
-    por el cron de Vercel (ver vercel.json). Idempotente: cada día solo
-    toca a quien ya lleve 30 días o más desde su último reseteo, así que da
-    igual si un día el cron no llega a ejecutarse."""
+    """Reseteo automático de contraseñas cada 48h — llamado a diario por el
+    cron de Vercel (ver vercel.json). Idempotente: cada día solo toca a
+    quien ya lleve 48h o más desde su último reseteo, así que da igual si
+    un día el cron no llega a ejecutarse. Nota: con el cron corriendo una
+    vez al día (límite del plan Hobby de Vercel), una contraseña puede
+    llegar a durar algo más de 48h en el peor caso — no exactamente 48h al
+    segundo."""
     conn = get_conn()
     try:
         with conn.cursor() as cur:
             cur.execute(
                 "select c.id, u.email from clientes c join auth.users u on u.id = c.id "
                 "where c.password_updated_at is null "
-                "or c.password_updated_at < now() - interval '30 days'"
+                "or c.password_updated_at < now() - interval '48 hours'"
             )
             pendientes = cur.fetchall()
     finally:
@@ -858,6 +862,61 @@ def cron_reset_passwords(_: None = Depends(require_cron)):
         except Exception as e:
             resultados.append({"usuario": email, "error": str(e)})
     return {"procesados": len(resultados), "resultados": resultados}
+
+
+class OlvidePasswordIn(BaseModel):
+    usuario: str
+
+
+@app.post("/auth/olvide-password")
+def olvide_password(datos: OlvidePasswordIn):
+    """Autoservicio del propio cliente desde "¿Has olvidado tu contraseña?"
+    en el login — a diferencia de regenerar_password_cliente() no hay clave
+    de admin de por medio, así que esto es público. Por eso: (1) identifica
+    solo por email y SIEMPRE responde igual, exista ese email o no, para que
+    no sirva para averiguar qué clientes tenemos dados de alta; (2) respeta
+    un cooldown de 5 min (reutilizando password_updated_at) para que no
+    sirva para tirar a un cliente de su cuenta a base de pedir resets sin
+    parar."""
+    usuario = datos.usuario.strip().lower()
+    conn = get_conn()
+    try:
+        with conn.cursor() as cur:
+            cur.execute(
+                "select c.id, u.email, "
+                "coalesce(c.password_updated_at > now() - interval '5 minutes', false) as en_cooldown "
+                "from clientes c join auth.users u on u.id = c.id "
+                "where lower(u.email) = %s",
+                (usuario,),
+            )
+            row = cur.fetchone()
+    finally:
+        conn.close()
+
+    if row and not row[2]:
+        cliente_id, email, _ = row
+        password = _generar_password()
+        _actualizar_auth_user(cliente_id, None, password)
+        conn = get_conn()
+        try:
+            with conn.cursor() as cur:
+                cur.execute(
+                    "update clientes set password_updated_at = now() where id = %s",
+                    (cliente_id,),
+                )
+            conn.commit()
+        except Exception:
+            conn.rollback()
+            raise
+        finally:
+            conn.close()
+        _enviar_email(
+            [email],
+            "Tu nueva contraseña de acceso a MASSCOB Wholesale",
+            _html_credenciales(email, password, es_regeneracion=True),
+        )
+
+    return {"ok": True}
 
 
 @app.post("/admin/clientes")

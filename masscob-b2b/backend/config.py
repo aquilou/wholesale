@@ -22,15 +22,18 @@ RESEND_API_KEY = os.environ.get("RESEND_API_KEY", "").strip()
 # dominio de "para" no esté verificado en Resend, solo se entregan a la
 # cuenta con la que se creó la API key — verificar el dominio en
 # resend.com/domains para poder mandarlos a clientes reales.
-RESEND_FROM_EMAIL = os.environ.get("RESEND_FROM_EMAIL", "MASSCOB Wholesale <pedidos@masscob.com>").strip()
+RESEND_FROM_EMAIL = os.environ.get("RESEND_FROM_EMAIL", "MASSCOB Wholesale <no-reply@masscob.com>").strip()
 
-# Reseteo automático de contraseñas de clientes cada 30 días
-# (GET /admin/cron/reset-passwords, llamado por el cron de Vercel — ver
+# Reseteo automático de contraseñas de clientes cada 48h (GET
+# /admin/cron/reset-passwords, llamado a diario por el cron de Vercel — ver
 # vercel.json). Vercel manda solo "Authorization: Bearer $CRON_SECRET" en
 # cada invocación de cron cuando esta env var está configurada en el
 # proyecto; sin ella el endpoint rechaza cualquier llamada.
 CRON_SECRET = os.environ.get("CRON_SECRET", "").strip()
 
 # Enlace a la tienda que se incluye en los emails de contraseña generada o
-# regenerada. Opcional: si no está, el email simplemente no lleva enlace.
-STORE_LOGIN_URL = os.environ.get("STORE_LOGIN_URL", "").strip()
+# regenerada (alta de cliente, regeneración manual desde el panel, cron de
+# 48h, o el propio cliente desde "¿Has olvidado tu contraseña?" en el login).
+STORE_LOGIN_URL = os.environ.get(
+    "STORE_LOGIN_URL", "https://wholesale-masscob.vercel.app/masscob-b2b/tienda/index.html"
+).strip()
