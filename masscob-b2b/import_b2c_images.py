@@ -26,7 +26,7 @@ import urllib.request
 
 B2C_BASE = 'https://masscob.com'
 CACHE_PATH = os.path.join(os.path.dirname(__file__), '.b2c_products_cache.json')
-CODIGO_RE = re.compile(r'\b([A-Z]\d{2}/\d{3}[A-Z]{1,2})\b')
+CODIGO_RE = re.compile(r'\b([A-Z]\d{2}/\d{3}[A-Z]{1,3})\b')
 
 
 def _get(url):
@@ -136,13 +136,17 @@ def cruzar(catalogo, b2c_idx):
         fotos_locales = {c: v for c, v in (p.get('images') or {}).items() if not str(v).startswith('http')}
         p['imagesLocal'] = dict(fotos_locales)
 
-        # galería para la ficha: solo fotos B2C (mejor calidad que el banco
-        # local, y ya sin la de plana repetida — la última foto B2C "limpia"
-        # de fondo suele ser la misma toma que la de plana, pero en mejor resolución)
+        # galería para la ficha: solo 2 fotos B2C, por petición de dirección.
+        # En el orden en que masscob.com devuelve las fotos de cada producto,
+        # la última es la de plana (el artículo solo, fondo limpio) y la
+        # primera es de modelo — así que la ficha muestra plana primero y
+        # modelo segunda; el resto de fotos no se muestran.
         gallery = {}
         for color in colores_locales:
             serie = list(reparto.get(color, []))
-            if serie:
+            if len(serie) >= 2:
+                gallery[color] = [serie[-1], serie[0]]
+            elif serie:
                 gallery[color] = serie
         if gallery:
             p['gallery'] = gallery
