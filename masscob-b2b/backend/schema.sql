@@ -42,12 +42,11 @@ create table if not exists pedido_items (
 );
 
 -- Stock en vivo por (codigo, color, talla) — mismo grano que pedido_items.
--- Se siembra una vez desde products.js (ver backend/seed_stock.py) y a
--- partir de ahí el backend es la única fuente de verdad: se reserva al
--- crear el pedido (POST /pedidos, ya en PENDIENTE) y se restituye si el
--- pedido pasa a ANULADO (y se vuelve a reservar si un ANULADO se reabre).
--- Reimportar el Excel del ERP y regenerar products.js NO toca esta tabla
--- — ver aviso en seed_stock.py.
+-- Cada importación del Excel del ERP (actualizar_catalogo.py ->
+-- backend/seed_stock.py) la sobrescribe entera: el Excel manda. Entre
+-- importaciones la mueven los pedidos: se reserva al crear el pedido
+-- (POST /pedidos, ya en PENDIENTE) y se restituye si el pedido pasa a
+-- ANULADO (y se vuelve a reservar si un ANULADO se reabre).
 create table if not exists stock (
   codigo text not null,
   color  text not null,

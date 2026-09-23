@@ -1,24 +1,17 @@
 #!/usr/bin/env python3
 """
-seed_stock.py — siembra inicial de la tabla `stock` a partir de products.js.
+seed_stock.py — sobrescribe la tabla `stock` con lo que dice el Excel del ERP.
 
-Uso (una sola vez, desde backend/):
+Uso (desde backend/, normalmente vía ../actualizar_catalogo.py):
     python seed_stock.py
 
-Lee ../products.js (stock "físico" del último Excel importado), le resta
-las unidades de los pedidos que ya estén PENDIENTE o ACEPTADO en la base de
-datos (el stock se reserva desde que el pedido se crea, no solo al
-aceptarlo), e inserta el resultado en `stock` — así el invariante "stock en
-vivo = stock ERP menos lo ya reservado" se cumple desde el primer día.
+Lee ../products.js (stock del último Excel importado) y deja la tabla
+`stock` EXACTAMENTE igual: el Excel manda. No se restan pedidos PENDIENTE ni
+ACEPTADO — si el Excel dice 3, en la web hay 3. Las combinaciones
+codigo/color/talla que ya no aparecen en el Excel se ponen a 0.
 
-AVISO — reposición física no resuelta todavía: a partir de aquí `stock` es
-la única fuente de verdad y build_products.py/products.js ya NO la
-alimentan. Si el almacén recibe mercancía nueva y se reimporta el Excel del
-ERP, esta tabla NO sube sola — hace falta un mecanismo aparte (pendiente de
-diseñar) para aplicar esa reposición aquí. Re-ejecutar este script tal cual
-NO sirve para eso: recalcula desde cero (stock ERP - reservado) y pisaría
-cualquier descuento ya aplicado por pedidos creados después del seed
-inicial.
+A partir de aquí los pedidos siguen moviendo `stock` como siempre (reservan
+al crearse, ANULADO devuelve) hasta la siguiente importación del Excel.
 """
 import json
 import os
@@ -41,18 +34,8 @@ def cargar_stock_bruto(path=PRODUCTS_JS):
         codigo = p["codigo"]
         for color, tallas in (p.get("colores") or {}).items():
             for talla, cantidad in tallas.items():
-                raw[(codigo, color, talla)] = cantidad
+                raw[(codigo, color, talla)] = max(0, cantidad)
     return raw
-
-
-def cargar_reservados(cur):
-    cur.execute(
-        "select pi.codigo, pi.color, pi.talla, sum(pi.cantidad) "
-        "from pedido_items pi join pedidos p on p.id = pi.pedido_id "
-        "where p.estado in ('PENDIENTE', 'ACEPTADO') "
-        "group by pi.codigo, pi.color, pi.talla"
-    )
-    return {(codigo, color, talla): cantidad for codigo, color, talla, cantidad in cur.fetchall()}
 
 
 def main():
@@ -62,25 +45,21 @@ def main():
     conn = get_conn()
     try:
         with conn.cursor() as cur:
-            reservados = cargar_reservados(cur)
-            print(f"pedidos PENDIENTE/ACEPTADO: {len(reservados)} combinaciones a descontar")
+            cur.execute("select codigo, color, talla, cantidad from stock")
+            actual = {(codigo, color, talla): cantidad for codigo, color, talla, cantidad in cur.fetchall()}
 
-            filas = []
-            ajustadas = 0
-            for key, cantidad in raw_stock.items():
-                descuento = reservados.get(key, 0)
-                seed_qty = cantidad - descuento
-                if seed_qty < 0:
-                    print(f"  aviso: {key} quedaría en {seed_qty}, se deja en 0 (revisar a mano)")
-                    seed_qty = 0
-                if descuento:
-                    ajustadas += 1
-                filas.append((*key, seed_qty))
+            filas = [(*key, cantidad) for key, cantidad in raw_stock.items()]
+            a_cero = [key for key, cantidad in actual.items() if key not in raw_stock and cantidad != 0]
+            cambiadas = sum(1 for key, cantidad in raw_stock.items() if actual.get(key) != cantidad)
 
             cur.executemany(
                 "insert into stock (codigo, color, talla, cantidad) values (%s, %s, %s, %s) "
                 "on conflict (codigo, color, talla) do update set cantidad = excluded.cantidad",
                 filas,
+            )
+            cur.executemany(
+                "update stock set cantidad = 0 where codigo = %s and color = %s and talla = %s",
+                a_cero,
             )
         conn.commit()
     except Exception:
@@ -89,7 +68,8 @@ def main():
     finally:
         conn.close()
 
-    print(f"stock sembrado: {len(filas)} filas ({ajustadas} ajustadas por pedidos ya reservados)")
+    print(f"stock sobrescrito desde el Excel: {len(filas)} filas ({cambiadas} cambiadas, "
+          f"{len(a_cero)} que ya no están en el Excel puestas a 0)")
 
 
 if __name__ == "__main__":

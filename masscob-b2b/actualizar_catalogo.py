@@ -6,8 +6,9 @@ dejar todo en su sitio de una vez, en vez de acordarte de tres pasos sueltos.
 Encadena, en este orden:
   1. build_products.py    -> products.js (stock + precios + fotos del banco ERP)
   2. import_b2c_images.py -> sustituye fotos por las de masscob.com donde haya match
-  3. backend/seed_stock.py -> sincroniza la tabla `stock` (BD, la que de verdad
-                              bloquea/permite pedidos) con el products.js nuevo
+  3. backend/seed_stock.py -> sobrescribe la tabla `stock` (BD, la que de verdad
+                              bloquea/permite pedidos) con las cantidades del
+                              Excel tal cual, sin restar pedidos pendientes
 
 Uso (desde cualquier sitio, no hace falta estar en masscob-b2b/):
     python actualizar_catalogo.py
