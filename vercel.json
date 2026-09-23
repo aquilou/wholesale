@@ -8,7 +8,8 @@
     { "source": "/pedidos", "destination": "/api/index" },
     { "source": "/pedidos/:path*", "destination": "/api/index" },
     { "source": "/stock", "destination": "/api/index" },
-    { "source": "/admin/:path*", "destination": "/api/index" }
+    { "source": "/admin/:path*", "destination": "/api/index" },
+    { "source": "/auth/:path*", "destination": "/api/index" }
   ],
   "crons": [
     { "path": "/admin/cron/reset-passwords", "schedule": "0 4 * * *" }
