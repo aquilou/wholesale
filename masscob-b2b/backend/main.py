@@ -8,10 +8,13 @@ Correr en local:
 """
 import base64
 import json
+import re
 import secrets
 import time
 import urllib.error
+import urllib.parse
 import urllib.request
+from html import escape as html_escape
 from io import BytesIO
 from typing import List, Optional
 from urllib.parse import quote
@@ -58,8 +61,18 @@ ESTADOS_PEDIDO = {"PENDIENTE", "ACEPTADO", "ANULADO"}
 def _enviar_email(
     destinatarios: List[str], asunto: str, html: str, adjuntos: Optional[List[dict]] = None
 ) -> bool:
-    if not RESEND_API_KEY or not destinatarios:
-        return False
+    return _enviar_email_detalle(destinatarios, asunto, html, adjuntos)[0]
+
+
+def _enviar_email_detalle(
+    destinatarios: List[str], asunto: str, html: str, adjuntos: Optional[List[dict]] = None
+) -> tuple:
+    """Igual que _enviar_email pero devuelve (ok, motivo_del_fallo) — para
+    cuando el panel tiene que enseñarle al admin por qué no salió un email."""
+    if not RESEND_API_KEY:
+        return False, "Falta RESEND_API_KEY en el backend"
+    if not destinatarios:
+        return False, "Sin destinatarios"
     payload = {"from": RESEND_FROM_EMAIL, "to": destinatarios, "subject": asunto, "html": html}
     if adjuntos:
         payload["attachments"] = adjuntos
@@ -79,17 +92,21 @@ def _enviar_email(
     try:
         with urllib.request.urlopen(req) as res:
             res.read()
-        return True
+        return True, None
     except urllib.error.HTTPError as e:
         # El motivo real (dominio no verificado, cuenta restringida, etc.)
         # va en el cuerpo de la respuesta, no en el código de estado — sin
         # esto un 403 no dice nada útil en los logs.
         body = e.read().decode(errors="replace")
         print(f"[email] no se pudo enviar {asunto!r} a {destinatarios}: HTTP {e.code} {body}")
-        return False
+        try:
+            motivo = json.loads(body).get("message") or body
+        except Exception:
+            motivo = body
+        return False, f"HTTP {e.code}: {motivo}"
     except Exception as e:
         print(f"[email] no se pudo enviar {asunto!r} a {destinatarios}: {e!r}")
-        return False
+        return False, repr(e)
 
 
 def _notif_emails_equipo(cur) -> List[str]:
@@ -630,6 +647,335 @@ def listar_stock(client: dict = Depends(get_current_client)):
     finally:
         conn.close()
     return result
+
+
+# ---- stocklist por email ----
+#
+# El panel manda las filas TAL CUAL las pinta en la vista Tabla (mismos
+# filtros de colección/categoría/búsqueda y mismo formato "Con unidades" /
+# "Sin unidades") y aquí se maqueta el PDF imitando el de "Exportar PDF"
+# (que es el diálogo de impresión del navegador, imposible de reutilizar en
+# el servidor) y se envía por Resend, un email por destinatario para que
+# ningún cliente vea a quién más se le ha mandado.
+
+class StocklistTallaIn(BaseModel):
+    size: str
+    qty: int
+    display: str = ""  # "" (sin stock), "3" (con unidades) o "✓" (sin unidades)
+
+
+class StocklistRowIn(BaseModel):
+    codigo: str
+    name: str
+    color: str
+    dot: str = "#b8b3a8"
+    stock: int
+    estado: Optional[str] = None
+    imagen: Optional[str] = None
+    tallas: List[StocklistTallaIn] = []
+
+
+class StocklistEnvioIn(BaseModel):
+    emails: List[str]
+    asunto: Optional[str] = None
+    mensaje: Optional[str] = None
+    titulo: str
+    subtitulo: str = ""
+    fecha: str = ""
+    formato: str = "detallado"  # "detallado" (con unidades) | "cliente" (sin unidades)
+    logo: Optional[str] = None
+    rows: List[StocklistRowIn]
+
+
+_EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
+# Hosts de los que el backend acepta descargar fotos/logo para el PDF: el
+# propio sitio (Fotos/ y el logo), el CDN de masscob.com y local para
+# pruebas — nada más, para que el endpoint no sirva de proxy a cualquier URL.
+_HOSTS_IMAGEN_OK = {"cdn.shopify.com", "localhost", "127.0.0.1"}
+
+
+def _latin1(s: str) -> str:
+    """Las fuentes core de FPDF (Helvetica/Courier) solo cubren latin-1."""
+    s = str(s or "").replace("—", "-").replace("–", "-").replace("’", "'")
+    return s.encode("latin-1", "replace").decode("latin-1")
+
+
+def _hex_rgb(h: str) -> tuple:
+    h = str(h or "").lstrip("#")
+    if len(h) != 6:
+        return (184, 179, 168)
+    try:
+        return tuple(int(h[i:i + 2], 16) for i in (0, 2, 4))
+    except ValueError:
+        return (184, 179, 168)
+
+
+def _cargar_imagen(src: Optional[str], host_propio: str, lado_max: int = 240):
+    """URL (o data: URL) -> PIL.Image en RGB, reducida. None si no se puede."""
+    if not src:
+        return None
+    try:
+        if src.startswith("data:"):
+            raw = base64.b64decode(src.split(",", 1)[1])
+        else:
+            host = urllib.parse.urlparse(src).hostname or ""
+            if host != host_propio and host not in _HOSTS_IMAGEN_OK:
+                return None
+            req = urllib.request.Request(src, headers={"User-Agent": "masscob-b2b-backend/1.0"})
+            with urllib.request.urlopen(req, timeout=8) as res:
+                raw = res.read()
+        img = Image.open(BytesIO(raw))
+        if img.mode in ("RGBA", "LA", "P"):
+            fondo = Image.new("RGB", img.size, (255, 255, 255))
+            img = img.convert("RGBA")
+            fondo.paste(img, mask=img.split()[-1])
+            img = fondo
+        else:
+            img = img.convert("RGB")
+        img.thumbnail((lado_max, lado_max))
+        return img
+    except Exception as e:
+        print(f"[stocklist] no se pudo cargar la imagen {src[:80]!r}: {e!r}")
+        return None
+
+
+def _recorte_cover(img, ratio: float):
+    """Recorta al centro para llenar una caja de proporción ancho/alto =
+    ratio sin deformar (object-fit: cover, como la miniatura del panel)."""
+    w, h = img.size
+    if w / h > ratio:
+        nw = int(h * ratio)
+        return img.crop(((w - nw) // 2, 0, (w - nw) // 2 + nw, h))
+    nh = int(w / ratio)
+    return img.crop((0, (h - nh) // 2, w, (h - nh) // 2 + nh))
+
+
+class _StocklistPDF(FPDF):
+    INK = (22, 22, 22)
+    GRIS = (107, 107, 100)
+    LINEA = (237, 237, 234)
+    COLS = (16, 46, 56, 125, 30)  # foto, item, nombre, tallas, stock/estado = 273mm
+
+    def __init__(self, datos: StocklistEnvioIn, logo_img):
+        super().__init__(orientation="L", unit="mm", format="A4")
+        self.datos = datos
+        self.logo_img = logo_img
+        self.set_margins(12, 12, 12)
+        self.set_auto_page_break(auto=False)
+
+    def header(self):
+        d = self.datos
+        x0, y0, ancho = self.l_margin, 12, self.w - self.l_margin - self.r_margin
+        alto = 20
+        self.set_draw_color(*self.LINEA)
+        self.set_line_width(0.3)
+        self.rect(x0, y0, ancho, alto)
+        # logo
+        logo_w = 52
+        self.line(x0 + logo_w, y0, x0 + logo_w, y0 + alto)
+        if self.logo_img is not None:
+            iw, ih = self.logo_img.size
+            caja_w, caja_h = logo_w - 10, alto - 8
+            esc = min(caja_w / iw, caja_h / ih)
+            w, h = iw * esc, ih * esc
+            self.image(self.logo_img, x=x0 + (logo_w - w) / 2, y=y0 + (alto - h) / 2, w=w, h=h)
+        else:
+            self.set_xy(x0, y0 + 7)
+            self.set_font("Helvetica", "B", 15)
+            self.set_text_color(*self.INK)
+            self.cell(logo_w, 6, "MASSCOB", align="C")
+        # título con barra negra
+        self.set_fill_color(*self.INK)
+        self.rect(x0 + logo_w + 8, y0 + 6.5, 1.2, 7, style="F")
+        self.set_xy(x0 + logo_w + 12, y0 + 6.5)
+        self.set_font("Helvetica", "B", 15)
+        self.set_text_color(*self.INK)
+        self.cell(120, 7, _latin1(d.titulo))
+        # FECHA | valor
+        fw1, fw2, fh = 18, 30, 9
+        fx = x0 + ancho - 8 - fw1 - fw2
+        fy = y0 + (alto - fh) / 2
+        self.set_fill_color(250, 250, 248)
+        self.rect(fx, fy, fw1, fh, style="DF")
+        self.rect(fx + fw1, fy, fw2, fh)
+        self.set_xy(fx, fy)
+        self.set_font("Helvetica", "B", 7)
+        self.cell(fw1, fh, "FECHA", align="C")
+        self.set_font("Helvetica", "", 8.5)
+        self.cell(fw2, fh, _latin1(d.fecha), align="C")
+        # subtítulo
+        self.set_xy(x0, y0 + alto + 2.5)
+        self.set_font("Helvetica", "B", 8)
+        self.set_text_color(*self.GRIS)
+        self.cell(ancho, 5, _latin1(d.subtitulo), align="C")
+        # cabecera de columnas
+        y = y0 + alto + 10
+        self.set_font("Helvetica", "B", 6.5)
+        self.set_text_color(*self.INK)
+        heads = ["", "ITEM", "NOMBRE", "TALLA / SIZE", "STOCK" if d.formato != "cliente" else "ESTADO"]
+        x = x0
+        for w, t in zip(self.COLS, heads):
+            self.set_xy(x + (3 if t else 0), y)
+            self.cell(w - 6 if t else w, 7, t, align="R" if t in ("STOCK", "ESTADO") else "L")
+            x += w
+        self.line(x0, y + 7, x0 + ancho, y + 7)
+        self.set_y(y + 7)
+
+    def footer(self):
+        self.set_y(-9)
+        self.set_font("Helvetica", "", 7)
+        self.set_text_color(167, 167, 160)
+        self.cell(0, 4, f"{self.page_no()} / {{nb}}", align="R")
+
+    def fila(self, r: StocklistRowIn, img):
+        alto = 15.5
+        if self.get_y() + alto > self.h - 12:
+            self.add_page()
+        x0, y = self.l_margin, self.get_y()
+        c_foto, c_item, c_nombre, c_tallas, c_stock = self.COLS
+
+        # foto (cover) sobre fondo gris claro
+        fw, fh = 9.5, 12
+        fx, fy = x0 + (c_foto - fw) / 2 + 1, y + (alto - fh) / 2
+        self.set_fill_color(242, 242, 239)
+        self.rect(fx, fy, fw, fh, style="F")
+        if img is not None:
+            self.image(_recorte_cover(img, fw / fh), x=fx, y=fy, w=fw, h=fh)
+
+        # item: código + punto de color + nombre de color
+        x = x0 + c_foto
+        self.set_xy(x + 3, y + alto / 2 - 4)
+        self.set_font("Courier", "B", 8.5)
+        self.set_text_color(*self.INK)
+        self.cell(c_item - 6, 4, _latin1(r.codigo))
+        self.set_fill_color(*_hex_rgb(r.dot))
+        self.set_draw_color(210, 210, 205)
+        self.ellipse(x + 3, y + alto / 2 + 1.1, 2, 2, style="DF")
+        self.set_xy(x + 6, y + alto / 2 + 0.3)
+        self.set_font("Helvetica", "B", 7)
+        self.set_text_color(*self.GRIS)
+        self.cell(c_item - 9, 3.6, _latin1(r.color))
+
+        # nombre
+        x += c_item
+        self.set_xy(x + 3, y + alto / 2 - 2)
+        self.set_font("Helvetica", "", 8.5)
+        self.set_text_color(*self.INK)
+        self.cell(c_nombre - 6, 4, _latin1(r.name))
+
+        # rejilla de tallas: etiqueta arriba, casilla abajo
+        x += c_nombre
+        bw, bh, gap = 7.5, 5.2, 3.2
+        bx = x + 3
+        for t in r.tallas:
+            self.set_xy(bx - 1, y + 2.6)
+            self.set_font("Helvetica", "B", 6.3)
+            self.set_text_color(*self.INK)
+            self.cell(bw + 2, 3, _latin1(t.size), align="C")
+            by = y + 6.6
+            con = t.qty > 0
+            self.set_draw_color(*((221, 216, 207) if con else self.LINEA))
+            self.set_fill_color(*((250, 250, 248) if con else (255, 255, 255)))
+            self.rect(bx, by, bw, bh, style="DF")
+            if con and t.display and t.display != "✓":
+                self.set_xy(bx, by)
+                self.set_font("Helvetica", "B", 7.5)
+                self.cell(bw, bh, _latin1(t.display), align="C")
+            elif con and t.display == "✓":
+                self.set_draw_color(*self.INK)
+                self.set_line_width(0.35)
+                cx, cy = bx + bw / 2, by + bh / 2
+                self.line(cx - 1.4, cy, cx - 0.4, cy + 1)
+                self.line(cx - 0.4, cy + 1, cx + 1.5, cy - 1.1)
+                self.set_line_width(0.3)
+            bx += bw + gap
+            if bx + bw > x + c_tallas:
+                break
+
+        # stock / estado
+        x += c_tallas
+        if self.datos.formato == "cliente":
+            estado = _latin1(r.estado or "DISPONIBLE")
+            poco = "POCAS" in estado.upper()
+            self.set_font("Helvetica", "B", 6.5)
+            pw = self.get_string_width(estado) + 5
+            px, py = x + c_stock - 3 - pw, y + alto / 2 - 2.5
+            self.set_fill_color(*((253, 236, 235) if poco else (240, 242, 236)))
+            self.set_draw_color(*((246, 211, 207) if poco else (221, 227, 212)))
+            self.rect(px, py, pw, 5, style="DF")
+            self.set_xy(px, py)
+            self.set_text_color(*((165, 68, 59) if poco else (110, 113, 80)))
+            self.cell(pw, 5, estado, align="C")
+        else:
+            self.set_xy(x, y + alto / 2 - 2.5)
+            self.set_font("Helvetica", "B", 10)
+            self.set_text_color(*self.INK)
+            self.cell(c_stock - 3, 5, str(r.stock), align="R")
+
+        self.set_draw_color(242, 242, 239)
+        self.line(x0, y + alto, x0 + sum(self.COLS), y + alto)
+        self.set_y(y + alto)
+
+
+def _stocklist_pdf(datos: StocklistEnvioIn, host_propio: str) -> bytes:
+    from concurrent.futures import ThreadPoolExecutor
+
+    srcs = [r.imagen for r in datos.rows]
+    with ThreadPoolExecutor(max_workers=16) as pool:
+        imgs = list(pool.map(lambda s: _cargar_imagen(s, host_propio), srcs))
+        logo = _cargar_imagen(datos.logo, host_propio, lado_max=600)
+    pdf = _StocklistPDF(datos, logo)
+    pdf.alias_nb_pages()
+    pdf.add_page()
+    for r, img in zip(datos.rows, imgs):
+        pdf.fila(r, img)
+    return bytes(pdf.output())
+
+
+def _html_stocklist(mensaje: Optional[str], titulo: str) -> str:
+    cuerpo = html_escape(mensaje or "").strip().replace("\n", "<br>")
+    if not cuerpo:
+        cuerpo = f"Hola,<br><br>Te adjuntamos el {html_escape(titulo.strip())} actualizado de MASSCOB."
+    return (
+        '<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.55;color:#161616">'
+        f"<p>{cuerpo}</p>"
+        '<p style="color:#6b6b64;font-size:12px">Adjunto: stocklist en PDF.</p>'
+        "</div>"
+    )
+
+
+@app.post("/admin/stocklist/enviar")
+def enviar_stocklist(datos: StocklistEnvioIn, request: Request, _: None = Depends(require_admin)):
+    emails = []
+    for e in datos.emails:
+        e = e.strip().lower()
+        if e and e not in emails:
+            emails.append(e)
+    if not emails:
+        raise HTTPException(400, "Indica al menos un email")
+    invalidos = [e for e in emails if not _EMAIL_RE.match(e)]
+    if invalidos:
+        raise HTTPException(400, f"Email no válido: {', '.join(invalidos)}")
+    if len(emails) > 50:
+        raise HTTPException(400, "Máximo 50 destinatarios por envío")
+    if not datos.rows:
+        raise HTTPException(400, "El stocklist está vacío con los filtros actuales")
+
+    pdf_bytes = _stocklist_pdf(datos, request.url.hostname or "")
+    titulo = datos.titulo.strip() or "Stocklist"
+    nombre_pdf = re.sub(r"[^A-Za-z0-9_-]+", "-", f"{titulo} {datos.fecha}").strip("-") + ".pdf"
+    adjuntos = [{"filename": nombre_pdf, "content": base64.b64encode(pdf_bytes).decode()}]
+    asunto = (datos.asunto or "").strip() or f"{titulo} - MASSCOB"
+    html = _html_stocklist(datos.mensaje, titulo)
+
+    enviados, fallidos = [], []
+    for email in emails:
+        ok, motivo = _enviar_email_detalle([email], asunto, html, adjuntos)
+        if ok:
+            enviados.append(email)
+        else:
+            fallidos.append({"email": email, "error": motivo})
+    return {"enviados": enviados, "fallidos": fallidos, "pdf_kb": round(len(pdf_bytes) / 1024)}
 
 
 # ---- clientes ----

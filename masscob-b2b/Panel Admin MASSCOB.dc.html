@@ -198,6 +198,7 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
               <button onClick="{{ setStocklistCliente }}" style="{{ stocklistClienteBtnStyle }}">Sin unidades</button>
             </div>
             <button onClick="{{ exportPdf }}" style="{{ exportBtnStyle }}">Exportar PDF ↓</button>
+            <button onClick="{{ openStocklistMail }}" style="{{ exportBtnStyle }}">Enviar por email ✉</button>
           </sc-if>
           <div style="display:flex;border:1px solid #e2e2dd;background:#fff">
             <button onClick="{{ setGrid }}" style="{{ gridBtnStyle }}">Cuadrícula</button>
@@ -348,6 +349,54 @@ input[type=range]::-moz-range-thumb{width:14px;height:14px;border-radius:50%;bac
 
       <sc-if value="{{ empty }}" hint-placeholder-val="">
         <div style="padding:60px;text-align:center;color:#a7a7a0;font-size:14px">Sin resultados para los filtros actuales.</div>
+      </sc-if>
+
+      <!-- ENVIAR STOCKLIST POR EMAIL: manda el mismo stocklist que se ve en Tabla (filtros + formato actuales) -->
+      <sc-if value="{{ hasStocklistMail }}" hint-placeholder-val="">
+      <div class="no-print" onClick="{{ closeStocklistMailBackdrop }}" style="position:fixed;inset:0;background:rgba(22,22,22,.4);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px">
+        <div class="fadeup" style="background:#fff;border:1px solid #ededea;width:100%;max-width:560px;max-height:calc(100vh - 40px);overflow:auto;padding:28px">
+          <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:6px">
+            <div>
+              <div style="font-size:11px;letter-spacing:.18em;color:#a7a7a0;font-weight:600;margin-bottom:8px">ENVIAR POR EMAIL</div>
+              <div style="font-size:20px;font-weight:600">{{ stocklistMail.titulo }}</div>
+            </div>
+            <button onClick="{{ closeStocklistMail }}" style="background:none;border:none;color:#a7a7a0;font-size:22px;line-height:1;padding:0">×</button>
+          </div>
+          <div style="font-size:12.5px;color:#6b6b64;line-height:1.5;margin-bottom:20px">{{ stocklistMail.resumen }}</div>
+
+          <label style="display:flex;flex-direction:column;gap:6px;margin-bottom:8px">
+            <span style="font-size:11px;color:#6b6b64;font-weight:600;letter-spacing:.04em">PARA</span>
+            <textarea value="{{ stocklistMail.emails }}" onInput="{{ setStocklistMailEmails }}" rows="3" placeholder="cliente@empresa.com, otro@empresa.com" style="{{ fieldStyle }};resize:vertical;font-family:inherit"></textarea>
+          </label>
+          <div style="display:flex;gap:7px;flex-wrap:wrap;align-items:center;margin-bottom:18px">
+            <span style="font-size:11.5px;color:#a7a7a0">Separa los emails con comas o saltos de línea · Añadir:</span>
+            <button onClick="{{ addStocklistMailClientes }}" style="padding:5px 10px;border:1px solid #e2e2dd;background:#fff;color:#6b6b64;font-size:11.5px">Todos los clientes ({{ stocklistMail.nClientes }})</button>
+            <button onClick="{{ addStocklistMailEquipo }}" style="padding:5px 10px;border:1px solid #e2e2dd;background:#fff;color:#6b6b64;font-size:11.5px">Equipo ({{ stocklistMail.nEquipo }})</button>
+          </div>
+
+          <label style="display:flex;flex-direction:column;gap:6px;margin-bottom:16px">
+            <span style="font-size:11px;color:#6b6b64;font-weight:600;letter-spacing:.04em">ASUNTO</span>
+            <input value="{{ stocklistMail.asunto }}" onInput="{{ setStocklistMailAsunto }}" placeholder="{{ stocklistMail.asuntoDefault }}" style="{{ fieldStyle }}">
+          </label>
+
+          <label style="display:flex;flex-direction:column;gap:6px;margin-bottom:20px">
+            <span style="font-size:11px;color:#6b6b64;font-weight:600;letter-spacing:.04em">MENSAJE (OPCIONAL)</span>
+            <textarea value="{{ stocklistMail.mensaje }}" onInput="{{ setStocklistMailMensaje }}" rows="5" placeholder="{{ stocklistMail.mensajeDefault }}" style="{{ fieldStyle }};resize:vertical;font-family:inherit;line-height:1.5"></textarea>
+          </label>
+
+          <sc-if value="{{ stocklistMail.error }}" hint-placeholder-val="">
+            <div style="font-size:12.5px;color:#a5443b;background:#fdeceb;border:1px solid #f6d3cf;padding:10px 12px;margin-bottom:14px;line-height:1.5">{{ stocklistMail.error }}</div>
+          </sc-if>
+          <sc-if value="{{ stocklistMail.ok }}" hint-placeholder-val="">
+            <div style="font-size:12.5px;color:#6E7150;background:#f0f2ec;border:1px solid #dde3d4;padding:10px 12px;margin-bottom:14px;line-height:1.5">{{ stocklistMail.ok }}</div>
+          </sc-if>
+
+          <div style="display:flex;justify-content:flex-end;gap:10px">
+            <button onClick="{{ closeStocklistMail }}" style="padding:12px 20px;border:1px solid #e2e2dd;background:#fff;color:#6b6b64;font-size:13px;font-weight:500">Cerrar</button>
+            <button onClick="{{ sendStocklistMail }}" style="{{ stocklistMail.sendBtnStyle }}">{{ stocklistMail.sendLabel }}</button>
+          </div>
+        </div>
+      </div>
       </sc-if>
     </div>
     </sc-if>
@@ -973,6 +1022,8 @@ class Component extends DCLogic {
       notifEmailDraft: '',
       notifEmailsSaving: false,
       notifEmailsError: null,
+      stocklistMail: null, // {emails, asunto, mensaje, sending, error, ok} mientras está abierta la ventana de envío
+      stocklistMailEmails: saved.stocklistMailEmails || '', // últimos destinatarios, para no reescribirlos cada vez
     };
   }
   componentDidMount(){
@@ -993,7 +1044,7 @@ class Component extends DCLogic {
       minReorder:this.state.minReorder, lowStockThreshold:this.state.lowStockThreshold,
       exchangesEnabled:this.state.exchangesEnabled, exchangePct:this.state.exchangePct,
       clients:this.state.clients, paisTarifas:this.state.paisTarifas, logo:this.state.logo,
-      adminKey:this.state.adminKey,
+      adminKey:this.state.adminKey, stocklistMailEmails:this.state.stocklistMailEmails,
     }, extra||{});
     try{ localStorage.setItem(this._key(), JSON.stringify(s)); }catch(e){}
   }
@@ -1235,6 +1286,62 @@ class Component extends DCLogic {
   setStocklistDetallado=()=>{ this.setState({stocklistFormat:'detallado'}); }
   setStocklistCliente=()=>{ this.setState({stocklistFormat:'cliente'}); }
   exportPdf=()=>{ window.print(); }
+
+  // ---- enviar stocklist por email: el backend maqueta el PDF a partir de
+  // las mismas filas que pinta la vista Tabla (this._stocklistPayload, que
+  // se recalcula en cada render con los filtros y el formato actuales) y lo
+  // manda por Resend, un email por destinatario.
+  openStocklistMail=()=>{
+    this.setState({stocklistMail:{emails:this.state.stocklistMailEmails, asunto:'', mensaje:'', sending:false, error:null, ok:null}});
+  }
+  closeStocklistMail=()=>{ if(!(this.state.stocklistMail||{}).sending) this.setState({stocklistMail:null}); }
+  closeStocklistMailBackdrop=(e)=>{ if(e.target===e.currentTarget) this.closeStocklistMail(); }
+  _patchStocklistMail(patch){ this.setState({stocklistMail:Object.assign({}, this.state.stocklistMail, {error:null, ok:null}, patch)}); }
+  setStocklistMailEmails=(e)=>{ this._patchStocklistMail({emails:e.target.value}); }
+  setStocklistMailAsunto=(e)=>{ this._patchStocklistMail({asunto:e.target.value}); }
+  setStocklistMailMensaje=(e)=>{ this._patchStocklistMail({mensaje:e.target.value}); }
+  _splitEmails(s){ return String(s||'').split(/[\s,;]+/).map(x=>x.trim().toLowerCase()).filter(Boolean); }
+  _addStocklistMailEmails(nuevos){
+    const actuales=this._splitEmails(this.state.stocklistMail.emails);
+    nuevos.forEach(e=>{ e=String(e||'').trim().toLowerCase(); if(e && !actuales.includes(e)) actuales.push(e); });
+    this._patchStocklistMail({emails:actuales.join(', ')});
+  }
+  addStocklistMailClientes=()=>{ this._addStocklistMailEmails(this.state.clients.map(c=>c.usuario)); }
+  addStocklistMailEquipo=()=>{ this._addStocklistMailEmails(this.state.notifEmails); }
+  sendStocklistMail=()=>{
+    const m=this.state.stocklistMail;
+    if(!m || m.sending) return;
+    if(!this.state.adminKey){ this._patchStocklistMail({error:'Configura la clave de administrador en Ajustes para poder enviar.'}); return; }
+    const emails=Array.from(new Set(this._splitEmails(m.emails)));
+    if(!emails.length){ this._patchStocklistMail({error:'Indica al menos un email.'}); return; }
+    const malos=emails.filter(e=>!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e));
+    if(malos.length){ this._patchStocklistMail({error:'Email no válido: '+malos.join(', ')}); return; }
+    const payload=this._stocklistPayload;
+    if(!payload || !payload.rows.length){ this._patchStocklistMail({error:'El stocklist está vacío con los filtros actuales.'}); return; }
+    if(!window.confirm('¿Enviar el '+payload.titulo+' a '+emails.length+(emails.length===1?' destinatario':' destinatarios')+'?')) return;
+
+    this._patchStocklistMail({sending:true});
+    this.setState({stocklistMailEmails:emails.join(', ')}, ()=>this._save());
+    fetch(API_BASE+'/admin/stocklist/enviar', {
+      method:'POST',
+      headers:Object.assign({'Content-Type':'application/json'}, this._adminHeaders()),
+      body: JSON.stringify(Object.assign({}, payload, {emails, asunto:m.asunto, mensaje:m.mensaje})),
+    })
+      .then(async res=>{
+        const data=await res.json().catch(()=>({}));
+        if(!res.ok) throw new Error(data.detail ? (typeof data.detail==='string' ? data.detail : 'Datos no válidos') : 'Error del servidor ('+res.status+')');
+        return data;
+      })
+      .then(data=>{
+        const env=data.enviados||[], fal=data.fallidos||[];
+        this._patchStocklistMail({
+          sending:false,
+          ok: env.length ? 'Enviado a '+env.length+(env.length===1?' destinatario':' destinatarios')+': '+env.join(', ') : null,
+          error: fal.length ? 'No se pudo enviar a: '+fal.map(f=>f.email+' ('+f.error+')').join(' · ') : null,
+        });
+      })
+      .catch(err=>this._patchStocklistMail({sending:false, error: err.message==='Failed to fetch' ? 'Backend no accesible' : err.message}));
+  }
 
   // ---- product handlers
   _readImage(e, fromDrop){
@@ -1581,11 +1688,43 @@ class Component extends DCLogic {
           stock: cr.total, color: cr.color, dot: cr.dot,
           sizeGrid: buildSizeGrid(p, cr.color, showQty),
           estadoLabel: estado.label, estadoStyle: estado.style,
+          imgSrc,
           isPhoto, noPhoto: !isPhoto,
           imgEl: isPhoto ? React.createElement('img',{src:imgSrc,style:{width:'100%',height:'100%',objectFit:'cover',display:'block'}}) : null,
         });
       });
     });
+
+    // lo que se manda al backend para "Enviar por email": las mismas filas de
+    // la tabla, con las rutas de foto/logo ya absolutas (el backend las
+    // descarga desde el propio sitio para montar el PDF)
+    const absUrl=(src)=>{ if(!src) return null; if(String(src).startsWith('data:')) return src; try{ return new URL(src, location.href).href; }catch(e){ return null; } };
+    this._stocklistPayload={
+      titulo: printTitle.trim(), subtitulo: printSubtitle, fecha: printDate,
+      formato: showQty ? 'detallado' : 'cliente',
+      logo: absUrl(st.logo),
+      rows: tableRows.map(r=>({
+        codigo:r.codigo, name:r.name, color:r.color, dot:r.dot, stock:r.stock,
+        estado:r.estadoLabel, imagen:absUrl(r.imgSrc),
+        tallas:r.sizeGrid.map(sg=>({size:sg.size, qty:sg.qty, display:sg.qtyDisplay})),
+      })),
+    };
+    let stocklistMailD=null;
+    if(st.stocklistMail){
+      const m=st.stocklistMail;
+      const nRefs=new Set(tableRows.map(r=>r.codigo)).size;
+      const asuntoDefault=printTitle.trim()+' - MASSCOB';
+      stocklistMailD=Object.assign({}, m, {
+        titulo: printTitle.trim(),
+        resumen: 'Se adjunta en PDF el stocklist tal como lo ves ahora en la tabla: '+nRefs+(nRefs===1?' referencia':' referencias')+' ('+tableRows.length+' filas de color) · '+(showQty?'con unidades':'sin unidades')+'. Cada destinatario lo recibe por separado, sin ver a los demás.',
+        nClientes: st.clients.filter(c=>c.usuario).length,
+        nEquipo: st.notifEmails.length,
+        asuntoDefault,
+        mensajeDefault: 'Si lo dejas en blanco: "Hola, te adjuntamos el '+printTitle.trim()+' actualizado de MASSCOB."',
+        sendLabel: m.sending ? 'Enviando…' : 'Enviar',
+        sendBtnStyle: `padding:12px 24px;border:none;background:${m.sending?'#6b6b64':'#161616'};color:#fff;font-size:13px;font-weight:600;letter-spacing:.03em`,
+      });
+    }
 
     // ---- selected product detail
     let selD=null;
@@ -1864,12 +2003,19 @@ class Component extends DCLogic {
       gridStyle:`display:grid;grid-template-columns:repeat(auto-fill,minmax(${this.props.catalogDensity==='Compacto'?'168px':'202px'},1fr));gap:${this.props.catalogDensity==='Compacto'?'16px':'22px'}`,
       gridBtnStyle:`padding:9px 16px;border:none;background:${st.view==='grid'?'#161616':'#fff'};color:${st.view==='grid'?'#fff':'#6b6b64'};font-size:12.5px;font-weight:500`,
       tableBtnStyle:`padding:9px 16px;border:none;border-left:1px solid #e2e2dd;background:${st.view==='table'?'#161616':'#fff'};color:${st.view==='table'?'#fff':'#6b6b64'};font-size:12.5px;font-weight:500`,
-      exportBtnStyle:`padding:9px 16px;border:1px solid #e2e2dd;background:#fff;color:#161616;font-size:12.5px;font-weight:500`,
+      exportBtnStyle:`padding:9px 16px;border:1px solid #e2e2dd;background:#fff;color:#161616;font-size:12.5px;font-weight:500;white-space:nowrap`,
       exportPdf:this.exportPdf,
+      openStocklistMail:this.openStocklistMail,
+      hasStocklistMail: !!stocklistMailD, stocklistMail: stocklistMailD || {},
+      closeStocklistMail:this.closeStocklistMail, closeStocklistMailBackdrop:this.closeStocklistMailBackdrop,
+      setStocklistMailEmails:this.setStocklistMailEmails, setStocklistMailAsunto:this.setStocklistMailAsunto,
+      setStocklistMailMensaje:this.setStocklistMailMensaje,
+      addStocklistMailClientes:this.addStocklistMailClientes, addStocklistMailEquipo:this.addStocklistMailEquipo,
+      sendStocklistMail:this.sendStocklistMail,
       isStocklistDetallado: st.stocklistFormat!=='cliente', isStocklistCliente: st.stocklistFormat==='cliente',
       setStocklistDetallado:this.setStocklistDetallado, setStocklistCliente:this.setStocklistCliente,
-      stocklistDetalladoBtnStyle:`padding:9px 16px;border:none;background:${st.stocklistFormat!=='cliente'?'#161616':'#fff'};color:${st.stocklistFormat!=='cliente'?'#fff':'#6b6b64'};font-size:12.5px;font-weight:500`,
-      stocklistClienteBtnStyle:`padding:9px 16px;border:none;border-left:1px solid #e2e2dd;background:${st.stocklistFormat==='cliente'?'#161616':'#fff'};color:${st.stocklistFormat==='cliente'?'#fff':'#6b6b64'};font-size:12.5px;font-weight:500`,
+      stocklistDetalladoBtnStyle:`padding:9px 16px;border:none;background:${st.stocklistFormat!=='cliente'?'#161616':'#fff'};color:${st.stocklistFormat!=='cliente'?'#fff':'#6b6b64'};font-size:12.5px;font-weight:500;white-space:nowrap`,
+      stocklistClienteBtnStyle:`padding:9px 16px;border:none;border-left:1px solid #e2e2dd;background:${st.stocklistFormat==='cliente'?'#161616':'#fff'};color:${st.stocklistFormat==='cliente'?'#fff':'#6b6b64'};font-size:12.5px;font-weight:500;white-space:nowrap`,
       printTitle, printDate, printSubtitle,
       hasLogo: !!st.logo, noLogo: !st.logo, logo: st.logo||'',
       filtered: filteredD,
