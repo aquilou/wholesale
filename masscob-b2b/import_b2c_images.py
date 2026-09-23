@@ -80,29 +80,46 @@ def _tokens(texto):
     return set(re.findall(r'[a-z]+', texto.lower()))
 
 
-def _filename_tokens(src):
+def _filename_letters(src):
+    """Letras del nombre de archivo, todas pegadas y en minúscula (sin
+    dígitos/guiones/extensión) — comprobamos coincidencia de color por
+    substring sobre esto, no por token exacto: nombres tipo
+    '312KN_OLIVEnew_a0c7d806...' pegan el color a la palabra siguiente
+    ('OLIVEnew'), así que un token exacto 'olive' nunca lo encuentra."""
     base = src.split('/')[-1].split('?')[0]
     base = re.sub(r'\.(jpg|jpeg|png|webp)$', '', base, flags=re.IGNORECASE)
-    return _tokens(base)
+    return re.sub(r'[^a-z]', '', base.lower())
 
 
-def asignar_fotos_por_color(colores_locales, imagenes):
+def asignar_fotos_por_color(colores_locales, colores_b2c, imagenes):
     """
     Reparte las imágenes del producto B2C entre los colores locales según
-    coincidencia de palabras en el nombre de archivo (ej. '..._red_2.jpg'
-    -> color 'RED'). Las imágenes sin ninguna palabra de color reconocible
-    van al color "por defecto" (el primero del producto local), que es el
-    criterio que ya usa el banco de fotos del ERP para su '_default'.
-    Devuelve {color: [src,...]}.
+    coincidencia del nombre de color en el nombre de archivo (ej.
+    '..._olivenew_...jpg' -> color 'OLIVE'). Las imágenes sin ningún color
+    reconocible van al color "por defecto" (el primero del producto local),
+    que es el criterio que ya usa el banco de fotos del ERP para su
+    '_default'.
+
+    colores_b2c: TODOS los colores que tiene el producto en masscob.com,
+    no solo los que vendemos localmente (colores_locales) — así una foto
+    de un color que la web sí tiene pero nosotros no (ej. este producto
+    solo en LIGHT GREY localmente, pero la web también lo saca en OLIVE)
+    se reconoce y se descarta, en vez de colársela por defecto al único
+    color local por no encontrarle color.
+
+    Devuelve {color: [src,...]} solo con claves de colores_locales.
     """
-    color_tokens = {c: _tokens(c) - {'de', 'la'} for c in colores_locales}
+    todos = set(colores_locales) | set(colores_b2c)
+    color_tokens = {c: [t for t in _tokens(c) if t not in ('de', 'la')] for c in todos}
     reparto = {c: [] for c in colores_locales}
     sin_color = []
     for src in imagenes:
-        ftoks = _filename_tokens(src)
-        match = [c for c, toks in color_tokens.items() if toks and (toks & ftoks)]
-        if len(match) == 1:
+        letras = _filename_letters(src)
+        match = [c for c, toks in color_tokens.items() if toks and all(t in letras for t in toks)]
+        if len(match) == 1 and match[0] in reparto:
             reparto[match[0]].append(src)
+        elif len(match) == 1:
+            continue  # color reconocido pero que no vendemos localmente: se descarta
         else:
             sin_color.append(src)  # 0 o >1 coincidencias: ambiguo, va al color por defecto
     if colores_locales:
@@ -128,7 +145,7 @@ def cruzar(catalogo, b2c_idx):
             sin_b2c.append(p['codigo'])
             continue
         colores_locales = list(p.get('colores', {}).keys())
-        reparto = asignar_fotos_por_color(colores_locales, match['images'])
+        reparto = asignar_fotos_por_color(colores_locales, match['colores_b2c'], match['images'])
         # banco de fotos del ERP (rutas locales, nunca URL): filtra por si
         # products.js ya traía una pasada anterior de este mismo script, para
         # que correrlo varias veces sea seguro y no "adopte" una foto B2C

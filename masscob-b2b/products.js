@@ -659,7 +659,7 @@ window.MASSCOB_PRODUCTS = [
     "gallery": {
       "MUD": [
         "https://cdn.shopify.com/s/files/1/0324/1401/files/342LTH_MUD_ed297da4-04f3-40b0-92c6-5b976fc1236d.jpg?v=1789127430",
-        "https://cdn.shopify.com/s/files/1/0324/1401/files/342LTH_FONDANT_5c772838-c117-48d9-9739-5e7504f040be.jpg?v=1789127430"
+        "https://cdn.shopify.com/s/files/1/0324/1401/files/342-1.jpg?v=1785930748"
       ]
     },
     "b2cHandle": "caparica-belt"
