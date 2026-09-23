@@ -151,14 +151,17 @@ def cruzar(catalogo, b2c_idx):
         if gallery:
             p['gallery'] = gallery
 
+        # miniatura (grid del catálogo, líneas de carrito/pedido, etc.):
+        # misma foto de plana que la primera de la galería de la ficha (la
+        # última que devuelve masscob.com), no la de modelo.
         images = {}
         for color, srcs in reparto.items():
             if srcs:
-                images[color] = srcs[0]
+                images[color] = srcs[-1]
         if colores_locales and colores_locales[0] in images:
             images['_default'] = images[colores_locales[0]]
         elif match['images']:
-            images['_default'] = match['images'][0]
+            images['_default'] = match['images'][-1]
         # conserva las fotos locales para colores que B2C no cubre (ej. color
         # descatalogado en la web pero aún vivo en el mayorista)
         for color, ruta in fotos_locales.items():
