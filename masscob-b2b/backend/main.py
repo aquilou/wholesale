@@ -991,21 +991,93 @@ def _generar_password() -> str:
     return secrets.token_urlsafe(9)  # 12 caracteres, aleatorio-seguro
 
 
+# Plantilla corporativa de los emails de credenciales. Todo con tablas y
+# estilos inline porque Gmail/Outlook ignoran casi todo lo demás. La
+# tipografía es Archivo, como en la web: Apple Mail e iOS la cargan desde
+# Google Fonts; Gmail y Outlook descartan webfonts y caen en Helvetica/Arial.
+# El logo va en JPG (no el SVG de la web) porque Gmail no muestra SVG.
+_EMAIL_FONT = "'Archivo',Helvetica,Arial,sans-serif"
+_EMAIL_LOGO_URL = (
+    STORE_LOGIN_URL.rsplit("/", 1)[0] + "/assets/masscob-logo-email.jpg"
+    if STORE_LOGIN_URL else ""
+)
+
+
+def _html_email_corporativo(titulo: str, cuerpo_html: str, preheader: str = "") -> str:
+    logo = (
+        f'<img src="{_EMAIL_LOGO_URL}" width="150" alt="MASSCOB" '
+        'style="display:block;width:150px;height:auto;border:0">'
+        if _EMAIL_LOGO_URL else
+        f'<span style="font-family:{_EMAIL_FONT};font-size:22px;font-weight:700;letter-spacing:.18em;color:#161616">MASSCOB</span>'
+    )
+    return f"""<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>{html_escape(titulo)}</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>@import url('https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&display=swap');</style>
+</head>
+<body style="margin:0;padding:0;background:#f2f2ef;-webkit-font-smoothing:antialiased">
+<div style="display:none;max-height:0;overflow:hidden;opacity:0">{html_escape(preheader)}</div>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#f2f2ef">
+<tr><td align="center" style="padding:40px 16px">
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px;background:#ffffff;border:1px solid #e2e2dd">
+    <tr><td style="padding:36px 40px 28px;border-bottom:1px solid #e2e2dd">
+      {logo}
+      <div style="font-family:{_EMAIL_FONT};font-size:9px;font-weight:500;letter-spacing:.34em;color:#6b6b64;margin-top:10px">WHOLESALE</div>
+    </td></tr>
+    <tr><td style="padding:36px 40px 40px;font-family:{_EMAIL_FONT};font-size:14px;line-height:1.6;color:#161616">
+      {cuerpo_html}
+    </td></tr>
+  </table>
+  <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:520px">
+    <tr><td style="padding:22px 40px 0;font-family:{_EMAIL_FONT};font-size:11px;line-height:1.6;color:#a7a7a0;text-align:center">
+      MASSCOB Wholesale · <a href="mailto:sales@masscob.com" style="color:#a7a7a0">sales@masscob.com</a><br>
+      Este es un mensaje automático, por favor no respondas a este email.
+    </td></tr>
+  </table>
+</td></tr>
+</table>
+</body></html>"""
+
+
 def _html_credenciales(usuario: str, password: str, es_regeneracion: bool) -> str:
-    intro = (
-        "Se ha generado una nueva contraseña para tu cuenta de acceso a la "
-        "tienda mayorista de MASSCOB. La anterior ha dejado de funcionar."
-        if es_regeneracion else
-        "Ya tienes acceso a la tienda mayorista de MASSCOB."
+    if es_regeneracion:
+        eyebrow, titulo = "NUEVA CONTRASEÑA", "Tu nueva contraseña"
+        intro = (
+            "Se ha generado una nueva contraseña para tu cuenta de acceso a la "
+            "tienda mayorista de MASSCOB. La anterior ha dejado de funcionar."
+        )
+    else:
+        eyebrow, titulo = "BIENVENIDO", "Ya tienes acceso"
+        intro = (
+            "Tu cuenta en la tienda mayorista de MASSCOB está lista. "
+            "Estas son tus credenciales de acceso:"
+        )
+    usuario_h, password_h = html_escape(usuario), html_escape(password)
+    label = "font-size:10px;font-weight:600;letter-spacing:.16em;color:#a7a7a0;padding-bottom:4px"
+    valor = "font-size:15px;font-weight:600;color:#161616;word-break:break-all"
+    boton = (
+        '<table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top:28px"><tr>'
+        f'<td style="background:#161616"><a href="{STORE_LOGIN_URL}" '
+        f'style="display:inline-block;padding:14px 28px;font-family:{_EMAIL_FONT};font-size:13px;'
+        'font-weight:600;letter-spacing:.04em;color:#ffffff;text-decoration:none">Entrar en la tienda</a></td>'
+        "</tr></table>"
+        if STORE_LOGIN_URL else ""
     )
-    enlace = f'<p><a href="{STORE_LOGIN_URL}">Entrar en la tienda</a></p>' if STORE_LOGIN_URL else ""
-    return (
-        f"<p>Hola,</p><p>{intro}</p>"
-        f"<p>Usuario: <strong>{usuario}</strong><br>"
-        f"Contraseña: <strong>{password}</strong></p>"
-        f"{enlace}"
-        "<p>Por seguridad, no compartas esta contraseña con nadie.</p>"
+    cuerpo = (
+        f'<div style="font-size:10px;font-weight:600;letter-spacing:.24em;color:#a7a7a0;margin-bottom:12px">{eyebrow}</div>'
+        f'<h1 style="margin:0 0 16px;font-family:{_EMAIL_FONT};font-size:24px;font-weight:600;letter-spacing:-.01em;color:#161616">{titulo}</h1>'
+        f'<p style="margin:0 0 24px;color:#6b6b64">Hola,<br>{intro}</p>'
+        '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#fafaf8;border:1px solid #e2e2dd">'
+        f'<tr><td style="padding:18px 20px 8px;font-family:{_EMAIL_FONT}"><div style="{label}">USUARIO</div><div style="{valor}">{usuario_h}</div></td></tr>'
+        f'<tr><td style="padding:10px 20px 18px;font-family:{_EMAIL_FONT}"><div style="{label}">CONTRASEÑA</div>'
+        f'<div style="{valor};font-family:ui-monospace,Menlo,Consolas,monospace;letter-spacing:.04em">{password_h}</div></td></tr>'
+        "</table>"
+        f"{boton}"
+        '<p style="margin:28px 0 0;font-size:12px;color:#a7a7a0">Por seguridad, no compartas esta contraseña con nadie.</p>'
     )
+    return _html_email_corporativo(titulo, cuerpo, preheader=intro)
 
 
 class ClienteIn(BaseModel):
