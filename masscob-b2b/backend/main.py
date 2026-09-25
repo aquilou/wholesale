@@ -169,7 +169,7 @@ def _imagen_item(base_url: str, codigo: str, color: str) -> Optional[str]:
 
 
 _ESTADO_PDF_LABEL = {
-    "PENDIENTE": "PENDIENTE DE ACEPTACION",
+    "PENDIENTE": "PENDIENTE DE CONFIRMACION",
     "ACEPTADO": "ACEPTADO",
     "ANULADO": "ANULADO",
 }
@@ -390,16 +390,19 @@ def crear_pedido(pedido: PedidoIn, request: Request, client: dict = Depends(get_
     # la base de datos, y cada reintento crea uno duplicado.
     try:
         adjuntos = None
+        base_url = str(request.base_url).rstrip("/")
+        items_pdf = []
+        for item in pedido.items:
+            try:
+                imagen_url = _imagen_item(base_url, item.codigo, item.color)
+            except Exception:
+                imagen_url = None
+            items_pdf.append({
+                "codigo": item.codigo, "nombre": item.nombre, "color": item.color,
+                "talla": item.talla, "cantidad": item.cantidad, "precio_unit": item.precio_unit,
+                "imagen_url": imagen_url,
+            })
         try:
-            base_url = str(request.base_url).rstrip("/")
-            items_pdf = [
-                {
-                    "codigo": item.codigo, "nombre": item.nombre, "color": item.color,
-                    "talla": item.talla, "cantidad": item.cantidad, "precio_unit": item.precio_unit,
-                    "imagen_url": _imagen_item(base_url, item.codigo, item.color),
-                }
-                for item in pedido.items
-            ]
             pdf_bytes = _pedido_pdf(
                 referencia, client.get("email", "—"), created_at.isoformat(),
                 items_pdf, float(total), estado=estado,
@@ -414,16 +417,12 @@ def crear_pedido(pedido: PedidoIn, request: Request, client: dict = Depends(get_
             # ningún aviso.
             print(f"[pdf] no se pudo generar el PDF del pedido {referencia}: {e!r}")
 
-        resumen = (
-            f"<p>Referencia: <strong>{referencia}</strong> — "
-            f"Total: <strong>{float(total):.2f} €</strong></p>"
-            "<p>Adjuntamos el PDF con el detalle completo del pedido.</p>"
-        )
+        cliente_email = client.get("email") or "—"
         if client.get("email"):
             _enviar_email(
                 [client["email"]],
                 f"Hemos recibido tu pedido {referencia}",
-                f"<p>Hola,</p><p>Hemos recibido tu pedido. Te avisaremos en cuanto lo revisemos.</p>{resumen}",
+                _html_pedido(referencia, cliente_email, items_pdf, float(total), para_equipo=False),
                 adjuntos=adjuntos,
             )
         conn2 = get_conn()
@@ -436,9 +435,7 @@ def crear_pedido(pedido: PedidoIn, request: Request, client: dict = Depends(get_
             _enviar_email(
                 equipo,
                 f"Nuevo pedido {referencia}",
-                f"<p>Nuevo pedido de <strong>{client.get('email','—')}</strong> — "
-                "Estado: <strong>PENDIENTE DE ACEPTACIÓN</strong>.</p>"
-                f"{resumen}",
+                _html_pedido(referencia, cliente_email, items_pdf, float(total), para_equipo=True),
                 adjuntos=adjuntos,
             )
     except Exception as e:
@@ -1078,6 +1075,70 @@ def _html_credenciales(usuario: str, password: str, es_regeneracion: bool) -> st
         '<p style="margin:28px 0 0;font-size:12px;color:#a7a7a0">Por seguridad, no compartas esta contraseña con nadie.</p>'
     )
     return _html_email_corporativo(titulo, cuerpo, preheader=intro)
+
+
+def _html_pedido(
+    referencia: str, cliente_email: str, items: List[dict], total: float, para_equipo: bool
+) -> str:
+    """Email de pedido nuevo (cliente y equipo): el detalle va en el cuerpo
+    con fotos para verlo sin abrir nada, y el PDF sigue adjunto aparte —
+    ningún cliente de correo pinta un PDF dentro del mensaje."""
+    if para_equipo:
+        eyebrow, titulo = "NUEVO PEDIDO", f"Pedido {referencia}"
+        intro = f"Nuevo pedido de <strong>{html_escape(cliente_email)}</strong>."
+        preheader = f"Nuevo pedido de {cliente_email} — {total:.2f} €"
+    else:
+        eyebrow, titulo = "PEDIDO RECIBIDO", "Hemos recibido tu pedido"
+        intro = "Gracias por tu pedido. Te avisaremos en cuanto lo revisemos."
+        preheader = f"Pedido {referencia} — {total:.2f} €"
+
+    label = "font-size:10px;font-weight:600;letter-spacing:.16em;color:#a7a7a0;padding-bottom:4px"
+    valor = "font-size:14px;font-weight:600;color:#161616"
+    ficha = (
+        '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#fafaf8;border:1px solid #e2e2dd">'
+        "<tr>"
+        f'<td style="padding:16px 20px;font-family:{_EMAIL_FONT}"><div style="{label}">REFERENCIA</div><div style="{valor}">{html_escape(referencia)}</div></td>'
+        f'<td style="padding:16px 20px;font-family:{_EMAIL_FONT}"><div style="{label}">ESTADO</div><div style="{valor}">Pendiente de confirmación</div></td>'
+        "</tr></table>"
+    )
+
+    filas = []
+    for it in items:
+        img = (
+            f'<img src="{html_escape(it["imagen_url"])}" width="56" alt="" '
+            'style="display:block;width:56px;height:auto;max-height:72px;border:0">'
+            if it.get("imagen_url") else ""
+        )
+        subtotal = it["cantidad"] * it["precio_unit"]
+        filas.append(
+            "<tr>"
+            f'<td width="64" valign="top" style="padding:14px 0;border-bottom:1px solid #e2e2dd">'
+            f'<div style="width:56px;background:#f7f7f4">{img}</div></td>'
+            f'<td valign="top" style="padding:14px 8px 14px 12px;border-bottom:1px solid #e2e2dd;font-family:{_EMAIL_FONT};font-size:13px;line-height:1.45;color:#161616">'
+            f'<div style="font-weight:600">{html_escape(it["nombre"])}</div>'
+            f'<div style="font-size:11px;color:#a7a7a0">{html_escape(it["codigo"])}</div>'
+            f'<div style="font-size:12px;color:#6b6b64;margin-top:4px">{html_escape(str(it["color"]))} · Talla {html_escape(str(it["talla"]))}'
+            f' · {it["cantidad"]} × {it["precio_unit"]:.2f} €</div></td>'
+            f'<td valign="top" align="right" style="padding:14px 0;border-bottom:1px solid #e2e2dd;font-family:{_EMAIL_FONT};font-size:13px;font-weight:600;color:#161616;white-space:nowrap">{subtotal:.2f} €</td>'
+            "</tr>"
+        )
+    tabla = (
+        '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-top:28px">'
+        f'<tr><td colspan="3" style="{label};border-bottom:1px solid #161616;padding-bottom:8px;font-family:{_EMAIL_FONT}">RESUMEN DE PEDIDO</td></tr>'
+        + "".join(filas)
+        + f'<tr><td colspan="2" style="padding:16px 0 0;font-family:{_EMAIL_FONT};font-size:14px;font-weight:600">Total</td>'
+        f'<td align="right" style="padding:16px 0 0;font-family:{_EMAIL_FONT};font-size:16px;font-weight:700;white-space:nowrap">{total:.2f} €</td></tr>'
+        "</table>"
+    )
+
+    cuerpo = (
+        f'<div style="font-size:10px;font-weight:600;letter-spacing:.24em;color:#a7a7a0;margin-bottom:12px">{eyebrow}</div>'
+        f'<h1 style="margin:0 0 16px;font-family:{_EMAIL_FONT};font-size:24px;font-weight:600;letter-spacing:-.01em;color:#161616">{html_escape(titulo)}</h1>'
+        f'<p style="margin:0 0 24px;color:#6b6b64">Hola,<br>{intro}</p>'
+        f"{ficha}{tabla}"
+        '<p style="margin:28px 0 0;font-size:12px;color:#a7a7a0">Adjuntamos el PDF con el detalle completo del pedido.</p>'
+    )
+    return _html_email_corporativo(titulo, cuerpo, preheader=preheader)
 
 
 class ClienteIn(BaseModel):
