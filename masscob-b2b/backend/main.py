@@ -422,7 +422,7 @@ def crear_pedido(pedido: PedidoIn, request: Request, client: dict = Depends(get_
             _enviar_email(
                 [client["email"]],
                 f"Hemos recibido tu pedido {referencia}",
-                _html_pedido(referencia, cliente_email, items_pdf, float(total), para_equipo=False),
+                _html_pedido(referencia, cliente_email, items_pdf, float(total), tipo="recibido"),
                 adjuntos=adjuntos,
             )
         conn2 = get_conn()
@@ -435,7 +435,7 @@ def crear_pedido(pedido: PedidoIn, request: Request, client: dict = Depends(get_
             _enviar_email(
                 equipo,
                 f"Nuevo pedido {referencia}",
-                _html_pedido(referencia, cliente_email, items_pdf, float(total), para_equipo=True),
+                _html_pedido(referencia, cliente_email, items_pdf, float(total), tipo="equipo"),
                 adjuntos=adjuntos,
             )
     except Exception as e:
@@ -535,7 +535,9 @@ def listar_pedidos_admin(_: None = Depends(require_admin)):
 
 
 @app.patch("/admin/pedidos/{pedido_id}/estado")
-def actualizar_estado_pedido(pedido_id: int, body: EstadoIn, _: None = Depends(require_admin)):
+def actualizar_estado_pedido(
+    pedido_id: int, body: EstadoIn, request: Request, _: None = Depends(require_admin)
+):
     if body.estado not in ESTADOS_PEDIDO:
         raise HTTPException(400, f"Estado inválido: {body.estado}")
     conn = get_conn()
@@ -545,13 +547,14 @@ def actualizar_estado_pedido(pedido_id: int, body: EstadoIn, _: None = Depends(r
             # dos PATCH concurrentes sobre el mismo pedido descuenten stock
             # dos veces (o restituyan dos veces)
             cur.execute(
-                "select estado, cliente_id, referencia from pedidos where id = %s for update",
+                "select estado, cliente_id, referencia, total, created_at "
+                "from pedidos where id = %s for update",
                 (pedido_id,),
             )
             row = cur.fetchone()
             if not row:
                 raise HTTPException(404, "Pedido no encontrado")
-            estado_actual, cliente_id, referencia = row
+            estado_actual, cliente_id, referencia, total, created_at = row
 
             if estado_actual != body.estado:
                 # el stock ya se reservó al crear el pedido (PENDIENTE), así
@@ -594,22 +597,46 @@ def actualizar_estado_pedido(pedido_id: int, body: EstadoIn, _: None = Depends(r
     finally:
         conn.close()
 
+    # Igual que al crear el pedido: el cambio de estado ya está guardado,
+    # así que el aviso por email es best-effort y nunca debe dar un 500.
     if body.estado != estado_actual and body.estado in ("ACEPTADO", "ANULADO"):
-        conn2 = get_conn()
         try:
-            with conn2.cursor() as cur:
-                email_cliente = _email_cliente(cur, cliente_id)
-        finally:
-            conn2.close()
-        if email_cliente:
-            if body.estado == "ACEPTADO":
-                asunto, mensaje = f"Pedido {referencia} aceptado", "Tu pedido ha sido aceptado."
-            else:
-                asunto, mensaje = f"Pedido {referencia} anulado", "Tu pedido ha sido anulado."
-            _enviar_email(
-                [email_cliente], asunto,
-                f"<p>Hola,</p><p>{mensaje}</p><p>Referencia: <strong>{referencia}</strong></p>",
-            )
+            conn2 = get_conn()
+            try:
+                with conn2.cursor() as cur:
+                    email_cliente = _email_cliente(cur, cliente_id)
+                    items = _fetch_items(cur, pedido_id)
+            finally:
+                conn2.close()
+            if email_cliente:
+                base_url = str(request.base_url).rstrip("/")
+                items_pdf = []
+                for item in items:
+                    try:
+                        imagen_url = _imagen_item(base_url, item["codigo"], item["color"])
+                    except Exception:
+                        imagen_url = None
+                    items_pdf.append(dict(item, imagen_url=imagen_url))
+                adjuntos = None
+                try:
+                    pdf_bytes = _pedido_pdf(
+                        referencia, email_cliente, created_at.isoformat(),
+                        items_pdf, float(total), estado=body.estado,
+                    )
+                    adjuntos = [{
+                        "filename": f"pedido-{referencia}.pdf",
+                        "content": base64.b64encode(pdf_bytes).decode(),
+                    }]
+                except Exception as e:
+                    print(f"[pdf] no se pudo generar el PDF del pedido {referencia}: {e!r}")
+                palabra = "aceptado" if body.estado == "ACEPTADO" else "anulado"
+                _enviar_email(
+                    [email_cliente], f"Pedido {referencia} {palabra}",
+                    _html_pedido(referencia, email_cliente, items_pdf, float(total), tipo=palabra),
+                    adjuntos=adjuntos,
+                )
+        except Exception as e:
+            print(f"[email] aviso de estado del pedido {referencia} no enviado: {e!r}")
 
     return {"id": pedido_id, "estado": body.estado}
 
@@ -933,12 +960,14 @@ def _html_stocklist(mensaje: Optional[str], titulo: str) -> str:
     cuerpo = html_escape(mensaje or "").strip().replace("\n", "<br>")
     if not cuerpo:
         cuerpo = f"Hola,<br><br>Te adjuntamos el {html_escape(titulo.strip())} actualizado de MASSCOB."
-    return (
-        '<div style="font-family:Arial,Helvetica,sans-serif;font-size:14px;line-height:1.55;color:#161616">'
-        f"<p>{cuerpo}</p>"
-        '<p style="color:#6b6b64;font-size:12px">Adjunto: stocklist en PDF.</p>'
-        "</div>"
+    titulo_h = html_escape(titulo.strip())
+    html = (
+        '<div style="font-size:10px;font-weight:600;letter-spacing:.24em;color:#a7a7a0;margin-bottom:12px">STOCKLIST</div>'
+        f'<h1 style="margin:0 0 16px;font-family:{_EMAIL_FONT};font-size:24px;font-weight:600;letter-spacing:-.01em;color:#161616">{titulo_h}</h1>'
+        f'<p style="margin:0;color:#161616">{cuerpo}</p>'
+        '<p style="margin:28px 0 0;font-size:12px;color:#a7a7a0">Adjunto: stocklist en PDF.</p>'
     )
+    return _html_email_corporativo(titulo.strip(), html, preheader=f"{titulo.strip()} actualizado de MASSCOB")
 
 
 @app.post("/admin/stocklist/enviar")
@@ -1077,16 +1106,38 @@ def _html_credenciales(usuario: str, password: str, es_regeneracion: bool) -> st
     return _html_email_corporativo(titulo, cuerpo, preheader=intro)
 
 
+_ESTADO_EMAIL_LABEL = {
+    "PENDIENTE": "Pendiente de confirmación",
+    "ACEPTADO": "Aceptado",
+    "ANULADO": "Anulado",
+}
+
+
 def _html_pedido(
-    referencia: str, cliente_email: str, items: List[dict], total: float, para_equipo: bool
+    referencia: str, cliente_email: str, items: List[dict], total: float, tipo: str
 ) -> str:
-    """Email de pedido nuevo (cliente y equipo): el detalle va en el cuerpo
-    con fotos para verlo sin abrir nada, y el PDF sigue adjunto aparte —
-    ningún cliente de correo pinta un PDF dentro del mensaje."""
-    if para_equipo:
+    """Emails de pedido (nuevo -> cliente y equipo; aceptado/anulado ->
+    cliente): el detalle va en el cuerpo con fotos para verlo sin abrir
+    nada, y el PDF sigue adjunto aparte — ningún cliente de correo pinta un
+    PDF dentro del mensaje. tipo: "equipo", "recibido", "aceptado", "anulado"."""
+    estado = "PENDIENTE"
+    if tipo == "equipo":
         eyebrow, titulo = "NUEVO PEDIDO", f"Pedido {referencia}"
         intro = f"Nuevo pedido de <strong>{html_escape(cliente_email)}</strong>."
         preheader = f"Nuevo pedido de {cliente_email} — {total:.2f} €"
+    elif tipo == "aceptado":
+        estado = "ACEPTADO"
+        eyebrow, titulo = "PEDIDO ACEPTADO", "Tu pedido ha sido aceptado"
+        intro = "Hemos revisado y aceptado tu pedido."
+        preheader = f"Pedido {referencia} aceptado"
+    elif tipo == "anulado":
+        estado = "ANULADO"
+        eyebrow, titulo = "PEDIDO ANULADO", "Tu pedido ha sido anulado"
+        intro = (
+            'Tu pedido ha sido anulado. Si tienes cualquier duda, escríbenos a '
+            '<a href="mailto:sales@masscob.com" style="color:#161616">sales@masscob.com</a>.'
+        )
+        preheader = f"Pedido {referencia} anulado"
     else:
         eyebrow, titulo = "PEDIDO RECIBIDO", "Hemos recibido tu pedido"
         intro = "Gracias por tu pedido. Te avisaremos en cuanto lo revisemos."
@@ -1098,7 +1149,7 @@ def _html_pedido(
         '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background:#fafaf8;border:1px solid #e2e2dd">'
         "<tr>"
         f'<td style="padding:16px 20px;font-family:{_EMAIL_FONT}"><div style="{label}">REFERENCIA</div><div style="{valor}">{html_escape(referencia)}</div></td>'
-        f'<td style="padding:16px 20px;font-family:{_EMAIL_FONT}"><div style="{label}">ESTADO</div><div style="{valor}">Pendiente de confirmación</div></td>'
+        f'<td style="padding:16px 20px;font-family:{_EMAIL_FONT}"><div style="{label}">ESTADO</div><div style="{valor}">{_ESTADO_EMAIL_LABEL[estado]}</div></td>'
         "</tr></table>"
     )
 
